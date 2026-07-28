@@ -7,13 +7,15 @@
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    /* VARIABLES & PALETTE */
     :root {
       --verde: #0B8F3A;
       --verde-light: #32C85A;
       --roxo: #4B2CA3;
+      --roxo-light: #6D4FD8;
       --dourado: #F5C542;
       --branco: #FFFFFF;
-      --bg-gradient: linear-gradient(135deg, #0B8F3A 0%, #4B2CA3 100%);
+      --bg-gradient: linear-gradient(135deg, #0B8F3A 0%, #32C85A 30%, #4B2CA3 70%, #6D4FD8 100%);
       --card-bg: rgba(255, 255, 255, 0.95);
       --glass-border: rgba(255, 255, 255, 0.25);
       --text-color: #2D3748;
@@ -21,23 +23,31 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background: var(--bg-gradient); min-height: 100vh; display: flex; color: var(--text-color); overflow-x: hidden; }
+    body { background: var(--bg-gradient); min-height: 100vh; display: flex; flex-direction: column; color: var(--text-color); overflow-x: hidden; }
+
+    /* LAYOUT BASE */
+    .app-container { display: flex; flex: 1; min-height: 100vh; }
 
     /* SIDEBAR */
     .sidebar {
       width: var(--sidebar-width);
-      background: linear-gradient(180deg, rgba(11, 143, 58, 0.95) 0%, rgba(75, 44, 163, 0.95) 100%);
+      background: linear-gradient(180deg, #0B8F3A, #32C85A, #4B2CA3);
       backdrop-filter: blur(15px);
       border-right: 1px solid var(--glass-border);
       color: var(--branco); display: flex; flex-direction: column; padding: 20px;
       position: fixed; height: 100vh; z-index: 1000; transition: transform 0.3s ease;
     }
-    .logo-container { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
-    .logo-icon { width: 42px; height: 42px; background: var(--dourado); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--roxo); font-size: 24px; font-weight: bold; flex-shrink: 0; }
-    .logo-text h2 { font-size: 1.05rem; font-weight: 700; line-height: 1.2; }
-    .logo-text span { font-size: 0.75rem; opacity: 0.85; }
 
-    .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    /* LOGO OFICIAL */
+    .logo-container { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+    .logo {
+      width: 55px; height: 55px; border-radius: 50%; object-fit: cover;
+      background: #fff; padding: 3px; box-shadow: 0 5px 15px rgba(0,0,0,.25); flex-shrink: 0;
+    }
+    .logo-text h2 { font-size: 1.05rem; font-weight: 700; line-height: 1.2; color: #fff; }
+    .logo-text span { font-size: 0.75rem; opacity: 0.85; color: #fff; }
+
+    .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .nav-item button {
       width: 100%; background: transparent; border: none; display: flex; align-items: center; gap: 12px;
       padding: 12px 16px; color: rgba(255, 255, 255, 0.85); border-radius: 10px; cursor: pointer;
@@ -47,24 +57,33 @@
     .nav-item.active button { background: var(--branco); color: var(--roxo); font-weight: 700; }
     .nav-item i { font-size: 1.25rem; }
 
-    /* MAIN */
-    .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 25px; width: calc(100% - var(--sidebar-width)); transition: all 0.3s ease; }
+    /* MAIN CONTENT */
+    .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 25px; width: calc(100% - var(--sidebar-width)); transition: all 0.3s ease; display: flex; flex-direction: column; }
     .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); padding: 15px 20px; border-radius: 16px; border: 1px solid var(--glass-border); color: var(--branco); }
     .header-left { display: flex; align-items: center; gap: 15px; }
     .mobile-toggle { display: none; background: transparent; border: none; color: var(--branco); font-size: 1.8rem; cursor: pointer; }
 
-    /* CARDS */
-    .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
-    .tab-content.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* USER PROFILE */
+    .user-profile { display: flex; align-items: center; gap: 12px; background: rgba(255, 255, 255, 0.1); padding: 6px 14px; border-radius: 30px; border: 1px solid var(--glass-border); }
+    .user-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--dourado); }
 
+    /* BARRA DE PESQUISA */
+    .search-box { display: flex; align-items: center; background: rgba(255,255,255,0.9); border-radius: 10px; padding: 8px 15px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .search-box input { border: none; background: transparent; outline: none; width: 100%; margin-left: 10px; font-size: 0.95rem; }
+
+    /* ANIMAÇÃO DE TROCA DE PÁGINA */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* CARDS */
     .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px; }
     .card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); border: 1px solid rgba(255, 255, 255, 0.5); margin-bottom: 20px; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .card-title { font-size: 0.95rem; color: #64748B; font-weight: 600; }
     .card-value { font-size: 1.8rem; font-weight: 700; color: #1E293B; }
 
-    /* FORMULÁRIOS E INPUTS */
+    /* FORMULÁRIOS & BOTÕES */
     .form-group { margin-bottom: 15px; }
     .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #475569; }
     .form-control { width: 100%; padding: 10px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem; outline: none; }
@@ -72,21 +91,32 @@
 
     .btn { background: linear-gradient(90deg, var(--verde), var(--verde-light)); color: var(--branco); border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; }
     .btn:hover { opacity: 0.9; transform: translateY(-2px); }
-    .btn-lock { background: linear-gradient(90deg, #E11D48, #F43F5E); }
+    .btn-danger { background: linear-gradient(90deg, #E11D48, #F43F5E); }
+    .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
 
-    /* LISTAS */
+    /* LISTAS E AÇÕES (EDITAR/EXCLUIR) */
     .item-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
     .item-list li { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #F8FAFC; border-radius: 10px; border-left: 4px solid var(--verde); }
+    .item-actions { display: flex; gap: 6px; }
+
     .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
     .status-pending { background: #FEF3C7; color: #92400E; }
     .status-progress { background: #E0F2FE; color: #075985; }
     .status-done { background: #DCFCE7; color: #166534; }
 
-    /* ESTILOS DA ÁREA RESTRITA */
+    /* NOTIFICAÇÕES TOAST */
+    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+    .toast { background: #1E293B; color: #fff; padding: 12px 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; border-left: 4px solid var(--dourado); }
+    @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+    /* RODAPÉ */
+    footer { text-align: center; padding: 15px; color: rgba(255, 255, 255, 0.8); font-size: 0.85rem; margin-top: auto; border-top: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.1); }
+
+    /* TELAS ESPECÍFICAS */
     .lock-screen { text-align: center; padding: 40px 20px; }
     .lock-screen i { font-size: 3rem; color: var(--roxo); margin-bottom: 15px; }
     .admin-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-
     .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 900; }
 
     @media (max-width: 900px) {
@@ -100,205 +130,219 @@
 </head>
 <body>
 
+  <div id="toast-container"></div>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <aside class="sidebar" id="sidebar">
-    <div class="logo-container">
-      <div class="logo-icon">G</div>
-      <div class="logo-text">
-        <h2>Grêmio Estudantil</h2>
-        <span>CETI José Marques</span>
-      </div>
-    </div>
-    <ul class="nav-menu">
-      <li class="nav-item active"><button onclick="openTab('dashboard', this)"><i class="ph ph-squares-four"></i><span>Dashboard</span></button></li>
-      <li class="nav-item"><button onclick="openTab('integrantes', this)"><i class="ph ph-users"></i><span>Integrantes</span></button></li>
-      <li class="nav-item"><button onclick="openTab('projetos', this)"><i class="ph ph-kanban"></i><span>Projetos</span></button></li>
-      <li class="nav-item"><button onclick="openTab('tarefas', this)"><i class="ph ph-check-square"></i><span>Tarefas</span></button></li>
-      <li class="nav-item"><button onclick="openTab('agenda', this)"><i class="ph ph-calendar"></i><span>Agenda</span></button></li>
-      <li class="nav-item"><button onclick="openTab('documentos', this)"><i class="ph ph-folder"></i><span>Documentos & Atas</span></button></li>
-      <li class="nav-item"><button onclick="openTab('admin', this)" style="color: var(--dourado);"><i class="ph ph-lock"></i><span>Área Restrita (Senha)</span></button></li>
-    </ul>
-  </aside>
-
-  <main class="main-content">
-    <header class="top-header">
-      <div class="header-left">
-        <button class="mobile-toggle" id="menuToggle"><i class="ph ph-list"></i></button>
-        <div>
-          <h1 id="pageTitle">Dashboard</h1>
-          <p>Gestão Várzea Branca - Painel Oficial</p>
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="logo-container">
+        <img src="logo-gremio.png" alt="Logo do Grêmio" class="logo" onerror="this.src='https://via.placeholder.com/55?text=G'">
+        <div class="logo-text">
+          <h2>Grêmio Estudantil</h2>
+          <span>CETI José Marques</span>
         </div>
       </div>
-      <div class="user-profile">
-        <div class="logo-icon" style="width:36px; height:36px; font-size: 16px;">P</div>
-      </div>
-    </header>
+      <ul class="nav-menu">
+        <li class="nav-item active"><button onclick="openTab('dashboard', this)"><i class="ph ph-squares-four"></i><span>Dashboard</span></button></li>
+        <li class="nav-item"><button onclick="openTab('integrantes', this)"><i class="ph ph-users"></i><span>Integrantes</span></button></li>
+        <li class="nav-item"><button onclick="openTab('projetos', this)"><i class="ph ph-kanban"></i><span>Projetos</span></button></li>
+        <li class="nav-item"><button onclick="openTab('tarefas', this)"><i class="ph ph-check-square"></i><span>Tarefas</span></button></li>
+        <li class="nav-item"><button onclick="openTab('financeiro', this)"><i class="ph ph-currency-dollar"></i><span>Financeiro</span></button></li>
+        <li class="nav-item"><button onclick="openTab('documentos', this)"><i class="ph ph-folder"></i><span>Documentos & Atas</span></button></li>
+        <li class="nav-item"><button onclick="openTab('admin', this)" style="color: var(--dourado);"><i class="ph ph-lock"></i><span>Área Restrita</span></button></li>
+      </ul>
+    </aside>
 
-    <section id="tab-dashboard" class="tab-content active">
-      <div class="dashboard-grid">
-        <div class="card"><div class="card-title">Projetos Ativos</div><div class="card-value" id="dash-proj-count">0</div></div>
-        <div class="card"><div class="card-title">Tarefas Pendentes</div><div class="card-value" id="dash-task-count">0</div></div>
-        <div class="card"><div class="card-title">Integrantes</div><div class="card-value" id="dash-membro-count">0</div></div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><h3><i class="ph ph-bell" style="color: var(--dourado);"></i> Comunicados Recentes</h3></div>
-        <ul class="item-list" id="dash-comunicados-list"></ul>
-      </div>
-    </section>
-
-    <section id="tab-integrantes" class="tab-content">
-      <div class="card">
-        <div class="card-header"><h3>Integrantes do Grêmio</h3></div>
-        <ul class="item-list" id="public-membros-list"></ul>
-      </div>
-    </section>
-
-    <section id="tab-projetos" class="tab-content">
-      <div class="card">
-        <div class="card-header"><h3>Projetos Em Andamento</h3></div>
-        <ul class="item-list" id="public-projetos-list"></ul>
-      </div>
-    </section>
-
-    <section id="tab-tarefas" class="tab-content">
-      <div class="card">
-        <div class="card-header"><h3>Quadro de Tarefas</h3></div>
-        <ul class="item-list" id="public-tarefas-list"></ul>
-      </div>
-    </section>
-
-    <section id="tab-agenda" class="tab-content">
-      <div class="card">
-        <div class="card-header"><h3>Agenda e Eventos</h3></div>
-        <p style="color: #64748B;">Consulte aqui os prazos das tarefas e projetos.</p>
-      </div>
-    </section>
-
-    <section id="tab-documentos" class="tab-content">
-      <div class="card">
-        <div class="card-header">
-          <h3><i class="ph ph-file-text"></i> Registros de Atas das Reuniões</h3>
-        </div>
-        <div class="form-group">
-          <label>Título da Ata / Reunião</label>
-          <input type="text" id="ata-titulo" class="form-control" placeholder="Ex: Reunião do Torneio Interclasse">
-        </div>
-        <div class="form-group">
-          <label>Conteúdo da Ata</label>
-          <textarea id="ata-conteudo" class="form-control" rows="5" placeholder="Digite aqui todas as decisões tomadas..."></textarea>
-        </div>
-        <button class="btn" onclick="salvarAta()"><i class="ph ph-floppy-disk"></i> Salvar Ata</button>
-      </div>
-
-      <div class="card">
-        <h3>Atas Registradas</h3>
-        <br>
-        <ul class="item-list" id="atas-list"></ul>
-      </div>
-    </section>
-
-    <section id="tab-admin" class="tab-content">
-      <div id="admin-lock" class="card lock-screen">
-        <i class="ph ph-lock-key"></i>
-        <h2>Área Restrita da Diretoria</h2>
-        <p style="color: #64748B; margin-bottom: 20px;">Digite a senha para acessar o painel de cadastro e avaliações.</p>
-        <div style="max-width: 300px; margin: 0 auto;">
-          <input type="password" id="admin-pass" class="form-control" placeholder="Senha de acesso" style="text-align: center; margin-bottom: 10px;">
-          <button class="btn" style="width: 100%; justify-content: center;" onclick="unlockAdmin()"><i class="ph ph-key"></i> Entrar</button>
-        </div>
-      </div>
-
-      <div id="admin-panel" style="display: none;">
-        <div class="card" style="background: #FFFBEB; border-color: #FCD34D;">
-          <div class="card-header">
-            <h3 style="color: #92400E;"><i class="ph ph-shield-check"></i> Modo Administrativo Ativo</h3>
-            <button class="btn btn-lock" onclick="lockAdmin()"><i class="ph ph-lock-simple"></i> Sair/Bloquear</button>
+    <main class="main-content">
+      <header class="top-header">
+        <div class="header-left">
+          <button class="mobile-toggle" id="menuToggle"><i class="ph ph-list"></i></button>
+          <div>
+            <h1 id="pageTitle">Dashboard</h1>
+            <p>Gestão Várzea Branca - Painel Oficial</p>
           </div>
+        </div>
+        <div class="user-profile">
+          <img src="https://ui-avatars.com/api/?name=Presidente+Gremio&background=F5C542&color=4B2CA3" alt="Usuário" class="user-avatar">
+          <div style="font-size:0.85rem;">
+            <strong>Presidente</strong>
+            <span style="display:block; font-size:0.7rem; opacity:0.8;">Gestão 2026</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="search-box">
+        <i class="ph ph-magnifying-glass" style="font-size: 1.2rem; color: #64748B;"></i>
+        <input type="text" id="globalSearch" placeholder="Pesquisar integrantes, tarefas ou projetos..." onkeyup="filterContent()">
+      </div>
+
+      <section id="tab-dashboard" class="tab-content active">
+        <div class="dashboard-grid">
+          <div class="card"><div class="card-title">Projetos Ativos</div><div class="card-value" id="dash-proj-count">0</div></div>
+          <div class="card"><div class="card-title">Tarefas Pendentes</div><div class="card-value" id="dash-task-count">0</div></div>
+          <div class="card"><div class="card-title">Integrantes</div><div class="card-value" id="dash-membro-count">0</div></div>
+          <div class="card"><div class="card-title">Saldo Caixa</div><div class="card-value" style="color: var(--verde);" id="dash-saldo">R$ 0,00</div></div>
         </div>
 
         <div class="card">
+          <div class="card-header"><h3><i class="ph ph-bell" style="color: var(--dourado);"></i> Comunicados Recentes</h3></div>
+          <ul class="item-list" id="dash-comunicados-list"></ul>
+        </div>
+      </section>
+
+      <section id="tab-integrantes" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h3>Integrantes do Grêmio</h3></div>
+          <ul class="item-list" id="public-membros-list"></ul>
+        </div>
+      </section>
+
+      <section id="tab-projetos" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h3>Projetos Em Andamento</h3></div>
+          <ul class="item-list" id="public-projetos-list"></ul>
+        </div>
+      </section>
+
+      <section id="tab-tarefas" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h3>Quadro de Tarefas</h3></div>
+          <ul class="item-list" id="public-tarefas-list"></ul>
+        </div>
+      </section>
+
+      <section id="tab-financeiro" class="tab-content">
+        <div class="card">
           <div class="card-header">
-            <h3><i class="ph ph-chart-line-up"></i> Desempenho e Avaliação dos Membros</h3>
+            <h3><i class="ph ph-chart-pie"></i> Painel Financeiro e Caixa</h3>
           </div>
-          <div style="max-height: 280px; margin-bottom: 20px;">
-            <canvas id="desempenhoChart"></canvas>
+          <div style="max-height: 260px; margin-bottom: 20px;">
+            <canvas id="financeiroChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-documentos" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h3><i class="ph ph-file-text"></i> Nova Ata de Reunião</h3></div>
+          <div class="form-group"><label>Título da Reunião</label><input type="text" id="ata-titulo" class="form-control" placeholder="Ex: Planejamento Cultural"></div>
+          <div class="form-group"><label>Conteúdo da Ata</label><textarea id="ata-conteudo" class="form-control" rows="4"></textarea></div>
+          <button class="btn" onclick="salvarAta()"><i class="ph ph-floppy-disk"></i> Salvar Ata</button>
+        </div>
+
+        <div class="card">
+          <h3>Atas Registradas</h3><br>
+          <ul class="item-list" id="atas-list"></ul>
+        </div>
+      </section>
+
+      <section id="tab-admin" class="tab-content">
+        <div id="admin-lock" class="card lock-screen">
+          <i class="ph ph-lock-key"></i>
+          <h2>Área Restrita da Diretoria</h2>
+          <p style="color: #64748B; margin-bottom: 20px;">Digite a senha para acessar o painel de edição e avaliações.</p>
+          <div style="max-width: 300px; margin: 0 auto;">
+            <input type="password" id="admin-pass" class="form-control" placeholder="Senha" style="text-align: center; margin-bottom: 10px;">
+            <button class="btn" style="width: 100%; justify-content: center;" onclick="unlockAdmin()"><i class="ph ph-key"></i> Entrar</button>
           </div>
         </div>
 
-        <div class="admin-sections">
-          <div class="card">
-            <h3><i class="ph ph-user-plus"></i> Novo Integrante & Avaliação</h3>
-            <br>
-            <div class="form-group"><label>Nome Completo</label><input type="text" id="membro-nome" class="form-control"></div>
-            <div class="form-group"><label>Cargo</label><input type="text" id="membro-cargo" class="form-control" placeholder="Ex: Diretor de Esportes"></div>
-            <div class="form-group"><label>Contato/WhatsApp</label><input type="text" id="membro-contato" class="form-control"></div>
-            <div class="form-group">
-              <label>Nota de Desempenho (1 a 5)</label>
-              <select id="membro-nota" class="form-control">
-                <option value="5">5 - Excelente</option>
-                <option value="4">4 - Bom</option>
-                <option value="3">3 - Regular</option>
-                <option value="2">2 - Necessita Melhora</option>
-                <option value="1">1 - Insuficiente</option>
-              </select>
+        <div id="admin-panel" style="display: none;">
+          <div class="card" style="background: #FFFBEB; border-color: #FCD34D;">
+            <div class="card-header">
+              <h3 style="color: #92400E;"><i class="ph ph-shield-check"></i> Modo Administrativo Ativo</h3>
+              <button class="btn btn-danger" onclick="lockAdmin()"><i class="ph ph-lock-simple"></i> Sair/Bloquear</button>
             </div>
-            <button class="btn" onclick="addMembro()"><i class="ph ph-check"></i> Salvar Integrante</button>
           </div>
 
           <div class="card">
-            <h3><i class="ph ph-check-square-offset"></i> Nova Tarefa</h3>
-            <br>
-            <div class="form-group"><label>Título da Tarefa</label><input type="text" id="task-titulo" class="form-control"></div>
-            <div class="form-group"><label>Responsável</label><input type="text" id="task-resp" class="form-control"></div>
-            <div class="form-group">
-              <label>Status</label>
-              <select id="task-status" class="form-control">
-                <option value="Pendente">Pendente</option>
-                <option value="Em Andamento">Em Andamento</option>
-                <option value="Concluído">Concluído</option>
-              </select>
+            <div class="card-header"><h3><i class="ph ph-chart-line-up"></i> Avaliação dos Membros</h3></div>
+            <div style="max-height: 250px;"><canvas id="desempenhoChart"></canvas></div>
+          </div>
+
+          <div class="admin-sections">
+            <div class="card">
+              <h3 id="form-membro-title"><i class="ph ph-user-plus"></i> Novo Integrante</h3><br>
+              <input type="hidden" id="membro-id">
+              <div class="form-group"><label>Nome Completo</label><input type="text" id="membro-nome" class="form-control"></div>
+              <div class="form-group"><label>Cargo</label><input type="text" id="membro-cargo" class="form-control"></div>
+              <div class="form-group"><label>Contato/WhatsApp</label><input type="text" id="membro-contato" class="form-control"></div>
+              <div class="form-group">
+                <label>Nota de Desempenho (1 a 5)</label>
+                <select id="membro-nota" class="form-control">
+                  <option value="5">5 - Excelente</option>
+                  <option value="4">4 - Bom</option>
+                  <option value="3">3 - Regular</option>
+                  <option value="2">2 - Insuficiente</option>
+                </select>
+              </div>
+              <button class="btn" onclick="addMembro()"><i class="ph ph-check"></i> Salvar Integrante</button>
             </div>
-            <button class="btn" onclick="addTask()"><i class="ph ph-check"></i> Criar Tarefa</button>
-          </div>
 
-          <div class="card">
-            <h3><i class="ph ph-folder-plus"></i> Novo Projeto</h3>
-            <br>
-            <div class="form-group"><label>Nome do Projeto</label><input type="text" id="proj-nome" class="form-control"></div>
-            <div class="form-group"><label>Descrição Breve</label><input type="text" id="proj-desc" class="form-control"></div>
-            <button class="btn" onclick="addProjeto()"><i class="ph ph-check"></i> Criar Projeto</button>
-          </div>
+            <div class="card">
+              <h3><i class="ph ph-currency-dollar-simple"></i> Lançar Caixa</h3><br>
+              <div class="form-group"><label>Descrição</label><input type="text" id="fin-desc" class="form-control" placeholder="Ex: Venda de Rifas"></div>
+              <div class="form-group"><label>Valor (R$)</label><input type="number" id="fin-valor" class="form-control" placeholder="100.00"></div>
+              <div class="form-group">
+                <label>Tipo</label>
+                <select id="fin-tipo" class="form-control">
+                  <option value="receita">Receita (Entrada)</option>
+                  <option value="despesa">Despesa (Saída)</option>
+                </select>
+              </div>
+              <button class="btn" onclick="addFinanceiro()"><i class="ph ph-plus"></i> Lançar Registro</button>
+            </div>
 
-          <div class="card">
-            <h3><i class="ph ph-megaphone"></i> Novo Comunicado</h3>
-            <br>
-            <div class="form-group"><label>Título do Comunicado</label><input type="text" id="com-titulo" class="form-control"></div>
-            <div class="form-group"><label>Mensagem</label><textarea id="com-msg" class="form-control" rows="3"></textarea></div>
-            <button class="btn" onclick="addComunicado()"><i class="ph ph-check"></i> Publicar Comunicado</button>
+            <div class="card">
+              <h3><i class="ph ph-check-square-offset"></i> Nova Tarefa</h3><br>
+              <div class="form-group"><label>Título</label><input type="text" id="task-titulo" class="form-control"></div>
+              <div class="form-group"><label>Responsável</label><input type="text" id="task-resp" class="form-control"></div>
+              <div class="form-group">
+                <label>Status</label>
+                <select id="task-status" class="form-control">
+                  <option value="Pendente">Pendente</option>
+                  <option value="Em Andamento">Em Andamento</option>
+                  <option value="Concluído">Concluído</option>
+                </select>
+              </div>
+              <button class="btn" onclick="addTask()"><i class="ph ph-check"></i> Salvar Tarefa</button>
+            </div>
+
+            <div class="card">
+              <h3><i class="ph ph-folder-plus"></i> Novo Projeto</h3><br>
+              <div class="form-group"><label>Nome do Projeto</label><input type="text" id="proj-nome" class="form-control"></div>
+              <div class="form-group"><label>Descrição</label><input type="text" id="proj-desc" class="form-control"></div>
+              <button class="btn" onclick="addProjeto()"><i class="ph ph-check"></i> Salvar Projeto</button>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-  </main>
+      <footer>
+        Sistema Oficial do Grêmio Estudantil • CETI José Marques • Várzea Branca – PI
+      </footer>
+    </main>
+  </div>
 
   <script>
-    // BANCO DE DADOS LOCAL (localStorage)
+    // ESTADO E PERSISTÊNCIA (localStorage)
     let state = JSON.parse(localStorage.getItem('gremio_db')) || {
       membros: [
-        { nome: "Ana Silva", cargo: "Presidente", contato: "(89) 99999-0001", nota: 5 },
-        { nome: "Carlos Eduardo", cargo: "Vice-Presidente", contato: "(89) 99999-0002", nota: 4 }
+        { id: 1, nome: "Ana Silva", cargo: "Presidente", contato: "(89) 99999-0001", nota: 5 },
+        { id: 2, nome: "Carlos Eduardo", cargo: "Vice-Presidente", contato: "(89) 99999-0002", nota: 4 }
       ],
       tarefas: [
-        { titulo: "Organizar Torneio Interclasse", resp: "Esportes", status: "Em Andamento" }
+        { id: 1, titulo: "Organizar Torneio Interclasse", resp: "Esportes", status: "Em Andamento" }
       ],
       projetos: [
-        { nome: "Reforma do Grêmio", desc: "Pintura e compras de puffs" }
+        { id: 1, nome: "Reforma da Sala do Grêmio", desc: "Pintura e novos puffs" }
       ],
       comunicados: [
         { titulo: "Reunião de Alinhamento", msg: "Sexta-feira às 15h no auditório." }
+      ],
+      financeiro: [
+        { desc: "Venda de Rifas", valor: 350.00, tipo: "receita" },
+        { desc: "Materiais de Pintura", valor: 120.00, tipo: "despesa" }
       ],
       atas: []
     };
@@ -308,27 +352,32 @@
       render();
     }
 
-    // CONTROLE DE NAVEGAÇÃO
+    // SISTEMA DE TOAST NOTIFICATIONS
+    function showToast(message, icon = "ph-check-circle") {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `<i class="ph ${icon}" style="color: var(--dourado); font-size: 1.2rem;"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // NAVEGAÇÃO DE ABAS
     function openTab(tabName, element) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
 
       const activeTab = document.getElementById('tab-' + tabName);
       if (activeTab) activeTab.classList.add('active');
-
       if (element) element.parentElement.classList.add('active');
 
       const titles = {
-        'dashboard': 'Dashboard',
-        'integrantes': 'Integrantes',
-        'projetos': 'Projetos',
-        'tarefas': 'Tarefas',
-        'agenda': 'Agenda',
-        'documentos': 'Documentos & Atas',
-        'admin': 'Área Restrita'
+        'dashboard': 'Dashboard', 'integrantes': 'Integrantes', 'projetos': 'Projetos',
+        'tarefas': 'Tarefas', 'financeiro': 'Financeiro', 'documentos': 'Atas & Docs', 'admin': 'Área Restrita'
       };
       document.getElementById('pageTitle').innerText = titles[tabName] || 'Painel';
 
+      if (tabName === 'financeiro') initFinChart();
       if (window.innerWidth <= 900) closeSidebar();
     }
 
@@ -339,8 +388,9 @@
         document.getElementById('admin-lock').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
         initChart();
+        showToast("Acesso concedido com sucesso!");
       } else {
-        alert('Senha incorreta! Tente novamente.');
+        showToast("Senha incorreta!", "ph-x-circle");
       }
     }
 
@@ -348,85 +398,122 @@
       document.getElementById('admin-pass').value = '';
       document.getElementById('admin-lock').style.display = 'block';
       document.getElementById('admin-panel').style.display = 'none';
+      showToast("Sessão encerrada.");
     }
 
-    // CADASTROS (ADMIN)
+    // CRUD INTEGRANTES (INSERIR / EDITAR / DELETAR)
     function addMembro() {
+      const id = document.getElementById('membro-id').value;
       const nome = document.getElementById('membro-nome').value;
       const cargo = document.getElementById('membro-cargo').value;
       const contato = document.getElementById('membro-contato').value;
       const nota = parseInt(document.getElementById('membro-nota').value);
 
-      if (!nome || !cargo) return alert('Preencha os campos obrigatórios!');
+      if (!nome || !cargo) return showToast("Preencha nome e cargo!", "ph-warning");
 
-      state.membros.push({ nome, cargo, contato, nota });
-      saveState();
+      if (id) {
+        // Editar
+        const index = state.membros.findIndex(m => m.id == id);
+        if (index !== -1) {
+          state.membros[index] = { id: parseInt(id), nome, cargo, contato, nota };
+          showToast("Integrante atualizado!");
+        }
+      } else {
+        // Criar Novo
+        state.membros.push({ id: Date.now(), nome, cargo, contato, nota });
+        showToast("Novo integrante salvo!");
+      }
+
+      // Reset Form
+      document.getElementById('membro-id').value = '';
       document.getElementById('membro-nome').value = '';
       document.getElementById('membro-cargo').value = '';
       document.getElementById('membro-contato').value = '';
-      alert('Integrante cadastrado com sucesso!');
+      document.getElementById('form-membro-title').innerText = "Novo Integrante";
+      
+      saveState();
       initChart();
     }
 
+    function editMembro(id) {
+      const m = state.membros.find(x => x.id === id);
+      if (!m) return;
+      document.getElementById('membro-id').value = m.id;
+      document.getElementById('membro-nome').value = m.nome;
+      document.getElementById('membro-cargo').value = m.cargo;
+      document.getElementById('membro-contato').value = m.contato || '';
+      document.getElementById('membro-nota').value = m.nota || 5;
+      document.getElementById('form-membro-title').innerText = "Editar Integrante";
+      openTab('admin');
+      showToast("Modo de edição ativado.");
+    }
+
+    function deleteMembro(id) {
+      if (confirm("Deseja realmente remover este integrante?")) {
+        state.membros = state.membros.filter(m => m.id !== id);
+        saveState();
+        initChart();
+        showToast("Integrante removido.", "ph-trash");
+      }
+    }
+
+    // FINANCEIRO
+    function addFinanceiro() {
+      const desc = document.getElementById('fin-desc').value;
+      const valor = parseFloat(document.getElementById('fin-valor').value);
+      const tipo = document.getElementById('fin-tipo').value;
+
+      if (!desc || isNaN(valor)) return showToast("Preencha os dados corretamente!", "ph-warning");
+
+      state.financeiro.push({ desc, valor, tipo });
+      saveState();
+      document.getElementById('fin-desc').value = '';
+      document.getElementById('fin-valor').value = '';
+      showToast("Lançamento financeiro realizado!");
+      initFinChart();
+    }
+
+    // TAREFAS & PROJETOS
     function addTask() {
       const titulo = document.getElementById('task-titulo').value;
       const resp = document.getElementById('task-resp').value;
       const status = document.getElementById('task-status').value;
+      if (!titulo) return showToast("Preencha o título!", "ph-warning");
 
-      if (!titulo) return alert('Preencha o título da tarefa!');
-
-      state.tarefas.push({ titulo, resp, status });
+      state.tarefas.push({ id: Date.now(), titulo, resp, status });
       saveState();
       document.getElementById('task-titulo').value = '';
-      document.getElementById('task-resp').value = '';
-      alert('Tarefa criada com sucesso!');
+      showToast("Tarefa criada!");
+    }
+
+    function deleteTask(id) {
+      state.tarefas = state.tarefas.filter(t => t.id !== id);
+      saveState();
+      showToast("Tarefa removida.");
     }
 
     function addProjeto() {
       const nome = document.getElementById('proj-nome').value;
       const desc = document.getElementById('proj-desc').value;
+      if (!nome) return showToast("Preencha o nome do projeto!", "ph-warning");
 
-      if (!nome) return alert('Preencha o nome do projeto!');
-
-      state.projetos.push({ nome, desc });
+      state.projetos.push({ id: Date.now(), nome, desc });
       saveState();
       document.getElementById('proj-nome').value = '';
-      document.getElementById('proj-desc').value = '';
-      alert('Projeto criado com sucesso!');
-    }
-
-    function addComunicado() {
-      const titulo = document.getElementById('com-titulo').value;
-      const msg = document.getElementById('com-msg').value;
-
-      if (!titulo || !msg) return alert('Preencha todos os campos!');
-
-      state.comunicados.push({ titulo, msg });
-      saveState();
-      document.getElementById('com-titulo').value = '';
-      document.getElementById('com-msg').value = '';
-      alert('Comunicado publicado!');
+      showToast("Projeto cadastrado!");
     }
 
     // ATAS E EXPORTAÇÃO
     function salvarAta() {
       const titulo = document.getElementById('ata-titulo').value;
       const conteudo = document.getElementById('ata-conteudo').value;
+      if (!titulo || !conteudo) return showToast("Preencha todos os campos!", "ph-warning");
 
-      if (!titulo || !conteudo) return alert('Preencha o título e o conteúdo da ata!');
-
-      const novaAta = {
-        id: Date.now(),
-        data: new Date().toLocaleDateString('pt-BR'),
-        titulo,
-        conteudo
-      };
-
-      state.atas.push(novaAta);
+      state.atas.push({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), titulo, conteudo });
       saveState();
       document.getElementById('ata-titulo').value = '';
       document.getElementById('ata-conteudo').value = '';
-      alert('Ata salva no histórico!');
+      showToast("Ata salva no histórico!");
     }
 
     function exportarAta(id) {
@@ -435,127 +522,125 @@
 
       const win = window.open('', '', 'width=800,height=600');
       win.document.write(`
-        <html>
-        <head>
-          <title>Ata - ${ata.titulo}</title>
-          <style>
-            body { font-family: sans-serif; padding: 40px; line-height: 1.6; }
-            h1 { color: #0B8F3A; border-bottom: 2px solid #0B8F3A; padding-bottom: 10px; }
-            .meta { color: #666; font-size: 0.9em; margin-bottom: 20px; }
-          </style>
-        </head>
-        <body>
+        <html><head><title>Ata - ${ata.titulo}</title>
+        <style>body{font-family:sans-serif;padding:40px;line-height:1.6;}h1{color:#0B8F3A;border-bottom:2px solid #0B8F3A;padding-bottom:10px;}</style>
+        </head><body>
           <h1>${ata.titulo}</h1>
-          <div class="meta"><strong>Data de Registro:</strong> ${ata.data} | CETI José Marques</div>
+          <p><strong>Data:</strong> ${ata.data} | CETI José Marques</p>
+          <hr><br>
           <p>${ata.conteudo.replace(/\n/g, '<br>')}</p>
-          <br><br>
-          <hr>
-          <p style="text-align: center; font-size: 0.8em; margin-top: 30px;">Documento Oficial do Grêmio Estudantil</p>
-        </body>
-        </html>
+        </body></html>
       `);
       win.document.close();
       win.print();
     }
 
-    // GRÁFICO DE AVALIAÇÃO (Chart.js)
+    // PESQUISA GLOBAL
+    function filterContent() {
+      const query = document.getElementById('globalSearch').value.toLowerCase();
+      
+      document.querySelectorAll('.item-list li').forEach(li => {
+        const text = li.innerText.toLowerCase();
+        li.style.display = text.includes(query) ? 'flex' : 'none';
+      });
+    }
+
+    // GRÁFICOS
     let chartInstance = null;
     function initChart() {
       const ctx = document.getElementById('desempenhoChart');
       if (!ctx) return;
-
-      const labels = state.membros.map(m => m.nome);
-      const data = state.membros.map(m => m.nota || 3);
-
       if (chartInstance) chartInstance.destroy();
 
       chartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: labels,
-          datasets: [{
-            label: 'Nota de Desempenho (1 a 5)',
-            data: data,
-            backgroundColor: '#0B8F3A',
-            borderRadius: 6
-          }]
+          labels: state.membros.map(m => m.nome),
+          datasets: [{ label: 'Nota (1 a 5)', data: state.membros.map(m => m.nota || 3), backgroundColor: '#0B8F3A', borderRadius: 6 }]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: { y: { min: 0, max: 5 } }
-        }
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 5 } } }
       });
     }
 
-    // RENDERIZAR TELA
+    let finChartInstance = null;
+    function initFinChart() {
+      const ctx = document.getElementById('financeiroChart');
+      if (!ctx) return;
+      if (finChartInstance) finChartInstance.destroy();
+
+      const receitas = state.financeiro.filter(f => f.tipo === 'receita').reduce((a, b) => a + b.valor, 0);
+      const despesas = state.financeiro.filter(f => f.tipo === 'despesa').reduce((a, b) => a + b.valor, 0);
+
+      finChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Receitas', 'Despesas'],
+          datasets: [{ data: [receitas, despesas], backgroundColor: ['#32C85A', '#E11D48'] }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    // RENDERIZAR INTERFACE
     function render() {
-      // Contadores Dashboard
+      // Dashboard Counts
       document.getElementById('dash-membro-count').innerText = state.membros.length;
       document.getElementById('dash-task-count').innerText = state.tarefas.filter(t => t.status !== 'Concluído').length;
       document.getElementById('dash-proj-count').innerText = state.projetos.length;
 
-      // Lista de Membros
-      const memList = document.getElementById('public-membros-list');
-      memList.innerHTML = state.membros.map(m => `
+      // Saldo Financeiro
+      const rec = state.financeiro.filter(f => f.tipo === 'receita').reduce((a, b) => a + b.valor, 0);
+      const desp = state.financeiro.filter(f => f.tipo === 'despesa').reduce((a, b) => a + b.valor, 0);
+      document.getElementById('dash-saldo').innerText = `R$ ${(rec - desp).toFixed(2)}`;
+
+      // Membros
+      document.getElementById('public-membros-list').innerHTML = state.membros.map(m => `
         <li>
           <div>
             <strong>${m.nome}</strong>
-            <p style="font-size:0.8rem; color:#64748B;">${m.cargo} • ${m.contato || 'Sem contato'}</p>
+            <p style="font-size:0.8rem; color:#64748B;">${m.cargo} • ${m.contato || ''}</p>
           </div>
-          <span class="status-badge status-done">Nota: ${m.nota || 5}/5</span>
+          <div class="item-actions">
+            <button class="btn btn-sm" onclick="editMembro(${m.id})"><i class="ph ph-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" onclick="deleteMembro(${m.id})"><i class="ph ph-trash"></i></button>
+          </div>
         </li>
       `).join('');
 
-      // Lista de Tarefas
-      const taskList = document.getElementById('public-tarefas-list');
-      taskList.innerHTML = state.tarefas.map(t => {
-        let badge = 'status-pending';
-        if (t.status === 'Em Andamento') badge = 'status-progress';
-        if (t.status === 'Concluído') badge = 'status-done';
-        return `
-          <li>
-            <div>
-              <strong>${t.titulo}</strong>
-              <p style="font-size:0.8rem; color:#64748B;">Resp: ${t.resp}</p>
-            </div>
-            <span class="status-badge ${badge}">${t.status}</span>
-          </li>
-        `;
-      }).join('');
-
-      // Lista de Projetos
-      const projList = document.getElementById('public-projetos-list');
-      projList.innerHTML = state.projetos.map(p => `
+      // Tarefas
+      document.getElementById('public-tarefas-list').innerHTML = state.tarefas.map(t => `
         <li>
           <div>
-            <strong>${p.nome}</strong>
-            <p style="font-size:0.8rem; color:#64748B;">${p.desc}</p>
+            <strong>${t.titulo}</strong>
+            <p style="font-size:0.8rem; color:#64748B;">Resp: ${t.resp}</p>
           </div>
+          <div class="item-actions">
+            <span class="status-badge ${t.status === 'Concluído' ? 'status-done' : 'status-progress'}">${t.status}</span>
+            <button class="btn btn-sm btn-danger" onclick="deleteTask(${t.id})"><i class="ph ph-trash"></i></button>
+          </div>
+        </li>
+      `).join('');
+
+      // Projetos
+      document.getElementById('public-projetos-list').innerHTML = state.projetos.map(p => `
+        <li>
+          <div><strong>${p.nome}</strong><p style="font-size:0.8rem; color:#64748B;">${p.desc}</p></div>
           <span class="status-badge status-progress">Ativo</span>
         </li>
       `).join('');
 
-      // Comunicados Dashboard
-      const comList = document.getElementById('dash-comunicados-list');
-      comList.innerHTML = state.comunicados.map(c => `
+      // Comunicados
+      document.getElementById('dash-comunicados-list').innerHTML = state.comunicados.map(c => `
         <li style="border-left-color: var(--dourado);">
-          <div>
-            <strong>${c.titulo}</strong>
-            <p style="font-size:0.8rem; color:#64748B;">${c.msg}</p>
-          </div>
+          <div><strong>${c.titulo}</strong><p style="font-size:0.8rem; color:#64748B;">${c.msg}</p></div>
         </li>
       `).join('');
 
-      // Lista de Atas
-      const atasList = document.getElementById('atas-list');
-      atasList.innerHTML = state.atas.map(a => `
+      // Atas
+      document.getElementById('atas-list').innerHTML = state.atas.map(a => `
         <li>
-          <div>
-            <strong>${a.titulo}</strong>
-            <p style="font-size:0.8rem; color:#64748B;">Data: ${a.data}</p>
-          </div>
-          <button class="btn" style="padding:4px 10px; font-size:0.8rem;" onclick="exportarAta(${a.id})"><i class="ph ph-printer"></i> Imprimir/PDF</button>
+          <div><strong>${a.titulo}</strong><p style="font-size:0.8rem; color:#64748B;">Data: ${a.data}</p></div>
+          <button class="btn btn-sm" onclick="exportarAta(${a.id})"><i class="ph ph-printer"></i> Imprimir</button>
         </li>
       `).join('');
     }
@@ -565,20 +650,12 @@
     const menuToggle = document.getElementById('menuToggle');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-    function toggleSidebar() {
-      sidebar.classList.toggle('open');
-      sidebarOverlay.classList.toggle('active');
-    }
-
-    function closeSidebar() {
-      sidebar.classList.remove('open');
-      sidebarOverlay.classList.remove('active');
-    }
+    function toggleSidebar() { sidebar.classList.toggle('open'); sidebarOverlay.classList.toggle('active'); }
+    function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }
 
     menuToggle.addEventListener('click', toggleSidebar);
     sidebarOverlay.addEventListener('click', closeSidebar);
 
-    // INICIALIZAÇÃO
     render();
   </script>
 </body>
