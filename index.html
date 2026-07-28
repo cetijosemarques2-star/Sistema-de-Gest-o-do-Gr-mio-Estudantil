@@ -3,341 +3,321 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Gestão - Grêmio Estudantil</title>
+  <title>Gestão do Grêmio Estudantil</title>
+  
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     :root {
-      --verde: #0B8F3A;
-      --verde-light: #32C85A;
-      --roxo: #4B2CA3;
-      --roxo-light: #6D4FD8;
-      --dourado: #F5C542;
-      --branco: #FFFFFF;
-      --bg-gradient: linear-gradient(135deg, #0B8F3A 0%, #32C85A 30%, #4B2CA3 70%, #6D4FD8 100%);
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --glass-border: rgba(255, 255, 255, 0.25);
-      --text-color: #2D3748;
-      --sidebar-width: 260px;
+      --bg-primary: #f4f6f9;
+      --bg-card: #ffffff;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+      --roxo: #4f46e5;
+      --roxo-light: #6366f1;
+      --dourado: #d97706;
+      --dourado-bg: #fef3c7;
+      --verde: #16a34a;
+      --verde-light: #22c55e;
+      --vermelho: #dc2626;
+      --sidebar-width: 250px;
     }
 
     body.dark-mode {
-      --bg-gradient: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
-      --card-bg: rgba(30, 41, 59, 0.95);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --text-color: #F8FAFC;
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-    body { background: var(--bg-gradient); min-height: 100vh; display: flex; flex-direction: column; color: var(--text-color); transition: background 0.3s ease; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background-color 0.2s, color 0.2s; }
+    body { background-color: var(--bg-primary); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-    .app-container { display: flex; flex: 1; min-height: 100vh; }
-
+    /* LAYOUT BASE */
+    .app-container { display: flex; width: 100%; width: 100vw; }
+    
     /* SIDEBAR */
-    .sidebar {
-      width: var(--sidebar-width);
-      background: linear-gradient(180deg, #0B8F3A, #32C85A, #4B2CA3);
-      backdrop-filter: blur(15px);
-      border-right: 1px solid var(--glass-border);
-      color: var(--branco); display: flex; flex-direction: column; padding: 20px;
-      position: fixed; height: 100vh; z-index: 1000; transition: transform 0.3s ease;
-    }
+    .sidebar { width: var(--sidebar-width); background: var(--bg-card); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: transform 0.3s; }
+    .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+    .sidebar-header h2 { font-size: 1.2rem; color: var(--roxo); display: flex; align-items: center; gap: 8px; }
+    .nav-list { list-style: none; padding: 15px 10px; display: flex; flex-direction: column; gap: 5px; overflow-y: auto; }
+    .nav-item button { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 15px; border: none; background: transparent; color: var(--text-muted); border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 500; text-align: left; }
+    .nav-item.active button, .nav-item button:hover { background: rgba(99, 102, 241, 0.1); color: var(--roxo-light); }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; }
 
-    .logo-container { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
-    .logo-svg { width: 50px; height: 50px; fill: var(--dourado); flex-shrink: 0; background: rgba(255,255,255,0.15); padding: 8px; border-radius: 50%; border: 1px solid var(--glass-border); }
-    .logo-text h2 { font-size: 1.05rem; font-weight: 700; color: #fff; }
-    .logo-text span { font-size: 0.75rem; opacity: 0.85; color: #fff; }
-
-    .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto; }
-    .nav-item button {
-      width: 100%; background: transparent; border: none; display: flex; align-items: center; gap: 12px;
-      padding: 10px 14px; color: rgba(255, 255, 255, 0.85); border-radius: 10px; cursor: pointer;
-      transition: all 0.25s ease; font-weight: 500; font-size: 0.9rem; text-align: left;
-    }
-    .nav-item button:hover, .nav-item.active button { background: rgba(255, 255, 255, 0.2); color: var(--branco); }
-    .nav-item.active button { background: var(--branco); color: var(--roxo); font-weight: 700; }
-
-    /* MAIN CONTENT */
-    .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 25px; width: calc(100% - var(--sidebar-width)); display: flex; flex-direction: column; }
-    .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); padding: 15px 20px; border-radius: 16px; border: 1px solid var(--glass-border); color: var(--branco); }
+    /* CONTEÚDO PRINCIPAL */
+    .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 20px; max-width: calc(100vw - var(--sidebar-width)); }
+    
+    /* HEADER DA PÁGINA */
+    .top-header { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px; background: var(--bg-card); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border-color); flex-wrap: wrap; }
     .header-left { display: flex; align-items: center; gap: 15px; }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .mobile-toggle { display: none; background: transparent; border: none; color: var(--branco); font-size: 1.8rem; cursor: pointer; }
+    .btn-toggle-sidebar { display: none; background: none; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; }
+    .search-box { display: flex; align-items: center; background: var(--bg-primary); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); }
+    .search-box input { border: none; background: transparent; outline: none; color: var(--text-main); margin-left: 8px; width: 180px; }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
 
-    .theme-toggle { background: rgba(255,255,255,0.2); border: none; color: #fff; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+    /* COMPONENTES DA INTERFACE */
+    .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; background: var(--roxo); color: white; font-size: 0.9rem; }
+    .btn:hover { opacity: 0.9; }
+    .btn-secondary { background: var(--border-color); color: var(--text-main); }
+    .btn-danger { background: var(--vermelho); color: white; }
+    .btn-sm { padding: 4px 8px; font-size: 0.8rem; }
 
-    /* PESQUISA */
-    .search-box { display: flex; align-items: center; background: var(--card-bg); border-radius: 10px; padding: 10px 15px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .search-box input { border: none; background: transparent; outline: none; width: 100%; margin-left: 10px; font-size: 0.95rem; color: var(--text-color); }
-
-    /* ABAS & CARDS */
-    .tab-content { display: none; }
-    .tab-content.active { display: block; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-    .card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); border: 1px solid var(--glass-border); margin-bottom: 20px; }
+    .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .card-title { font-size: 0.85rem; opacity: 0.8; font-weight: 600; }
-    .card-value { font-size: 1.5rem; font-weight: 700; margin-top: 5px; }
 
-    /* BARRA DE PROGRESSO */
-    .progress-bar-bg { background: rgba(0,0,0,0.1); border-radius: 10px; height: 12px; overflow: hidden; width: 100%; margin-top: 8px; }
-    .progress-bar-fill { background: linear-gradient(90deg, var(--verde), var(--verde-light)); height: 100%; border-radius: 10px; transition: width 0.4s ease; }
-
-    /* FORMULÁRIOS & BOTÕES */
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; }
-    .form-control { width: 100%; padding: 10px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem; outline: none; background: rgba(255,255,255,0.05); color: var(--text-color); }
-    body.dark-mode .form-control { border-color: #475569; background: #0F172A; }
-
-    .btn { background: linear-gradient(90deg, var(--verde), var(--verde-light)); color: var(--branco); border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; }
-    .btn:hover { opacity: 0.9; transform: translateY(-2px); }
-    .btn-secondary { background: linear-gradient(90deg, var(--roxo), var(--roxo-light)); }
-    .btn-danger { background: linear-gradient(90deg, #E11D48, #F43F5E); }
-    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+    /* DASHBOARD GRID */
+    .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; }
+    .stat-icon { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background: rgba(99, 102, 241, 0.1); color: var(--roxo-light); }
+    .stat-info h4 { font-size: 0.85rem; color: var(--text-muted); }
+    .stat-info p { font-size: 1.4rem; font-weight: bold; }
 
     /* LISTAS */
-    .item-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-    .item-list li { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: rgba(0,0,0,0.03); border-radius: 10px; border-left: 4px solid var(--verde); }
-    body.dark-mode .item-list li { background: rgba(255,255,255,0.03); }
-    .item-actions { display: flex; gap: 6px; }
+    .item-list { list-style: none; }
+    .item-list li { padding: 12px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--roxo); margin-bottom: 8px; background: var(--bg-primary); border-radius: 0 8px 8px 0; }
+    .item-actions { display: flex; gap: 5px; }
+
+    /* ABAS & CONTEÚDO */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* FORMULÁRIOS */
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+    .form-control { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-main); outline: none; }
 
     /* CALENDÁRIO */
-    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
-    .calendar-day-head { font-weight: 700; font-size: 0.85rem; padding: 8px; opacity: 0.7; }
-    .calendar-day-cell { background: rgba(0,0,0,0.03); min-height: 80px; padding: 6px; border-radius: 8px; text-align: left; font-size: 0.8rem; border: 1px solid transparent; }
-    body.dark-mode .calendar-day-cell { background: rgba(255,255,255,0.03); }
-    .calendar-day-cell.today { border-color: var(--verde); font-weight: bold; }
-    .calendar-event-tag { background: var(--roxo-light); color: #fff; font-size: 0.68rem; padding: 2px 5px; border-radius: 4px; display: block; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 15px; text-align: center; }
+    .calendar-day-cell { min-height: 80px; padding: 5px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-card); font-size: 0.85rem; text-align: left; }
+    .calendar-day-cell.today { border-color: var(--roxo); background: rgba(99, 102, 241, 0.05); }
+    .calendar-event-tag { background: var(--dourado-bg); color: var(--dourado); padding: 2px 4px; border-radius: 4px; font-size: 0.7rem; margin-top: 4px; display: block; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; cursor: pointer; }
 
-    /* TOAST */
-    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-    .toast { background: #1E293B; color: #fff; padding: 12px 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; border-left: 4px solid var(--dourado); }
+    /* BARRAS DE PROGRESSO */
+    .progress-bar-bg { background: var(--border-color); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 6px; }
+    .progress-bar-fill { background: var(--verde-light); height: 100%; transition: width 0.3s; }
 
-    .admin-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 900; }
+    /* TOAST & OVERLAYS */
+    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+    .toast { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-left: 4px solid var(--dourado); padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; }
 
-    /* OVERLAY */
-    .welcome-overlay {
-      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px);
-      z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;
-    }
-    .welcome-card {
-      background: var(--card-bg); border: 1px solid var(--glass-border); padding: 35px 25px;
-      border-radius: 20px; text-align: center; max-width: 420px; width: 100%;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3); animation: slideUp 0.4s ease;
-    }
+    /* TELA INICIAL (BOAS VINDAS) */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .modal-card { background: var(--bg-card); border-radius: 12px; padding: 30px; max-width: 450px; width: 100%; text-align: center; border: 1px solid var(--border-color); }
 
+    .admin-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+    /* RESPONSIVIDADE */
     @media (max-width: 900px) {
       .sidebar { transform: translateX(-100%); }
       .sidebar.open { transform: translateX(0); }
       .sidebar-overlay.active { display: block; }
-      .main-content { margin-left: 0; width: 100%; padding: 15px; }
-      .mobile-toggle { display: block; }
+      .main-content { margin-left: 0; max-width: 100vw; }
+      .btn-toggle-sidebar { display: block; }
     }
   </style>
 </head>
 <body>
 
-  <div id="welcome-screen" class="welcome-overlay" style="display: none;">
-    <div class="welcome-card">
-      <div class="logo-container" style="justify-content: center; border: none; margin: 0;">
-        <svg class="logo-svg" viewBox="0 0 24 24" style="width: 70px; height: 70px;"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      </div>
-      <h2>Bem-vindo ao Grêmio Estudantil</h2>
-      <p>CETI José Marques — Gestão Várzea Branca</p>
-      <hr style="margin: 15px 0; opacity: 0.2;">
-      <p style="font-size: 0.9rem; margin-bottom: 20px;">Informe seus dados para identificação:</p>
+  <div id="welcome-screen" class="modal-overlay">
+    <div class="modal-card">
+      <i class="ph ph-identification-card" style="font-size: 3rem; color: var(--roxo);"></i>
+      <h2 style="margin: 15px 0 5px;">Identificação do Estudante</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Informe seu nome e cargo para navegar no sistema do Grêmio.</p>
       
       <div class="form-group" style="text-align: left;">
-        <label>Nome Completo</label>
-        <input type="text" id="welcome-nome" class="form-control" placeholder="Ex: Gustavo Silva">
+        <label>Seu Nome Completo</label>
+        <input type="text" id="welcome-nome" class="form-control" placeholder="Ex: Maria Silva">
       </div>
       <div class="form-group" style="text-align: left;">
-        <label>Cargo / Função</label>
-        <input type="text" id="welcome-cargo" class="form-control" placeholder="Ex: Aluno / Comunicação">
+        <label>Seu Cargo / Função</label>
+        <input type="text" id="welcome-cargo" class="form-control" placeholder="Ex: Aluno / 2º Ano B ou Diretor Cultural">
       </div>
-      <button class="btn btn-secondary" style="width: 100%; justify-content: center;" id="btnSalvarPerfilInicial">
-        Acessar Sistema <i class="ph ph-arrow-right"></i>
-      </button>
+      <button class="btn" id="btnSalvarPerfilInicial" style="width: 100%; justify-content: center; padding: 12px;"><i class="ph ph-check"></i> Entrar no Painel</button>
     </div>
   </div>
 
-  <div id="toast-container"></div>
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
   <div class="app-container">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <aside class="sidebar" id="sidebar">
-      <div class="logo-container">
-        <svg class="logo-svg" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        <div class="logo-text">
-          <h2>Grêmio Estudantil</h2>
-          <span>CETI José Marques</span>
-        </div>
+      <div class="sidebar-header">
+        <h2><i class="ph ph-student"></i> Grêmio Ativo</h2>
       </div>
-      <ul class="nav-menu">
-        <li class="nav-item active"><button data-tab="dashboard"><i class="ph ph-squares-four"></i><span>Dashboard</span></button></li>
-        <li class="nav-item"><button data-tab="mural"><i class="ph ph-megaphone"></i><span>Mural de Avisos</span></button></li>
-        <li class="nav-item"><button data-tab="calendario"><i class="ph ph-calendar-blank"></i><span>Calendário</span></button></li>
-        <li class="nav-item"><button data-tab="integrantes"><i class="ph ph-users"></i><span>Integrantes</span></button></li>
-        <li class="nav-item"><button data-tab="projetos"><i class="ph ph-kanban"></i><span>Projetos & Metas</span></button></li>
-        <li class="nav-item"><button data-tab="tarefas"><i class="ph ph-check-square"></i><span>Tarefas</span></button></li>
-        <li class="nav-item"><button data-tab="financeiro"><i class="ph ph-currency-dollar"></i><span>Financeiro</span></button></li>
-        <li class="nav-item"><button data-tab="documentos"><i class="ph ph-folder"></i><span>Documentos & Atas</span></button></li>
-        <li class="nav-item"><button data-tab="perfil"><i class="ph ph-user-circle"></i><span>Meu Perfil</span></button></li>
-        <li class="nav-item"><button data-tab="admin" style="color: var(--dourado);"><i class="ph ph-lock"></i><span>Área Restrita</span></button></li>
+      <ul class="nav-list">
+        <li class="nav-item active"><button data-tab="dashboard"><i class="ph ph-squares-four"></i> Dashboard</button></li>
+        <li class="nav-item"><button data-tab="mural"><i class="ph ph-megaphone"></i> Mural de Avisos</button></li>
+        <li class="nav-item"><button data-tab="calendario"><i class="ph ph-calendar"></i> Calendário</button></li>
+        <li class="nav-item"><button data-tab="integrantes"><i class="ph ph-users"></i> Integrantes</button></li>
+        <li class="nav-item"><button data-tab="projetos"><i class="ph ph-kanban"></i> Projetos & Metas</button></li>
+        <li class="nav-item"><button data-tab="tarefas"><i class="ph ph-check-square"></i> Tarefas</button></li>
+        <li class="nav-item"><button data-tab="financeiro"><i class="ph ph-currency-dollar"></i> Financeiro</button></li>
+        <li class="nav-item"><button data-tab="documentos"><i class="ph ph-file-text"></i> Atas & Docs</button></li>
+        <li class="nav-item"><button data-tab="perfil"><i class="ph ph-user-circle"></i> Meu Perfil</button></li>
+        <li class="nav-item" style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+          <button data-tab="admin" style="color: var(--dourado);"><i class="ph ph-shield-check"></i> Área Restrita</button>
+        </li>
       </ul>
     </aside>
 
     <main class="main-content">
       <header class="top-header">
         <div class="header-left">
-          <button class="mobile-toggle" id="btnToggleSidebar"><i class="ph ph-list"></i></button>
-          <div>
-            <h1 id="pageTitle">Dashboard</h1>
-            <p>Gestão Várzea Branca - Painel Oficial</p>
-          </div>
+          <button class="btn-toggle-sidebar" id="btnToggleSidebar"><i class="ph ph-list"></i></button>
+          <h2 id="pageTitle">Dashboard</h2>
         </div>
-        <div class="header-right">
-          <button class="btn btn-sm btn-secondary" id="btnPrint" title="Imprimir Relatório"><i class="ph ph-printer"></i> Relatório</button>
-          <button class="theme-toggle" id="btnThemeToggle"><i class="ph ph-moon" id="themeIcon"></i></button>
+        <div class="header-actions">
+          <div class="search-box">
+            <i class="ph ph-magnifying-glass" style="color: var(--text-muted);"></i>
+            <input type="text" id="globalSearch" placeholder="Pesquisar registros...">
+          </div>
+          <button class="btn btn-secondary" id="btnThemeToggle" title="Alternar Tema"><i id="themeIcon" class="ph ph-moon"></i></button>
+          <button class="btn btn-secondary" id="btnPrint" title="Imprimir Relatório"><i class="ph ph-printer"></i></button>
         </div>
       </header>
 
-      <div class="search-box">
-        <i class="ph ph-magnifying-glass" style="font-size: 1.2rem; opacity: 0.6;"></i>
-        <input type="text" id="globalSearch" placeholder="Pesquisar comunicados, eventos, tarefas ou integrantes...">
-      </div>
-
       <section id="tab-dashboard" class="tab-content active">
-        <div class="dashboard-grid">
-          <div class="card"><div class="card-title">Integrantes</div><div class="card-value" id="dash-membro-count">0</div></div>
-          <div class="card"><div class="card-title">Tarefas Pendentes</div><div class="card-value" id="dash-task-count">0</div></div>
-          <div class="card"><div class="card-title">Projetos Ativos</div><div class="card-value" id="dash-proj-count">0</div></div>
-          <div class="card"><div class="card-title">Saldo Caixa</div><div class="card-value" id="dash-saldo">R$ 0,00</div></div>
-          <div class="card"><div class="card-title">Entradas (Mês)</div><div class="card-value" style="color:var(--verde-light);" id="dash-receita">R$ 0,00</div></div>
-          <div class="card"><div class="card-title">Saídas (Mês)</div><div class="card-value" style="color:#E11D48;" id="dash-despesa">R$ 0,00</div></div>
-          <div class="card"><div class="card-title">Comunicados</div><div class="card-value" id="dash-com-count">0</div></div>
-          <div class="card"><div class="card-title">Metas Concluídas</div><div class="card-value" id="dash-meta-count">0%</div></div>
+        <div class="grid-stats">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="ph ph-users"></i></div>
+            <div class="stat-info"><h4>Membros</h4><p id="dash-membro-count">0</p></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="ph ph-kanban"></i></div>
+            <div class="stat-info"><h4>Projetos</h4><p id="dash-proj-count">0</p></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="ph ph-check-square"></i></div>
+            <div class="stat-info"><h4>Tarefas</h4><p id="dash-task-count">0</p></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="ph ph-megaphone"></i></div>
+            <div class="stat-info"><h4>Avisos</h4><p id="dash-com-count">0</p></div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+          <div class="card">
+            <div class="card-header"><h3><i class="ph ph-currency-dollar-simple"></i> Resumo Financeiro</h3></div>
+            <p style="margin-bottom: 5px;">Entradas: <strong id="dash-receita" style="color: var(--verde-light);">R$ 0,00</strong></p>
+            <p style="margin-bottom: 10px;">Saídas: <strong id="dash-despesa" style="color: var(--vermelho);">R$ 0,00</strong></p>
+            <hr style="border-color: var(--border-color); margin: 10px 0;">
+            <h3>Saldo em Caixa: <span id="dash-saldo">R$ 0,00</span></h3>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3><i class="ph ph-target"></i> Média de Progresso das Metas</h3></div>
+            <h1 id="dash-meta-count" style="font-size: 2.5rem; color: var(--roxo-light);">0%</h1>
+          </div>
         </div>
 
         <div class="card">
-          <div class="card-header"><h3><i class="ph ph-megaphone" style="color: var(--dourado);"></i> Comunicados Recentes</h3></div>
+          <div class="card-header"><h3><i class="ph ph-bell"></i> Comunicados Recentes</h3></div>
           <ul class="item-list" id="dash-comunicados-list"></ul>
         </div>
       </section>
 
       <section id="tab-mural" class="tab-content">
         <div class="card">
-          <div class="card-header"><h3><i class="ph ph-megaphone"></i> Mural Oficial de Comunicados</h3></div>
+          <div class="card-header"><h3><i class="ph ph-megaphone"></i> Mural de Avisos</h3></div>
           <ul class="item-list" id="public-mural-list"></ul>
         </div>
       </section>
 
       <section id="tab-calendario" class="tab-content">
         <div class="card">
-          <div class="calendar-header">
-            <button class="btn btn-sm" id="btnPrevMonth"><i class="ph ph-caret-left"></i></button>
-            <h3 id="calendarMonthYear" style="color:var(--verde-light);">Carregando...</h3>
-            <button class="btn btn-sm" id="btnNextMonth"><i class="ph ph-caret-right"></i></button>
-          </div>
-          <div class="calendar-grid">
-            <div class="calendar-day-head">Dom</div><div class="calendar-day-head">Seg</div>
-            <div class="calendar-day-head">Ter</div><div class="calendar-day-head">Qua</div>
-            <div class="calendar-day-head">Qui</div><div class="calendar-day-head">Sex</div>
-            <div class="calendar-day-head">Sáb</div>
+          <div class="card-header">
+            <h3 id="calendarMonthYear">Mês Ano</h3>
+            <div>
+              <button class="btn btn-secondary btn-sm" id="btnPrevMonth"><i class="ph ph-caret-left"></i> Anterior</button>
+              <button class="btn btn-secondary btn-sm" id="btnNextMonth">Próximo <i class="ph ph-caret-right"></i></button>
+            </div>
           </div>
           <div class="calendar-grid" id="calendarDays"></div>
         </div>
-
         <div class="card">
-          <div class="card-header"><h3>Lista Completa de Eventos</h3></div>
+          <div class="card-header"><h3><i class="ph ph-calendar-blank"></i> Próximos Eventos</h3></div>
           <ul class="item-list" id="public-eventos-list"></ul>
         </div>
       </section>
 
       <section id="tab-integrantes" class="tab-content">
         <div class="card">
-          <div class="card-header"><h3><i class="ph ph-users"></i> Integrantes do Grêmio</h3></div>
+          <div class="card-header"><h3><i class="ph ph-users"></i> Integrantes da Gestão</h3></div>
           <ul class="item-list" id="public-membros-list"></ul>
         </div>
       </section>
 
       <section id="tab-projetos" class="tab-content">
         <div class="card">
-          <div class="card-header"><h3><i class="ph ph-target"></i> Metas Anuais da Gestão</h3></div>
-          <div id="public-metas-list"></div>
-        </div>
-
-        <div class="card">
-          <div class="card-header"><h3>Projetos Em Andamento</h3></div>
+          <div class="card-header"><h3><i class="ph ph-kanban"></i> Projetos em Andamento</h3></div>
           <ul class="item-list" id="public-projetos-list"></ul>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3><i class="ph ph-target"></i> Metas da Gestão</h3></div>
+          <div id="public-metas-list"></div>
         </div>
       </section>
 
       <section id="tab-tarefas" class="tab-content">
         <div class="card">
-          <div class="card-header"><h3>Quadro de Tarefas</h3></div>
+          <div class="card-header"><h3><i class="ph ph-check-square"></i> Quadro de Tarefas</h3></div>
           <ul class="item-list" id="public-tarefas-list"></ul>
         </div>
       </section>
 
       <section id="tab-financeiro" class="tab-content">
-        <div class="card">
-          <div class="card-header"><h3><i class="ph ph-chart-pie"></i> Balanço Financeiro</h3></div>
-          <div style="max-height: 220px; margin-bottom: 15px;"><canvas id="financeiroChart"></canvas></div>
-        </div>
-
-        <div class="card">
-          <div class="card-header"><h3><i class="ph ph-receipt"></i> Histórico do Caixa</h3></div>
-          <ul class="item-list" id="public-financeiro-list"></ul>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+          <div class="card">
+            <div class="card-header"><h3><i class="ph ph-chart-pie-slice"></i> Gráfico Financeiro</h3></div>
+            <div style="height: 250px; position: relative;">
+              <canvas id="financeiroChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3><i class="ph ph-list-bullets"></i> Extrato de Transações</h3></div>
+            <ul class="item-list" id="public-financeiro-list"></ul>
+          </div>
         </div>
       </section>
 
       <section id="tab-documentos" class="tab-content">
         <div class="card">
-          <div class="card-header"><h3><i class="ph ph-file-text"></i> Nova Ata ou Documento</h3></div>
-          <div class="form-group"><label>Título</label><input type="text" id="ata-titulo" class="form-control"></div>
-          <div class="form-group"><label>Anexo (PDF/Imagem - Máx. 5MB)</label><input type="file" id="ata-file" class="form-control" accept=".pdf,.png,.jpg,.jpeg"></div>
-          <div class="form-group"><label>Resumo / Conteúdo</label><textarea id="ata-conteudo" class="form-control" rows="4"></textarea></div>
-          <button class="btn" id="btnSalvarAta"><i class="ph ph-floppy-disk"></i> Salvar Documento</button>
-        </div>
-
-        <div class="card">
-          <h3>Atas & Documentos Registrados</h3><br>
+          <div class="card-header"><h3><i class="ph ph-file-text"></i> Atas de Reunião e Documentos</h3></div>
+          <div class="form-group"><label>Título do Documento</label><input type="text" id="ata-titulo" class="form-control"></div>
+          <div class="form-group"><label>Resumo / Conteúdo</label><textarea id="ata-conteudo" class="form-control" rows="3"></textarea></div>
+          <div class="form-group"><label>Anexo (PDF, PNG, JPG - máx 5MB)</label><input type="file" id="ata-file" class="form-control"></div>
+          <button class="btn" id="btnSalvarAta"><i class="ph ph-upload-simple"></i> Registrar Documento</button>
+          <hr style="margin: 20px 0; border-color: var(--border-color);">
           <ul class="item-list" id="atas-list"></ul>
         </div>
       </section>
 
       <section id="tab-perfil" class="tab-content">
         <div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
-          <i class="ph ph-user-circle-gear" style="font-size: 4rem; color: var(--roxo-light); margin-bottom: 10px;"></i>
-          <h2 id="profile-display-name">Carregando...</h2>
-          <p id="profile-display-role" style="opacity: 0.7; margin-bottom: 20px;">-</p>
-          <button class="btn btn-danger" style="width: 100%; justify-content: center;" id="btnEncerrarSessao">
-            <i class="ph ph-sign-out"></i> Sair / Trocar Usuário
-          </button>
+          <i class="ph ph-user-circle" style="font-size: 4rem; color: var(--roxo-light);"></i>
+          <h2 id="profile-display-name" style="margin-top: 10px;">Estudante</h2>
+          <p id="profile-display-role" style="color: var(--text-muted); margin-bottom: 20px;">Cargo</p>
+          <button class="btn btn-danger" id="btnEncerrarSessao"><i class="ph ph-sign-out"></i> Sair / Trocar Identificação</button>
         </div>
       </section>
 
       <section id="tab-admin" class="tab-content">
-        <div id="admin-lock" class="card" style="text-align: center; padding: 40px 20px;">
-          <i class="ph ph-lock-key" style="font-size: 3rem; color: var(--roxo); margin-bottom: 15px;"></i>
-          <h2>Autenticação da Diretoria</h2>
-          <p style="opacity: 0.7; margin-bottom: 20px;">Digite a senha restrita da diretoria.</p>
-          <div style="max-width: 320px; margin: 0 auto;">
-            <input type="password" id="admin-pass" class="form-control" placeholder="Senha Restrita" style="margin-bottom: 15px;">
-            <button class="btn" style="width: 100%; justify-content: center;" id="btnLogin"><i class="ph ph-key"></i> Acessar Painel</button>
-          </div>
+        <div id="admin-lock" class="card" style="max-width: 400px; margin: 40px auto; text-align: center;">
+          <i class="ph ph-lock-key" style="font-size: 3rem; color: var(--dourado);"></i>
+          <h3 style="margin: 15px 0 5px;">Acesso Restrito à Diretoria</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Digite a senha correspondente ao seu cargo na diretoria.</p>
+          <input type="password" id="admin-pass" class="form-control" placeholder="Senha da Diretoria" style="margin-bottom: 15px;">
+          <button class="btn" id="btnLogin" style="width: 100%; justify-content: center;"><i class="ph ph-key"></i> Autenticar</button>
         </div>
 
         <div id="admin-panel" style="display: none;">
-          <div class="card" style="background: rgba(252, 211, 77, 0.15); border-color: #FCD34D;">
+          <div class="card" style="border-left: 4px solid var(--dourado);">
             <div class="card-header">
-              <h3 style="color: #D97706;"><i class="ph ph-shield-check"></i> Painel de Controle Ativo (<span id="user-email-display">Diretoria</span>)</h3>
-              <button class="btn btn-danger" id="btnLogout"><i class="ph ph-sign-out"></i> Sair</button>
+              <h3 style="color: var(--dourado);"><i class="ph ph-shield-check"></i> Painel de Gerenciamento (<span id="user-email-display">Diretoria</span>)</h3>
+              <button class="btn btn-danger" id="btnLogout"><i class="ph ph-sign-out"></i> Encerrar Sessão Diretoria</button>
             </div>
           </div>
 
@@ -348,14 +328,14 @@
               <div class="form-group"><label>Nome</label><input type="text" id="membro-nome" class="form-control"></div>
               <div class="form-group"><label>Cargo</label><input type="text" id="membro-cargo" class="form-control"></div>
               <div class="form-group"><label>Contato</label><input type="text" id="membro-contato" class="form-control"></div>
-              <button class="btn" id="btnSalvarMembro"><i class="ph ph-check"></i> Salvar</button>
+              <button class="btn" id="btnSalvarMembro"><i class="ph ph-check"></i> Salvar Integrante</button>
             </div>
 
             <div class="card">
               <h3><i class="ph ph-kanban"></i> Gerenciar Projeto</h3><br>
               <input type="hidden" id="proj-id">
               <div class="form-group"><label>Nome</label><input type="text" id="proj-nome" class="form-control"></div>
-              <div class="form-group"><label>Descrição</label><textarea id="proj-desc" class="form-control" rows="2"></textarea></div>
+              <div class="form-group"><label>Descrição</label><textarea id="proj-desc" class="form-controlrows="2"></textarea></div>
               <div class="form-group">
                 <label>Status</label>
                 <select id="proj-status" class="form-control">
@@ -364,15 +344,15 @@
                   <option value="Pendente">Pendente</option>
                 </select>
               </div>
-              <button class="btn" id="btnSalvarProjeto"><i class="ph ph-plus"></i> Salvar</button>
+              <button class="btn" id="btnSalvarProjeto"><i class="ph ph-plus"></i> Salvar Projeto</button>
             </div>
 
             <div class="card">
               <h3><i class="ph ph-calendar-plus"></i> Agendar Evento</h3><br>
               <input type="hidden" id="ev-id">
-              <div class="form-group"><label>Nome</label><input type="text" id="ev-nome" class="form-control"></div>
+              <div class="form-group"><label>Nome do Evento</label><input type="text" id="ev-nome" class="form-control"></div>
               <div class="form-group"><label>Data</label><input type="date" id="ev-data" class="form-control"></div>
-              <button class="btn" id="btnSalvarEvento"><i class="ph ph-plus"></i> Salvar</button>
+              <button class="btn" id="btnSalvarEvento"><i class="ph ph-plus"></i> Salvar Evento</button>
             </div>
 
             <div class="card">
@@ -380,7 +360,7 @@
               <input type="hidden" id="com-id">
               <div class="form-group"><label>Título</label><input type="text" id="com-titulo" class="form-control"></div>
               <div class="form-group"><label>Mensagem</label><textarea id="com-msg" class="form-control" rows="3"></textarea></div>
-              <button class="btn" id="btnSalvarComunicado"><i class="ph ph-plus"></i> Salvar</button>
+              <button class="btn" id="btnSalvarComunicado"><i class="ph ph-plus"></i> Publicar Comunicado</button>
             </div>
 
             <div class="card">
@@ -395,7 +375,7 @@
                   <option value="despesa">Despesa (Saída)</option>
                 </select>
               </div>
-              <button class="btn" id="btnSalvarFinanceiro"><i class="ph ph-plus"></i> Salvar</button>
+              <button class="btn" id="btnSalvarFinanceiro"><i class="ph ph-plus"></i> Lançar Valor</button>
             </div>
 
             <div class="card">
@@ -403,7 +383,7 @@
               <input type="hidden" id="meta-id">
               <div class="form-group"><label>Título</label><input type="text" id="meta-titulo" class="form-control"></div>
               <div class="form-group"><label>Progresso (%)</label><input type="number" min="0" max="100" id="meta-progresso" class="form-control"></div>
-              <button class="btn" id="btnSalvarMeta"><i class="ph ph-plus"></i> Salvar</button>
+              <button class="btn" id="btnSalvarMeta"><i class="ph ph-plus"></i> Salvar Meta</button>
             </div>
 
             <div class="card">
@@ -411,7 +391,7 @@
               <input type="hidden" id="task-id">
               <div class="form-group"><label>Título</label><input type="text" id="task-titulo" class="form-control"></div>
               <div class="form-group"><label>Responsável</label><input type="text" id="task-resp" class="form-control"></div>
-              <button class="btn" id="btnSalvarTarefa"><i class="ph ph-check"></i> Salvar</button>
+              <button class="btn" id="btnSalvarTarefa"><i class="ph ph-check"></i> Salvar Tarefa</button>
             </div>
           </div>
         </div>
@@ -419,12 +399,14 @@
     </main>
   </div>
 
+  <div id="toast-container"></div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-    // Firebase Config
+    // Configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyC2rnMOi-YMH9LthRFf9KCICFtKpGvDm78",
       authDomain: "fala--estudante.firebaseapp.com",
@@ -469,7 +451,7 @@
       };
       document.getElementById('pageTitle').innerText = titles[tabName] || 'Painel';
 
-      if (tabName === 'financeiro') initFinChart();
+      if (tabName === 'financeiro') setTimeout(initFinChart, 100);
       if (window.innerWidth <= 900) closeSidebar();
     };
 
@@ -493,12 +475,10 @@
       }
     }
 
-    // OUVINTES DE EVENTOS DE CLIQUE
+    // EVENTOS DE NAVEGAÇÃO
     document.addEventListener('click', (e) => {
       const tabBtn = e.target.closest('[data-tab]');
-      if (tabBtn) {
-        openTab(tabBtn.getAttribute('data-tab'));
-      }
+      if (tabBtn) openTab(tabBtn.getAttribute('data-tab'));
     });
 
     document.getElementById('btnThemeToggle').addEventListener('click', () => {
@@ -519,7 +499,7 @@
     document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
     document.getElementById('btnPrint').addEventListener('click', () => window.print());
 
-    // USUÁRIO E SESSÃO
+    // USUÁRIO LOCAL & AUTO-CADASTRO NA ABA INTEGRANTES
     function checarIdentificacao() {
       if (!localUser || !localUser.nome) {
         document.getElementById('welcome-screen').style.display = 'flex';
@@ -530,15 +510,29 @@
       }
     }
 
-    document.getElementById('btnSalvarPerfilInicial').addEventListener('click', () => {
+    document.getElementById('btnSalvarPerfilInicial').addEventListener('click', async () => {
       const nome = document.getElementById('welcome-nome').value.trim();
       const cargo = document.getElementById('welcome-cargo').value.trim();
       if (!nome || !cargo) return showToast("Preencha seu nome e cargo!");
 
       localUser = { nome, cargo };
       localStorage.setItem('gremio_user', JSON.stringify(localUser));
+
+      try {
+        const jaExiste = state.membros.some(m => m.nome.toLowerCase() === nome.toLowerCase());
+        if (!jaExiste) {
+          await addDoc(collection(db, "membros"), {
+            nome: nome,
+            cargo: cargo,
+            contato: "Estudante Cadastrado"
+          });
+        }
+      } catch (err) {
+        console.error("Erro ao registrar integrante automaticamente:", err);
+      }
+
       checarIdentificacao();
-      showToast(`Bem-vindo(a), ${nome}!`);
+      showToast(`Bem-vindo(a), ${nome}! Você foi listado em Integrantes.`);
     });
 
     document.getElementById('btnEncerrarSessao').addEventListener('click', () => {
@@ -548,24 +542,33 @@
       showToast("Sessão finalizada!");
     });
 
-    // ADMIN AUTH
+    // ROLES E AUTENTICAÇÃO DA DIRETORIA
+    const ROLES_PASSWORDS = {
+      "Gremio26": { role: "Presidente", permissions: ["all"] },
+      "Tesouraria26": { role: "Tesoureiro", permissions: ["financeiro", "dashboard"] },
+      "Comunicacao26": { role: "Comunicação", permissions: ["comunicados", "eventos", "mural"] }
+    };
+
     document.getElementById('btnLogin').addEventListener('click', () => {
-      if (document.getElementById('admin-pass').value === "Gremio26") {
-        state.currentUser = { role: "Diretoria", email: "diretoria@gremio.com" };
+      const inputPass = document.getElementById('admin-pass').value.trim();
+      const authData = ROLES_PASSWORDS[inputPass];
+
+      if (authData) {
+        state.currentUser = { role: authData.role, permissions: authData.permissions };
         sessionStorage.setItem('gremio_admin_session', JSON.stringify(state.currentUser));
         document.getElementById('admin-pass').value = '';
-        showToast("Acesso autorizado!");
+        showToast(`Acesso concedido: ${authData.role}`);
         updateAdminUI();
         render();
       } else {
-        showToast("Senha incorreta!");
+        showToast("Senha incorreta ou sem permissão!");
       }
     });
 
     document.getElementById('btnLogout').addEventListener('click', () => {
       state.currentUser = null;
       sessionStorage.removeItem('gremio_admin_session');
-      showToast("Sessão encerrada.");
+      showToast("Sessão da diretoria encerrada.");
       updateAdminUI();
       render();
     });
@@ -574,9 +577,12 @@
       const active = !!state.currentUser;
       document.getElementById('admin-lock').style.display = active ? 'none' : 'block';
       document.getElementById('admin-panel').style.display = active ? 'block' : 'none';
+      if (active) {
+        document.getElementById('user-email-display').innerText = state.currentUser.role;
+      }
     }
 
-    // FIRESTORE LISTENERS
+    // ESCUTAS EM TEMPO REAL NO FIRESTORE
     function setupListeners() {
       onSnapshot(collection(db, "membros"), s => { state.membros = s.docs.map(d => ({ id: d.id, ...d.data() })); render(); });
       onSnapshot(collection(db, "projetos"), s => { state.projetos = s.docs.map(d => ({ id: d.id, ...d.data() })); render(); });
@@ -588,76 +594,119 @@
       onSnapshot(collection(db, "atas"), s => { state.atas = s.docs.map(d => ({ id: d.id, ...d.data() })); render(); });
     }
 
-    // OPERAÇÕES CRUD
+    // EDIÇÃO DE ITENS (CARREGAR NO FORMULÁRIO)
+    window.editItem = (collectionName, id) => {
+      if (!state.currentUser) return showToast("Acesso restrito!");
+      openTab('admin');
+
+      const item = state[collectionName]?.find(x => x.id === id);
+      if (!item) return;
+
+      if (collectionName === 'membros') {
+        document.getElementById('membro-id').value = item.id;
+        document.getElementById('membro-nome').value = item.nome || '';
+        document.getElementById('membro-cargo').value = item.cargo || '';
+        document.getElementById('membro-contato').value = item.contato || '';
+      } else if (collectionName === 'projetos') {
+        document.getElementById('proj-id').value = item.id;
+        document.getElementById('proj-nome').value = item.nome || '';
+        document.getElementById('proj-desc').value = item.desc || '';
+        document.getElementById('proj-status').value = item.status || 'Em Andamento';
+      } else if (collectionName === 'eventos') {
+        document.getElementById('ev-id').value = item.id;
+        document.getElementById('ev-nome').value = item.nome || '';
+        document.getElementById('ev-data').value = item.data || '';
+      } else if (collectionName === 'comunicados') {
+        document.getElementById('com-id').value = item.id;
+        document.getElementById('com-titulo').value = item.titulo || '';
+        document.getElementById('com-msg').value = item.msg || '';
+      } else if (collectionName === 'financeiro') {
+        document.getElementById('fin-id').value = item.id;
+        document.getElementById('fin-desc').value = item.desc || '';
+        document.getElementById('fin-valor').value = item.valor || '';
+        document.getElementById('fin-tipo').value = item.tipo || 'receita';
+      } else if (collectionName === 'metas') {
+        document.getElementById('meta-id').value = item.id;
+        document.getElementById('meta-titulo').value = item.titulo || '';
+        document.getElementById('meta-progresso').value = item.progresso || 0;
+      } else if (collectionName === 'tarefas') {
+        document.getElementById('task-id').value = item.id;
+        document.getElementById('task-titulo').value = item.titulo || '';
+        document.getElementById('task-resp').value = item.resp || '';
+      }
+      showToast("Dados carregados para edição!");
+    };
+
+    // EXCLUSÃO
     window.deleteItem = async (col, id) => {
       if (!state.currentUser) return showToast("Acesso negado.");
-      if (confirm("Confirmar exclusão?")) {
+      if (confirm("Confirmar exclusão deste registro?")) {
         await deleteDoc(doc(db, col, id));
-        showToast("Item removido!");
+        showToast("Item removido com sucesso!");
       }
     };
 
+    // OPERAÇÕES DE SALVAMENTO / ATUALIZAÇÃO
     document.getElementById('btnSalvarMembro').addEventListener('click', async () => {
       const id = document.getElementById('membro-id').value;
       const data = { nome: document.getElementById('membro-nome').value, cargo: document.getElementById('membro-cargo').value, contato: document.getElementById('membro-contato').value };
-      if (!data.nome) return showToast("Nome obrigatório!");
+      if (!data.nome) return showToast("Nome é obrigatório!");
       id ? await updateDoc(doc(db, "membros", id), data) : await addDoc(collection(db, "membros"), data);
       document.getElementById('membro-id').value = ''; document.getElementById('membro-nome').value = ''; document.getElementById('membro-cargo').value = ''; document.getElementById('membro-contato').value = '';
-      showToast("Salvo!");
+      showToast(id ? "Membro atualizado!" : "Membro cadastrado!");
     });
 
     document.getElementById('btnSalvarProjeto').addEventListener('click', async () => {
       const id = document.getElementById('proj-id').value;
       const data = { nome: document.getElementById('proj-nome').value, desc: document.getElementById('proj-desc').value, status: document.getElementById('proj-status').value };
-      if (!data.nome) return showToast("Nome obrigatório!");
+      if (!data.nome) return showToast("Nome do projeto é obrigatório!");
       id ? await updateDoc(doc(db, "projetos", id), data) : await addDoc(collection(db, "projetos"), data);
       document.getElementById('proj-id').value = ''; document.getElementById('proj-nome').value = ''; document.getElementById('proj-desc').value = '';
-      showToast("Salvo!");
+      showToast(id ? "Projeto atualizado!" : "Projeto criado!");
     });
 
     document.getElementById('btnSalvarEvento').addEventListener('click', async () => {
       const id = document.getElementById('ev-id').value;
       const data = { nome: document.getElementById('ev-nome').value, data: document.getElementById('ev-data').value };
-      if (!data.nome || !data.data) return showToast("Campos obrigatórios!");
+      if (!data.nome || !data.data) return showToast("Nome e data são obrigatórios!");
       id ? await updateDoc(doc(db, "eventos", id), data) : await addDoc(collection(db, "eventos"), data);
       document.getElementById('ev-id').value = ''; document.getElementById('ev-nome').value = ''; document.getElementById('ev-data').value = '';
-      showToast("Salvo!");
+      showToast(id ? "Evento atualizado!" : "Evento agendado!");
     });
 
     document.getElementById('btnSalvarComunicado').addEventListener('click', async () => {
       const id = document.getElementById('com-id').value;
       const data = { titulo: document.getElementById('com-titulo').value, msg: document.getElementById('com-msg').value, createdAt: serverTimestamp() };
-      if (!data.titulo) return showToast("Título obrigatório!");
+      if (!data.titulo) return showToast("Título é obrigatório!");
       id ? await updateDoc(doc(db, "comunicados", id), data) : await addDoc(collection(db, "comunicados"), data);
       document.getElementById('com-id').value = ''; document.getElementById('com-titulo').value = ''; document.getElementById('com-msg').value = '';
-      showToast("Salvo!");
+      showToast(id ? "Comunicado atualizado!" : "Comunicado publicado!");
     });
 
     document.getElementById('btnSalvarFinanceiro').addEventListener('click', async () => {
       const id = document.getElementById('fin-id').value;
       const data = { desc: document.getElementById('fin-desc').value, valor: parseFloat(document.getElementById('fin-valor').value), tipo: document.getElementById('fin-tipo').value };
-      if (!data.desc || isNaN(data.valor)) return showToast("Dados inválidos!");
+      if (!data.desc || isNaN(data.valor)) return showToast("Preencha descrição e valor!");
       id ? await updateDoc(doc(db, "financeiro", id), data) : await addDoc(collection(db, "financeiro"), data);
       document.getElementById('fin-id').value = ''; document.getElementById('fin-desc').value = ''; document.getElementById('fin-valor').value = '';
-      showToast("Salvo!");
+      showToast(id ? "Lançamento atualizado!" : "Lançamento registrado!");
     });
 
     document.getElementById('btnSalvarMeta').addEventListener('click', async () => {
       const id = document.getElementById('meta-id').value;
       const data = { titulo: document.getElementById('meta-titulo').value, progresso: parseInt(document.getElementById('meta-progresso').value) || 0 };
-      if (!data.titulo) return showToast("Título obrigatório!");
+      if (!data.titulo) return showToast("Título é obrigatório!");
       id ? await updateDoc(doc(db, "metas", id), data) : await addDoc(collection(db, "metas"), data);
       document.getElementById('meta-id').value = ''; document.getElementById('meta-titulo').value = ''; document.getElementById('meta-progresso').value = '';
-      showToast("Salvo!");
+      showToast(id ? "Meta atualizada!" : "Meta cadastrada!");
     });
 
     document.getElementById('btnSalvarTarefa').addEventListener('click', async () => {
       const id = document.getElementById('task-id').value;
       const data = { titulo: document.getElementById('task-titulo').value, resp: document.getElementById('task-resp').value };
-      if (!data.titulo) return showToast("Título obrigatório!");
-      id ? await updateDoc(doc(db, "tarefas", id), data) : await addDoc(collection(db, "tarefas"), data);
-      document.getElementById('task-id').value = ''; document.getElementById('task-titulo').value = ''; document.getElementById('task-resp').value = '';
-      showToast("Salvo!");
+      if (!data.titulo) return showToast("Título da tarefa é obrigatório!");
+      id ? await updateDoc(doc(db, "tarefas", id), data) : await addDoc(collection(db, "tarefas"), data);      document.getElementById('task-id').value = ''; document.getElementById('task-titulo').value = ''; document.getElementById('task-resp').value = '';
+      showToast(id ? "Tarefa atualizada!" : "Tarefa salva!");
     });
 
     document.getElementById('btnSalvarAta').addEventListener('click', async () => {
@@ -666,15 +715,15 @@
       const fileInput = document.getElementById('ata-file');
       let downloadURL = null;
 
-      if (!titulo || !conteudo) return showToast("Preencha título e conteúdo!");
+      if (!titulo || !conteudo) return showToast("Preencha o título e o conteúdo!");
 
       if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        if (file.size > 5 * 1024 * 1024) return showToast("Erro: Máximo 5MB!");
-        if (!["application/pdf", "image/png", "image/jpeg"].includes(file.type)) return showToast("Formato não suportado!");
+        if (file.size > 5 * 1024 * 1024) return showToast("Arquivo excedeu o limite de 5MB!");
+        if (!["application/pdf", "image/png", "image/jpeg"].includes(file.type)) return showToast("Formato inválido (use PDF, PNG ou JPG)!");
 
         const storageRef = ref(storage, 'documentos/' + Date.now() + '_' + file.name);
-        showToast("Enviando...");
+        showToast("Enviando anexo...");
         const snapshot = await uploadBytes(storageRef, file);
         downloadURL = await getDownloadURL(snapshot.ref);
       }
@@ -684,7 +733,7 @@
       });
 
       document.getElementById('ata-titulo').value = ''; document.getElementById('ata-conteudo').value = ''; document.getElementById('ata-file').value = '';
-      showToast("Ata salva!");
+      showToast("Documento registrado!");
     });
 
     // CALENDÁRIO
@@ -698,6 +747,7 @@
 
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const calGrid = document.getElementById('calendarDays');
+      if (!calGrid) return;
       calGrid.innerHTML = '';
       const today = new Date();
 
@@ -712,28 +762,35 @@
         calGrid.innerHTML += `
           <div class="calendar-day-cell ${isToday ? 'today' : ''}">
             <span>${i}</span>
-            ${evs.map(e => `<span class="calendar-event-tag">${e.nome}</span>`).join('')}
+            ${evs.map(e => `<span class="calendar-event-tag" onclick="editItem('eventos', '${e.id}')" title="Clique para editar">${e.nome}</span>`).join('')}
           </div>`;
       }
     }
 
-    // CHART
+    // GRÁFICO CHART.JS
     function initFinChart() {
       const canvas = document.getElementById("financeiroChart");
       if (!canvas) return;
-      if (finChartInstance) finChartInstance.destroy();
+
+      if (finChartInstance) {
+        finChartInstance.destroy();
+        finChartInstance = null;
+      }
 
       const rec = state.financeiro.filter(f => f.tipo === 'receita').reduce((a, b) => a + (b.valor || 0), 0);
       const desp = state.financeiro.filter(f => f.tipo === 'despesa').reduce((a, b) => a + (b.valor || 0), 0);
 
       finChartInstance = new Chart(canvas, {
         type: 'doughnut',
-        data: { labels: ['Entradas', 'Saídas'], datasets: [{ data: [rec, desp], backgroundColor: ['#32C85A', '#E11D48'] }] },
+        data: {
+          labels: ['Entradas', 'Saídas'],
+          datasets: [{ data: [rec, desp], backgroundColor: ['#22c55e', '#dc2626'], borderWidth: 2 }]
+        },
         options: { responsive: true, maintainAspectRatio: false }
       });
     }
 
-    // BUSCA
+    // PESQUISA GLOBAL
     document.getElementById('globalSearch').addEventListener('keyup', (e) => {
       const q = e.target.value.toLowerCase();
       document.querySelectorAll('.item-list li').forEach(el => {
@@ -741,7 +798,7 @@
       });
     });
 
-    // RENDER PRINCIPAL
+    // RENDERIZAR INTERFACE
     function render() {
       applyTheme();
       const isAdmin = !!state.currentUser;
@@ -759,23 +816,31 @@
       document.getElementById('dash-despesa').innerText = fmtCurrency.format(desp);
       const elSaldo = document.getElementById('dash-saldo');
       elSaldo.innerText = fmtCurrency.format(total);
-      elSaldo.style.color = total < 0 ? '#E11D48' : 'var(--verde-light)';
+      elSaldo.style.color = total < 0 ? '#dc2626' : 'var(--verde-light)';
 
       const mediaMetas = state.metas.length ? Math.round(state.metas.reduce((a, b) => a + (b.progresso || 0), 0) / state.metas.length) : 0;
       document.getElementById('dash-meta-count').innerText = `${mediaMetas}%`;
 
-      // Render Membros
+      // Render Integrantes
       document.getElementById('public-membros-list').innerHTML = state.membros.map(m => `
         <li>
           <div><strong>${m.nome}</strong><p style="font-size:0.8rem; opacity:0.7;">${m.cargo} ${m.contato ? '• ' + m.contato : ''}</p></div>
-          ${isAdmin ? `<button class="btn btn-sm btn-danger" onclick="deleteItem('membros', '${m.id}')"><i class="ph ph-trash"></i></button>` : ''}
+          ${isAdmin ? `
+            <div class="item-actions">
+              <button class="btn btn-sm btn-secondary" onclick="editItem('membros', '${m.id}')"><i class="ph ph-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('membros', '${m.id}')"><i class="ph ph-trash"></i></button>
+            </div>` : ''}
         </li>`).join('');
 
       // Render Projetos
       document.getElementById('public-projetos-list').innerHTML = state.projetos.map(p => `
         <li>
           <div><strong>${p.nome}</strong><p style="font-size:0.8rem; opacity:0.7;">${p.desc || ''} • Status: <b>${p.status || 'Em Andamento'}</b></p></div>
-          ${isAdmin ? `<button class="btn btn-sm btn-danger" onclick="deleteItem('projetos', '${p.id}')"><i class="ph ph-trash"></i></button>` : ''}
+          ${isAdmin ? `
+            <div class="item-actions">
+              <button class="btn btn-sm btn-secondary" onclick="editItem('projetos', '${p.id}')"><i class="ph ph-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('projetos', '${p.id}')"><i class="ph ph-trash"></i></button>
+            </div>` : ''}
         </li>`).join('');
 
       renderCalendar();
@@ -784,14 +849,22 @@
       document.getElementById('public-eventos-list').innerHTML = state.eventos.map(e => `
         <li>
           <div><strong>${e.nome}</strong><p style="font-size:0.8rem; opacity:0.7;">Data: ${e.data || '-'}</p></div>
-          ${isAdmin ? `<button class="btn btn-sm btn-danger" onclick="deleteItem('eventos', '${e.id}')"><i class="ph ph-trash"></i></button>` : ''}
+          ${isAdmin ? `
+            <div class="item-actions">
+              <button class="btn btn-sm btn-secondary" onclick="editItem('eventos', '${e.id}')"><i class="ph ph-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('eventos', '${e.id}')"><i class="ph ph-trash"></i></button>
+            </div>` : ''}
         </li>`).join('');
 
       // Render Comunicados
       const comHtml = state.comunicados.map(c => `
         <li style="border-left-color: var(--dourado);">
           <div><strong>${c.titulo}</strong><p style="font-size:0.85rem; opacity:0.8;">${c.msg}</p></div>
-          ${isAdmin ? `<button class="btn btn-sm btn-danger" onclick="deleteItem('comunicados', '${c.id}')"><i class="ph ph-trash"></i></button>` : ''}
+          ${isAdmin ? `
+            <div class="item-actions">
+              <button class="btn btn-sm btn-secondary" onclick="editItem('comunicados', '${c.id}')"><i class="ph ph-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('comunicados', '${c.id}')"><i class="ph ph-trash"></i></button>
+            </div>` : ''}
         </li>`).join('');
       document.getElementById('dash-comunicados-list').innerHTML = comHtml;
       document.getElementById('public-mural-list').innerHTML = comHtml;
@@ -800,33 +873,44 @@
       document.getElementById('public-tarefas-list').innerHTML = state.tarefas.map(t => `
         <li>
           <div><strong>${t.titulo}</strong><p style="font-size:0.8rem; opacity:0.7;">Responsável: ${t.resp}</p></div>
-          ${isAdmin ? `<button class="btn btn-sm btn-danger" onclick="deleteItem('tarefas', '${t.id}')"><i class="ph ph-trash"></i></button>` : ''}
+          ${isAdmin ? `
+            <div class="item-actions">
+              <button class="btn btn-sm btn-secondary" onclick="editItem('tarefas', '${t.id}')"><i class="ph ph-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('tarefas', '${t.id}')"><i class="ph ph-trash"></i></button>
+            </div>` : ''}
         </li>`).join('');
 
       // Render Financeiro
       document.getElementById('public-financeiro-list').innerHTML = state.financeiro.map(f => `
-        <li style="border-left-color: ${f.tipo === 'receita' ? '#32C85A' : '#E11D48'};">
+        <li style="border-left-color: ${f.tipo === 'receita' ? '#22c55e' : '#dc2626'};">
           <div><strong>${f.desc}</strong></div>
           <div style="display:flex; align-items:center; gap:10px;">
-            <strong style="color: ${f.tipo === 'receita' ? '#32C85A' : '#E11D48'};">${f.tipo === 'receita' ? '+' : '-'} ${fmtCurrency.format(f.valor || 0)}</strong>
-            ${isAdmin ? `<button class="btn btn-sm btn-danger" onclick="deleteItem('financeiro', '${f.id}')"><i class="ph ph-trash"></i></button>` : ''}
+            <strong style="color: ${f.tipo === 'receita' ? '#22c55e' : '#dc2626'};">${f.tipo === 'receita' ? '+' : '-'} ${fmtCurrency.format(f.valor || 0)}</strong>
+            ${isAdmin ? `
+              <div class="item-actions">
+                <button class="btn btn-sm btn-secondary" onclick="editItem('financeiro', '${f.id}')"><i class="ph ph-pencil"></i></button>
+                <button class="btn btn-sm btn-danger" onclick="deleteItem('financeiro', '${f.id}')"><i class="ph ph-trash"></i></button>
+              </div>` : ''}
           </div>
         </li>`).join('');
 
       // Render Metas
       document.getElementById('public-metas-list').innerHTML = state.metas.map(m => `
         <div style="margin-bottom: 15px; background: rgba(0,0,0,0.02); padding: 10px; border-radius: 8px;">
-          <div style="display:flex; justify-content:space-between; font-weight:600; font-size:0.9rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-weight:600; font-size:0.9rem;">
             <span>${m.titulo}</span>
             <div>
               <span>${m.progresso}%</span>
-              ${isAdmin ? `<button class="btn btn-sm btn-danger" style="margin-left:8px;" onclick="deleteItem('metas', '${m.id}')"><i class="ph ph-trash"></i></button>` : ''}
+              ${isAdmin ? `
+                <button class="btn btn-sm btn-secondary" style="margin-left:8px;" onclick="editItem('metas', '${m.id}')"><i class="ph ph-pencil"></i></button>
+                <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteItem('metas', '${m.id}')"><i class="ph ph-trash"></i></button>
+              ` : ''}
             </div>
           </div>
           <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${m.progresso}%;"></div></div>
         </div>`).join('');
 
-      // Render Atas
+      // Render Atas e Documentos
       document.getElementById('atas-list').innerHTML = state.atas.map(a => `
         <li>
           <div>
