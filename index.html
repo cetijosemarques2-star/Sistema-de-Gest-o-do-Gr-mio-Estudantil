@@ -104,7 +104,7 @@
     .item-actions { display: flex; gap: 6px; }
 
     /* CALENDÁRIO */
-    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .calendar-header { display: flex; justify-content: space-between; align-align: center; margin-bottom: 15px; }
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
     .calendar-day-head { font-weight: 700; font-size: 0.85rem; padding: 8px; opacity: 0.7; }
     .calendar-day-cell { background: rgba(0,0,0,0.03); min-height: 80px; padding: 6px; border-radius: 8px; text-align: left; font-size: 0.8rem; border: 1px solid transparent; }
@@ -119,6 +119,19 @@
     .admin-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
     .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 900; }
 
+    /* BOAS VINDAS OVERLAY */
+    .welcome-overlay {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px);
+      z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .welcome-card {
+      background: var(--card-bg); border: 1px solid var(--glass-border); padding: 35px 25px;
+      border-radius: 20px; text-align: center; max-width: 420px; width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3); animation: slideUp 0.4s ease;
+    }
+    .welcome-card h2 { font-size: 1.4rem; margin-top: 10px; color: var(--text-color); }
+    .welcome-card p { opacity: 0.8; font-size: 0.85rem; }
+
     @media (max-width: 900px) {
       .sidebar { transform: translateX(-100%); }
       .sidebar.open { transform: translateX(0); }
@@ -129,6 +142,30 @@
   </style>
 </head>
 <body>
+
+  <div id="welcome-screen" class="welcome-overlay" style="display: none;">
+    <div class="welcome-card">
+      <div class="logo-container" style="justify-content: center; border: none; margin: 0;">
+        <svg class="logo-svg" viewBox="0 0 24 24" style="width: 70px; height: 70px;"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <h2>Bem-vindo ao Grêmio Estudantil</h2>
+      <p>CETI José Marques — Gestão Várzea Branca</p>
+      <hr style="margin: 15px 0; opacity: 0.2;">
+      <p style="font-size: 0.9rem; margin-bottom: 20px;">Para personalizar sua navegação, informe seus dados básicos:</p>
+      
+      <div class="form-group" style="text-align: left;">
+        <label>Nome Completo</label>
+        <input type="text" id="welcome-nome" class="form-control" placeholder="Ex: Gustavo Silva">
+      </div>
+      <div class="form-group" style="text-align: left;">
+        <label>Cargo / Função</label>
+        <input type="text" id="welcome-cargo" class="form-control" placeholder="Ex: Aluno / Diretor de Comunicação">
+      </div>
+      <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="salvarPerfilInicial()">
+        Acessar o Sistema <i class="ph ph-arrow-right"></i>
+      </button>
+    </div>
+  </div>
 
   <div id="toast-container"></div>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -151,6 +188,7 @@
         <li class="nav-item"><button onclick="openTab('tarefas', this)"><i class="ph ph-check-square"></i><span>Tarefas</span></button></li>
         <li class="nav-item"><button onclick="openTab('financeiro', this)"><i class="ph ph-currency-dollar"></i><span>Financeiro</span></button></li>
         <li class="nav-item"><button onclick="openTab('documentos', this)"><i class="ph ph-folder"></i><span>Documentos & Atas</span></button></li>
+        <li class="nav-item"><button onclick="openTab('perfil', this)"><i class="ph ph-user-circle"></i><span>Meu Perfil</span></button></li>
         <li class="nav-item"><button onclick="openTab('admin', this)" style="color: var(--dourado);"><i class="ph ph-lock"></i><span>Área Restrita</span></button></li>
       </ul>
     </aside>
@@ -203,8 +241,9 @@
       <section id="tab-calendario" class="tab-content">
         <div class="card">
           <div class="calendar-header">
-            <h3><i class="ph ph-calendar"></i> Calendário de Eventos & Reuniões</h3>
-            <span style="font-weight:bold; color:var(--verde-light);" id="calendarMonthYear">Carregando...</span>
+            <button class="btn btn-sm" onclick="changeMonth(-1)"><i class="ph ph-caret-left"></i></button>
+            <h3 id="calendarMonthYear" style="color:var(--verde-light);">Carregando...</h3>
+            <button class="btn btn-sm" onclick="changeMonth(1)"><i class="ph ph-caret-right"></i></button>
           </div>
           <div class="calendar-grid">
             <div class="calendar-day-head">Dom</div><div class="calendar-day-head">Seg</div>
@@ -263,7 +302,7 @@
         <div class="card">
           <div class="card-header"><h3><i class="ph ph-file-text"></i> Nova Ata ou Documento</h3></div>
           <div class="form-group"><label>Título da Reunião / Documento</label><input type="text" id="ata-titulo" class="form-control"></div>
-          <div class="form-group"><label>Anexar Documento (PDF/Imagem)</label><input type="file" id="ata-file" class="form-control"></div>
+          <div class="form-group"><label>Anexar Documento (PDF/Imagem - Máx. 5MB)</label><input type="file" id="ata-file" class="form-control" accept=".pdf,.png,.jpg,.jpeg"></div>
           <div class="form-group"><label>Conteúdo / Resumo</label><textarea id="ata-conteudo" class="form-control" rows="4"></textarea></div>
           <button class="btn" id="btnSalvarAta"><i class="ph ph-floppy-disk"></i> Salvar Ata/Doc</button>
         </div>
@@ -274,15 +313,34 @@
         </div>
       </section>
 
+      <section id="tab-perfil" class="tab-content">
+        <div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
+          <i class="ph ph-user-circle-gear" style="font-size: 4rem; color: var(--roxo-light); margin-bottom: 10px;"></i>
+          <h2 id="profile-display-name">Carregando...</h2>
+          <p id="profile-display-role" style="opacity: 0.7; margin-bottom: 20px;">-</p>
+          
+          <div style="text-align: left; background: rgba(0,0,0,0.03); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+            <p style="font-size: 0.85rem; opacity: 0.8;"><strong>Sessão Local:</strong> Identificação salva no dispositivo.</p>
+          </div>
+
+          <button class="btn btn-danger" style="width: 100%; justify-content: center;" onclick="encerrarSessaoLocal()">
+            <i class="ph ph-sign-out"></i> Sair da Minha Conta / Trocar Usuário
+          </button>
+        </div>
+      </section>
+
       <section id="tab-admin" class="tab-content">
         <div id="admin-lock" class="card" style="text-align: center; padding: 40px 20px;">
           <i class="ph ph-lock-key" style="font-size: 3rem; color: var(--roxo); margin-bottom: 15px;"></i>
           <h2>Autenticação da Diretoria</h2>
-          <p style="opacity: 0.7; margin-bottom: 20px;">Entre com seu e-mail e senha de administrador do Firebase.</p>
+          <p style="opacity: 0.7; margin-bottom: 20px;">Entre com seu e-mail e senha de administrador.</p>
           <div style="max-width: 320px; margin: 0 auto;">
-            <input type="email" id="admin-email" class="form-control" placeholder="E-mail" style="margin-bottom: 10px;">
-            <input type="password" id="admin-pass" class="form-control" placeholder="Senha" style="margin-bottom: 15px;">
-            <button class="btn" style="width: 100%; justify-content: center;" id="btnLogin"><i class="ph ph-key"></i> Entrar</button>
+            <input type="email" id="admin-email" class="form-control" placeholder="Seu E-mail (ex: admin@gmail.com)" style="margin-bottom: 10px;">
+            <input type="password" id="admin-pass" class="form-control" placeholder="Sua Senha (mínimo 6 caracteres)" style="margin-bottom: 15px;">
+            <div style="display: flex; gap: 10px;">
+              <button class="btn" style="flex: 1; justify-content: center;" id="btnLogin"><i class="ph ph-key"></i> Entrar</button>
+              <button class="btn btn-secondary" style="flex: 1; justify-content: center;" id="btnRegister"><i class="ph ph-user-plus"></i> Criar Conta</button>
+            </div>
           </div>
         </div>
 
@@ -377,8 +435,8 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
     // Configuração do Firebase
@@ -398,12 +456,12 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    const currencyFormatter = new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    });
+    const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
-    // Estado da aplicação
+    // Controle de estado local
+    let localUser = JSON.parse(localStorage.getItem('gremio_user')) || null;
+    let calendarDate = new Date();
+
     let state = {
       theme: localStorage.getItem('gremio_theme') || 'light',
       membros: [],
@@ -417,7 +475,49 @@
       currentUser: null
     };
 
-    // UI Helpers
+    // --- SESSÃO LOCAL & PERFIL ---
+    function checarIdentificacao() {
+      if (!localUser || !localUser.nome) {
+        document.getElementById('welcome-screen').style.display = 'flex';
+      } else {
+        document.getElementById('welcome-screen').style.display = 'none';
+        atualizarUIPerfil();
+      }
+    }
+
+    window.salvarPerfilInicial = function() {
+      const nome = document.getElementById('welcome-nome').value.trim();
+      const cargo = document.getElementById('welcome-cargo').value.trim();
+
+      if (!nome || !cargo) {
+        showToast("Por favor, preencha seu nome e cargo!");
+        return;
+      }
+
+      localUser = { nome, cargo };
+      localStorage.setItem('gremio_user', JSON.stringify(localUser));
+      document.getElementById('welcome-screen').style.display = 'none';
+      showToast(`Bem-vindo(a), ${nome}!`);
+      atualizarUIPerfil();
+    };
+
+    function atualizarUIPerfil() {
+      if (localUser) {
+        document.getElementById('profile-display-name').innerText = localUser.nome;
+        document.getElementById('profile-display-role').innerText = localUser.cargo;
+      }
+    }
+
+    window.encerrarSessaoLocal = function() {
+      localStorage.removeItem('gremio_user');
+      localUser = null;
+      document.getElementById('welcome-nome').value = '';
+      document.getElementById('welcome-cargo').value = '';
+      checarIdentificacao();
+      showToast("Sessão finalizada!");
+    };
+
+    // --- UI HELPERS & TEMA ---
     window.showToast = function(message) {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -455,7 +555,7 @@
       const titles = {
         'dashboard': 'Dashboard', 'mural': 'Mural de Avisos', 'calendario': 'Calendário 📅',
         'integrantes': 'Integrantes', 'projetos': 'Projetos & Metas', 'tarefas': 'Tarefas',
-        'financeiro': 'Financeiro', 'documentos': 'Atas & Docs', 'admin': 'Área Restrita'
+        'financeiro': 'Financeiro', 'documentos': 'Atas & Docs', 'perfil': 'Meu Perfil', 'admin': 'Área Restrita'
       };
       document.getElementById('pageTitle').innerText = titles[tabName] || 'Painel';
 
@@ -463,15 +563,32 @@
       if (window.innerWidth <= 900) closeSidebar();
     };
 
-    // Autenticação Firebase
+    // --- FIREBASE AUTH ---
     document.getElementById('btnLogin').addEventListener('click', async () => {
       const email = document.getElementById('admin-email').value;
       const pass = document.getElementById('admin-pass').value;
+      if (!email || !pass) return showToast("Informe e-mail e senha!");
+
       try {
         await signInWithEmailAndPassword(auth, email, pass);
         showToast("Acesso autorizado!");
       } catch (error) {
-        showToast("Erro de autenticação: " + error.message);
+        showToast("Erro: " + error.message);
+      }
+    });
+
+    document.getElementById('btnRegister').addEventListener('click', async () => {
+      const email = document.getElementById('admin-email').value;
+      const pass = document.getElementById('admin-pass').value;
+
+      if (!email || !pass) return showToast("Preencha e-mail e senha para cadastrar!");
+      if (pass.length < 6) return showToast("A senha precisa ter no mínimo 6 caracteres!");
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, pass);
+        showToast("Conta criada e logada!");
+      } catch (error) {
+        showToast("Erro: " + error.message);
       }
     });
 
@@ -490,9 +607,10 @@
         document.getElementById('admin-lock').style.display = 'block';
         document.getElementById('admin-panel').style.display = 'none';
       }
+      render();
     });
 
-    // Listeners em tempo real (Firestore)
+    // --- LISTENERS TEMPO REAL ---
     function setupRealtimeListeners() {
       onSnapshot(collection(db, "membros"), snapshot => {
         state.membros = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -509,7 +627,9 @@
         render();
       });
 
-      onSnapshot(collection(db, "comunicados"), snapshot => {
+      // Ordenação de comunicados do mais recente ao mais antigo
+      const qComunicados = query(collection(db, "comunicados"), orderBy("createdAt", "desc"));
+      onSnapshot(qComunicados, snapshot => {
         state.comunicados = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         render();
       });
@@ -536,7 +656,7 @@
       });
     }
 
-    // Operações CRUD Firebase
+    // --- OPERAÇÕES SALVAR (CRUD) ---
     document.getElementById('btnSalvarMembro').addEventListener('click', async () => {
       const id = document.getElementById('membro-id').value;
       const data = {
@@ -662,6 +782,7 @@
       showToast("Tarefa salva!");
     });
 
+    // Upload com validações
     document.getElementById('btnSalvarAta').addEventListener('click', async () => {
       const titulo = document.getElementById('ata-titulo').value;
       const conteudo = document.getElementById('ata-conteudo').value;
@@ -672,6 +793,18 @@
 
       if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
+        
+        // Limite de Tamanho: 5MB
+        if (file.size > 5 * 1024 * 1024) {
+          return showToast("Erro: Arquivo maior que 5 MB!");
+        }
+
+        // Formatos aceitos
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (!['pdf', 'png', 'jpg', 'jpeg'].includes(ext)) {
+          return showToast("Erro: Apenas PDF, PNG e JPG são aceitos!");
+        }
+
         const storageRef = ref(storage, 'documentos/' + Date.now() + '_' + file.name);
         showToast("Enviando arquivo...");
         const snapshot = await uploadBytes(storageRef, file);
@@ -691,12 +824,9 @@
       showToast("Ata/Documento registrado!");
     });
 
-    // Funções globais com verificação de autenticação
+    // --- EXCLUSÃO E EDIÇÃO ---
     window.deleteItem = async function(col, id) {
-      if (!auth.currentUser) {
-        showToast("Acesso restrito à diretoria autenticada.");
-        return;
-      }
+      if (!auth.currentUser) return showToast("Acesso restrito à diretoria autenticada.");
       if (confirm("Deseja realmente remover este item?")) {
         await deleteDoc(doc(db, col, id));
         showToast("Item removido!");
@@ -777,7 +907,44 @@
       return '📁 Anexo';
     }
 
-    // Gráfico Financeiro
+    // NAVEGAÇÃO DE MESES NO CALENDÁRIO
+    window.changeMonth = function(offset) {
+      calendarDate.setMonth(calendarDate.getMonth() + offset);
+      renderCalendar();
+    };
+
+    function renderCalendar() {
+      const year = calendarDate.getFullYear();
+      const month = calendarDate.getMonth();
+      
+      const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+      document.getElementById('calendarMonthYear').innerText = `${monthNames[month]} ${year}`;
+
+      const monthDays = new Date(year, month + 1, 0).getDate();
+      const calGrid = document.getElementById('calendarDays');
+      calGrid.innerHTML = '';
+
+      const today = new Date();
+
+      for (let i = 1; i <= monthDays; i++) {
+        const evs = state.eventos.filter(e => {
+          if (!e.data) return false;
+          const [eYear, eMonth, eDay] = e.data.split('-').map(Number);
+          return eDay === i && (eMonth - 1) === month && eYear === year;
+        });
+
+        const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+
+        calGrid.innerHTML += `
+          <div class="calendar-day-cell ${isToday ? 'today' : ''}">
+            <span>${i}</span>
+            ${evs.map(e => `<span class="calendar-event-tag">${e.nome}</span>`).join('')}
+          </div>
+        `;
+      }
+    }
+
+    // GRÁFICO FINANCEIRO
     let finChartInstance = null;
     function initFinChart() {
       const canvas = document.getElementById("financeiroChart");
@@ -798,7 +965,6 @@
       });
     }
 
-    // Pesquisa
     window.filterContent = function() {
       const q = document.getElementById('globalSearch').value.toLowerCase();
       document.querySelectorAll('.item-list li').forEach(el => {
@@ -806,9 +972,10 @@
       });
     };
 
-    // Renderização Principal
+    // --- RENDERIZAÇÃO COMPLETA ---
     function render() {
       applyTheme();
+      const isAdmin = !!auth.currentUser;
 
       document.getElementById('dash-membro-count').innerText = state.membros.length;
       document.getElementById('dash-task-count').innerText = state.tarefas.length;
@@ -836,10 +1003,12 @@
             <strong>${m.nome}</strong>
             <p style="font-size:0.8rem; opacity:0.7;">${m.cargo} ${m.contato ? '• ' + m.contato : ''}</p>
           </div>
-          <div class="item-actions">
-            <button class="btn btn-sm" onclick="editMembro('${m.id}')"><i class="ph ph-pencil"></i></button>
-            <button class="btn btn-sm btn-danger" onclick="deleteItem('membros', '${m.id}')"><i class="ph ph-trash"></i></button>
-          </div>
+          ${isAdmin ? `
+            <div class="item-actions">
+              <button class="btn btn-sm" onclick="editMembro('${m.id}')"><i class="ph ph-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('membros', '${m.id}')"><i class="ph ph-trash"></i></button>
+            </div>
+          ` : ''}
         </li>
       `).join('');
 
@@ -850,43 +1019,28 @@
             <strong>${p.nome}</strong>
             <p style="font-size:0.8rem; opacity:0.7;">${p.desc || 'Sem descrição'} • Status: <b>${p.status || 'Em Andamento'}</b></p>
           </div>
-          <div class="item-actions">
-            <button class="btn btn-sm" onclick="editProjeto('${p.id}')"><i class="ph ph-pencil"></i></button>
-            <button class="btn btn-sm btn-danger" onclick="deleteItem('projetos', '${p.id}')"><i class="ph ph-trash"></i></button>
-          </div>
+          ${isAdmin ? `
+            <div class="item-actions">
+              <button class="btn btn-sm" onclick="editProjeto('${p.id}')"><i class="ph ph-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('projetos', '${p.id}')"><i class="ph ph-trash"></i></button>
+            </div>
+          ` : ''}
         </li>
       `).join('');
 
-      // Calendário Dinâmico (Com validação estrita de mês e ano)
-      const now = new Date();
-      const monthDays = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-      document.getElementById('calendarMonthYear').innerText = now.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-
-      const calGrid = document.getElementById('calendarDays');
-      calGrid.innerHTML = '';
-      for (let i = 1; i <= monthDays; i++) {
-        const evs = state.eventos.filter(e => {
-          if (!e.data) return false;
-          const [year, month, day] = e.data.split('-').map(Number);
-          return day === i && (month - 1) === now.getMonth() && year === now.getFullYear();
-        });
-
-        calGrid.innerHTML += `
-          <div class="calendar-day-cell ${i === now.getDate() ? 'today' : ''}">
-            <span>${i}</span>
-            ${evs.map(e => `<span class="calendar-event-tag">${e.nome}</span>`).join('')}
-          </div>
-        `;
-      }
+      // Calendário
+      renderCalendar();
 
       // Eventos Lista
       document.getElementById('public-eventos-list').innerHTML = state.eventos.map(e => `
         <li>
           <div><strong>${e.nome}</strong><p style="font-size:0.8rem; opacity:0.7;">Data: ${e.data || 'Sem data'}</p></div>
-          <div class="item-actions">
-            <button class="btn btn-sm" onclick="editEvento('${e.id}')"><i class="ph ph-pencil"></i></button>
-            <button class="btn btn-sm btn-danger" onclick="deleteItem('eventos', '${e.id}')"><i class="ph ph-trash"></i></button>
-          </div>
+          ${isAdmin ? `
+            <div class="item-actions">
+              <button class="btn btn-sm" onclick="editEvento('${e.id}')"><i class="ph ph-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('eventos', '${e.id}')"><i class="ph ph-trash"></i></button>
+            </div>
+          ` : ''}
         </li>
       `).join('');
 
@@ -894,10 +1048,12 @@
       const comHtml = state.comunicados.map(c => `
         <li style="border-left-color: var(--dourado);">
           <div><strong>${c.titulo}</strong><p style="font-size:0.85rem; opacity:0.8; margin-top:4px;">${c.msg}</p></div>
-          <div class="item-actions">
-            <button class="btn btn-sm" onclick="editComunicado('${c.id}')"><i class="ph ph-pencil"></i></button>
-            <button class="btn btn-sm btn-danger" onclick="deleteItem('comunicados', '${c.id}')"><i class="ph ph-trash"></i></button>
-          </div>
+          ${isAdmin ? `
+            <div class="item-actions">
+              <button class="btn btn-sm" onclick="editComunicado('${c.id}')"><i class="ph ph-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('comunicados', '${c.id}')"><i class="ph ph-trash"></i></button>
+            </div>
+          ` : ''}
         </li>
       `).join('');
       document.getElementById('dash-comunicados-list').innerHTML = comHtml;
@@ -907,10 +1063,12 @@
       document.getElementById('public-tarefas-list').innerHTML = state.tarefas.map(t => `
         <li>
           <div><strong>${t.titulo}</strong><p style="font-size:0.8rem; opacity:0.7;">Responsável: ${t.resp}</p></div>
-          <div class="item-actions">
-            <button class="btn btn-sm" onclick="editTask('${t.id}')"><i class="ph ph-pencil"></i></button>
-            <button class="btn btn-sm btn-danger" onclick="deleteItem('tarefas', '${t.id}')"><i class="ph ph-trash"></i></button>
-          </div>
+          ${isAdmin ? `
+            <div class="item-actions">
+              <button class="btn btn-sm" onclick="editTask('${t.id}')"><i class="ph ph-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('tarefas', '${t.id}')"><i class="ph ph-trash"></i></button>
+            </div>
+          ` : ''}
         </li>
       `).join('');
 
@@ -920,8 +1078,10 @@
           <div><strong>${f.desc}</strong><p style="font-size:0.8rem; opacity:0.7;">${f.tipo === 'receita' ? 'Entrada' : 'Saída'}</p></div>
           <div style="display:flex; align-items:center; gap:10px;">
             <strong style="color: ${f.tipo === 'receita' ? '#32C85A' : '#E11D48'};">${f.tipo === 'receita' ? '+' : '-'} ${currencyFormatter.format(f.valor || 0)}</strong>
-            <button class="btn btn-sm" onclick="editFinanceiro('${f.id}')"><i class="ph ph-pencil"></i></button>
-            <button class="btn btn-sm btn-danger" onclick="deleteItem('financeiro', '${f.id}')"><i class="ph ph-trash"></i></button>
+            ${isAdmin ? `
+              <button class="btn btn-sm" onclick="editFinanceiro('${f.id}')"><i class="ph ph-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteItem('financeiro', '${f.id}')"><i class="ph ph-trash"></i></button>
+            ` : ''}
           </div>
         </li>
       `).join('');
@@ -933,8 +1093,10 @@
             <span>${m.titulo}</span>
             <div>
               <span>${m.progresso}%</span>
-              <button class="btn btn-sm" style="margin-left:8px;" onclick="editMeta('${m.id}')"><i class="ph ph-pencil"></i></button>
-              <button class="btn btn-sm btn-danger" onclick="deleteItem('metas', '${m.id}')"><i class="ph ph-trash"></i></button>
+              ${isAdmin ? `
+                <button class="btn btn-sm" style="margin-left:8px;" onclick="editMeta('${m.id}')"><i class="ph ph-pencil"></i></button>
+                <button class="btn btn-sm btn-danger" onclick="deleteItem('metas', '${m.id}')"><i class="ph ph-trash"></i></button>
+              ` : ''}
             </div>
           </div>
           <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${m.progresso}%;"></div></div>
@@ -949,12 +1111,12 @@
             <p style="font-size:0.8rem; opacity:0.7;">${a.conteudo}</p>
             ${a.anexoUrl ? `<a href="${a.anexoUrl}" target="_blank" style="font-size:0.75rem; color:var(--roxo-light); margin-top:2px; display:inline-block;"><i class="ph ph-paperclip"></i> ${getFileIcon(a.anexoUrl)}</a>` : ''}
           </div>
-          <button class="btn btn-sm btn-danger" onclick="deleteItem('atas', '${a.id}')"><i class="ph ph-trash"></i></button>
+          ${isAdmin ? `<button class="btn btn-sm btn-danger" onclick="deleteItem('atas', '${a.id}')"><i class="ph ph-trash"></i></button>` : ''}
         </li>
       `).join('');
     }
 
-    // Sidebar Mobile Controls
+    // CONTROLES MOBILE
     window.toggleSidebar = function() {
       document.getElementById('sidebar').classList.toggle('open');
       document.getElementById('sidebarOverlay').classList.toggle('active');
@@ -965,7 +1127,8 @@
     };
     document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
 
-    // Inicializar Ouvintes
+    // INICIALIZAÇÃO
+    checarIdentificacao();
     setupRealtimeListeners();
   </script>
 </body>
