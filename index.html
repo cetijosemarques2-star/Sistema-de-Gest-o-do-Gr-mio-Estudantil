@@ -44,7 +44,7 @@
       position: fixed; height: 100vh; z-index: 1000; transition: transform 0.3s ease;
     }
 
-    .logo-container { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+    .logo-container { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
     .logo {
       width: 55px; height: 55px; border-radius: 50%; object-fit: cover;
       background: #fff; padding: 3px; box-shadow: 0 5px 15px rgba(0,0,0,.25); flex-shrink: 0;
@@ -52,15 +52,15 @@
     .logo-text h2 { font-size: 1.05rem; font-weight: 700; line-height: 1.2; color: #fff; }
     .logo-text span { font-size: 0.75rem; opacity: 0.85; color: #fff; }
 
-    .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto; }
     .nav-item button {
       width: 100%; background: transparent; border: none; display: flex; align-items: center; gap: 12px;
-      padding: 12px 16px; color: rgba(255, 255, 255, 0.85); border-radius: 10px; cursor: pointer;
-      transition: all 0.25s ease; font-weight: 500; font-size: 0.95rem; text-align: left;
+      padding: 10px 14px; color: rgba(255, 255, 255, 0.85); border-radius: 10px; cursor: pointer;
+      transition: all 0.25s ease; font-weight: 500; font-size: 0.9rem; text-align: left;
     }
     .nav-item button:hover, .nav-item.active button { background: rgba(255, 255, 255, 0.2); color: var(--branco); }
     .nav-item.active button { background: var(--branco); color: var(--roxo); font-weight: 700; }
-    .nav-item i { font-size: 1.25rem; }
+    .nav-item i { font-size: 1.2rem; }
 
     /* MAIN CONTENT */
     .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 25px; width: calc(100% - var(--sidebar-width)); transition: all 0.3s ease; display: flex; flex-direction: column; }
@@ -87,11 +87,15 @@
     @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
     /* CARDS */
-    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
     .card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); border: 1px solid var(--glass-border); margin-bottom: 20px; }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .card-title { font-size: 0.95rem; opacity: 0.8; font-weight: 600; }
-    .card-value { font-size: 1.8rem; font-weight: 700; }
+    .card-title { font-size: 0.9rem; opacity: 0.8; font-weight: 600; }
+    .card-value { font-size: 1.7rem; font-weight: 700; }
+
+    /* PROGRESS BAR */
+    .progress-bar-bg { background: rgba(0,0,0,0.1); border-radius: 10px; height: 12px; overflow: hidden; width: 100%; margin-top: 8px; }
+    .progress-bar-fill { background: linear-gradient(90deg, var(--verde), var(--verde-light)); height: 100%; border-radius: 10px; transition: width 0.4s ease; }
 
     /* FORMULÁRIOS & BOTÕES */
     .form-group { margin-bottom: 15px; }
@@ -100,12 +104,13 @@
     body.dark-mode .form-control { border-color: #475569; background: #0F172A; }
     .form-control:focus { border-color: var(--verde); }
 
-    .btn { background: linear-gradient(90deg, var(--verde), var(--verde-light)); color: var(--branco); border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; }
+    .btn { background: linear-gradient(90deg, var(--verde), var(--verde-light)); color: var(--branco); border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; }
     .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+    .btn-secondary { background: linear-gradient(90deg, var(--roxo), var(--roxo-light)); }
     .btn-danger { background: linear-gradient(90deg, #E11D48, #F43F5E); }
     .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
 
-    /* LISTAS E TABELAS */
+    /* LISTAS */
     .item-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
     .item-list li { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: rgba(0,0,0,0.03); border-radius: 10px; border-left: 4px solid var(--verde); }
     body.dark-mode .item-list li { background: rgba(255,255,255,0.03); }
@@ -125,10 +130,9 @@
     /* RODAPÉ */
     footer { text-align: center; padding: 15px; color: rgba(255, 255, 255, 0.8); font-size: 0.85rem; margin-top: auto; border-top: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.1); }
 
-    /* TELAS ESPECÍFICAS */
     .lock-screen { text-align: center; padding: 40px 20px; }
     .lock-screen i { font-size: 3rem; color: var(--roxo); margin-bottom: 15px; }
-    .admin-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .admin-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
     .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 900; }
 
     @media (max-width: 900px) {
@@ -137,6 +141,13 @@
       .sidebar-overlay.active { display: block; }
       .main-content { margin-left: 0; width: 100%; padding: 15px; }
       .mobile-toggle { display: block; }
+    }
+
+    /* ESTILOS IMPRESSÃO DE RELATÓRIO */
+    @media print {
+      .sidebar, .top-header, .search-box, .btn, .item-actions, #admin-lock, #toast-container { display: none !important; }
+      .main-content { margin-left: 0 !important; width: 100% !important; padding: 0 !important; }
+      .card { box-shadow: none !important; border: 1px solid #ccc !important; }
     }
   </style>
 </head>
@@ -148,7 +159,7 @@
   <div class="app-container">
     <aside class="sidebar" id="sidebar">
       <div class="logo-container">
-        <img src="logo-gremio.png" alt="Logo do Grêmio" class="logo" onerror="this.src='https://via.placeholder.com/55?text=G'">
+        <img src="logo-gremio.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/55?text=G'">
         <div class="logo-text">
           <h2>Grêmio Estudantil</h2>
           <span>CETI José Marques</span>
@@ -156,8 +167,10 @@
       </div>
       <ul class="nav-menu">
         <li class="nav-item active"><button onclick="openTab('dashboard', this)"><i class="ph ph-squares-four"></i><span>Dashboard</span></button></li>
+        <li class="nav-item"><button onclick="openTab('mural', this)"><i class="ph ph-megaphone"></i><span>Mural de Avisos</span></button></li>
+        <li class="nav-item"><button onclick="openTab('calendario', this)"><i class="ph ph-calendar"></i><span>Calendário</span></button></li>
         <li class="nav-item"><button onclick="openTab('integrantes', this)"><i class="ph ph-users"></i><span>Integrantes</span></button></li>
-        <li class="nav-item"><button onclick="openTab('projetos', this)"><i class="ph ph-kanban"></i><span>Projetos</span></button></li>
+        <li class="nav-item"><button onclick="openTab('projetos', this)"><i class="ph ph-kanban"></i><span>Projetos & Metas</span></button></li>
         <li class="nav-item"><button onclick="openTab('tarefas', this)"><i class="ph ph-check-square"></i><span>Tarefas</span></button></li>
         <li class="nav-item"><button onclick="openTab('financeiro', this)"><i class="ph ph-currency-dollar"></i><span>Financeiro</span></button></li>
         <li class="nav-item"><button onclick="openTab('documentos', this)"><i class="ph ph-folder"></i><span>Documentos & Atas</span></button></li>
@@ -175,6 +188,7 @@
           </div>
         </div>
         <div class="header-right">
+          <button class="btn btn-sm btn-secondary" onclick="imprimirRelatorio()" title="Imprimir Relatório"><i class="ph ph-printer"></i> Relatório</button>
           <button class="theme-toggle" onclick="toggleDarkMode()" title="Alternar Modo Escuro/Claro">
             <i class="ph ph-moon" id="themeIcon"></i>
           </button>
@@ -190,7 +204,7 @@
 
       <div class="search-box">
         <i class="ph ph-magnifying-glass" style="font-size: 1.2rem; opacity: 0.6;"></i>
-        <input type="text" id="globalSearch" placeholder="Pesquisar integrantes, tarefas ou finanças..." onkeyup="filterContent()">
+        <input type="text" id="globalSearch" placeholder="Pesquisar comunicados, eventos, tarefas ou finanças..." onkeyup="filterContent()">
       </div>
 
       <section id="tab-dashboard" class="tab-content active">
@@ -202,8 +216,27 @@
         </div>
 
         <div class="card">
-          <div class="card-header"><h3><i class="ph ph-bell" style="color: var(--dourado);"></i> Comunicados Recentes</h3></div>
+          <div class="card-header"><h3><i class="ph ph-megaphone" style="color: var(--dourado);"></i> Comunicados Recentes</h3></div>
           <ul class="item-list" id="dash-comunicados-list"></ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3><i class="ph ph-calendar-blank" style="color: var(--verde-light);"></i> Próximos Eventos</h3></div>
+          <ul class="item-list" id="dash-eventos-list"></ul>
+        </div>
+      </section>
+
+      <section id="tab-mural" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h3><i class="ph ph-megaphone"></i> Mural Oficial de Comunicados</h3></div>
+          <ul class="item-list" id="public-mural-list"></ul>
+        </div>
+      </section>
+
+      <section id="tab-calendario" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h3><i class="ph ph-calendar-event"></i> Agenda de Eventos & Reuniões</h3></div>
+          <ul class="item-list" id="public-eventos-list"></ul>
         </div>
       </section>
 
@@ -215,6 +248,11 @@
       </section>
 
       <section id="tab-projetos" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h3><i class="ph ph-target"></i> Metas Anuais da Gestão</h3></div>
+          <div id="public-metas-list"></div>
+        </div>
+
         <div class="card">
           <div class="card-header"><h3>Projetos Em Andamento</h3></div>
           <ul class="item-list" id="public-projetos-list"></ul>
@@ -280,11 +318,38 @@
           </div>
 
           <div class="card">
+            <div class="card-header"><h3><i class="ph ph-database"></i> Backup dos Dados (JSON)</h3></div>
+            <p style="font-size: 0.85rem; opacity:0.8; margin-bottom: 12px;">Exporte uma cópia de segurança de todos os dados ou restaure um arquivo baixado anteriormente.</p>
+            <div style="display:flex; gap: 10px; flex-wrap: wrap;">
+              <button class="btn btn-secondary" onclick="exportarBackup()"><i class="ph ph-download-simple"></i> Exportar Backup</button>
+              <label class="btn" style="cursor: pointer;">
+                <i class="ph ph-upload-simple"></i> Importar Backup
+                <input type="file" id="importFile" accept=".json" onchange="importarBackup(event)" style="display:none;">
+              </label>
+            </div>
+          </div>
+
+          <div class="card">
             <div class="card-header"><h3><i class="ph ph-chart-line-up"></i> Avaliação dos Membros</h3></div>
             <div style="max-height: 250px;"><canvas id="desempenhoChart"></canvas></div>
           </div>
 
           <div class="admin-sections">
+            <div class="card">
+              <h3><i class="ph ph-megaphone"></i> Novo Comunicado (Mural)</h3><br>
+              <div class="form-group"><label>Título do Aviso</label><input type="text" id="com-titulo" class="form-control"></div>
+              <div class="form-group"><label>Mensagem</label><textarea id="com-msg" class="form-control" rows="3"></textarea></div>
+              <button class="btn" onclick="addComunicado()"><i class="ph ph-plus"></i> Publicar Aviso</button>
+            </div>
+
+            <div class="card">
+              <h3><i class="ph ph-calendar-plus"></i> Agendar Evento</h3><br>
+              <div cllass="form-group"><label>Nome do Evento</label><input type="text" id="ev-nome" class="form-control"></div>
+              <div class="form-group"><label>Data / Horário</label><input type="text" id="ev-data" class="form-control" placeholder="Ex: 15/08 às 14:00"></div>
+              <div class="form-group"><label>Local</label><input type="text" id="ev-local" class="form-control" placeholder="Ex: Quadra de Esportes"></div>
+              <button class="btn" onclick="addEvento()"><i class="ph ph-check"></i> Agendar Evento</button>
+            </div>
+
             <div class="card">
               <h3 id="form-membro-title"><i class="ph ph-user-plus"></i> Gerenciar Integrante</h3><br>
               <input type="hidden" id="membro-id">
@@ -316,6 +381,13 @@
                 </select>
               </div>
               <button class="btn" onclick="addFinanceiro()"><i class="ph ph-plus"></i> Salvar Registro</button>
+            </div>
+
+            <div class="card">
+              <h3><i class="ph ph-target"></i> Nova Meta da Gestão</h3><br>
+              <div class="form-group"><label>Título da Meta</label><input type="text" id="meta-titulo" class="form-control" placeholder="Ex: Reforma dos Puffs"></div>
+              <div class="form-group"><label>Progresso (%)</label><input type="number" min="0" max="100" id="meta-progresso" class="form-control" placeholder="70"></div>
+              <button class="btn" onclick="addMeta()"><i class="ph ph-plus"></i> Cadastrar Meta</button>
             </div>
 
             <div class="card">
@@ -364,7 +436,13 @@
         { id: 1, nome: "Reforma da Sala do Grêmio", desc: "Pintura e novos puffs" }
       ],
       comunicados: [
-        { titulo: "Reunião de Alinhamento", msg: "Sexta-feira às 15h no auditório." }
+        { id: 1, titulo: "Reunião Geral", msg: "Sexta-feira às 15h no auditório principal." }
+      ],
+      eventos: [
+        { id: 1, nome: "Abertura dos Jogos Escolares", data: "10 de Agosto às 08:00", local: "Quadra Poliesportiva" }
+      ],
+      metas: [
+        { id: 1, titulo: "Arrecadação para Reforma da Sala", progresso: 65 }
       ],
       financeiro: [
         { id: 1, desc: "Venda de Rifas", valor: 350.00, tipo: "receita" },
@@ -396,7 +474,7 @@
       }
     }
 
-    // SISTEMA DE TOAST NOTIFICATIONS
+    // TOAST NOTIFICATIONS
     function showToast(message, icon = "ph-check-circle") {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -416,8 +494,9 @@
       if (element) element.parentElement.classList.add('active');
 
       const titles = {
-        'dashboard': 'Dashboard', 'integrantes': 'Integrantes', 'projetos': 'Projetos',
-        'tarefas': 'Tarefas', 'financeiro': 'Financeiro', 'documentos': 'Atas & Docs', 'admin': 'Área Restrita'
+        'dashboard': 'Dashboard', 'mural': 'Mural de Avisos', 'calendario': 'Calendário',
+        'integrantes': 'Integrantes', 'projetos': 'Projetos & Metas', 'tarefas': 'Tarefas',
+        'financeiro': 'Financeiro', 'documentos': 'Atas & Docs', 'admin': 'Área Restrita'
       };
       document.getElementById('pageTitle').innerText = titles[tabName] || 'Painel';
 
@@ -445,6 +524,37 @@
       showToast("Sessão encerrada.");
     }
 
+    // BACKUP EM JSON
+    function exportarBackup() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `backup_gremio_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast("Backup baixado com sucesso!");
+    }
+
+    function importarBackup(event) {
+      const fileReader = new FileReader();
+      fileReader.onload = function(e) {
+        try {
+          state = JSON.parse(e.target.result);
+          saveState();
+          showToast("Dados restaurados com sucesso!");
+        } catch (error) {
+          showToast("Arquivo de backup inválido!", "ph-x-circle");
+        }
+      };
+      fileReader.readAsText(event.target.files[0]);
+    }
+
+    // RELATÓRIO
+    function imprimirRelatorio() {
+      window.print();
+    }
+
     // CRUD INTEGRANTES
     function addMembro() {
       const id = document.getElementById('membro-id').value;
@@ -470,7 +580,6 @@
       document.getElementById('membro-nome').value = '';
       document.getElementById('membro-cargo').value = '';
       document.getElementById('membro-contato').value = '';
-      document.getElementById('form-membro-title').innerText = "Gerenciar Integrante";
       
       saveState();
       initChart();
@@ -484,7 +593,6 @@
       document.getElementById('membro-cargo').value = m.cargo;
       document.getElementById('membro-contato').value = m.contato || '';
       document.getElementById('membro-nota').value = m.nota || 5;
-      document.getElementById('form-membro-title').innerText = "Editar Integrante";
       openTab('admin');
       showToast("Editando integrante...");
     }
@@ -498,7 +606,7 @@
       }
     }
 
-    // CRUD FINANCEIRO (INSERIR / EDITAR / REMOVER)
+    // CRUD FINANCEIRO
     function addFinanceiro() {
       const id = document.getElementById('fin-id').value;
       const desc = document.getElementById('fin-desc').value;
@@ -521,7 +629,6 @@
       document.getElementById('fin-id').value = '';
       document.getElementById('fin-desc').value = '';
       document.getElementById('fin-valor').value = '';
-      document.getElementById('form-fin-title').innerText = "Lançar / Modificar Caixa";
 
       saveState();
       initFinChart();
@@ -534,7 +641,6 @@
       document.getElementById('fin-desc').value = f.desc;
       document.getElementById('fin-valor').value = f.valor;
       document.getElementById('fin-tipo').value = f.tipo;
-      document.getElementById('form-fin-title').innerText = "Editar Transação Financeira";
       openTab('admin');
       showToast("Editando transação...");
     }
@@ -548,7 +654,7 @@
       }
     }
 
-    // TAREFAS & PROJETOS
+    // TAREFAS, PROJETOS, METAS, COMUNICADOS & EVENTOS
     function addTask() {
       const titulo = document.getElementById('task-titulo').value;
       const resp = document.getElementById('task-resp').value;
@@ -576,6 +682,44 @@
       saveState();
       document.getElementById('proj-nome').value = '';
       showToast("Projeto cadastrado!");
+    }
+
+    function addComunicado() {
+      const titulo = document.getElementById('com-titulo').value;
+      const msg = document.getElementById('com-msg').value;
+      if (!titulo || !msg) return showToast("Preencha o título e mensagem!", "ph-warning");
+
+      state.comunicados.unshift({ id: Date.now(), titulo, msg });
+      saveState();
+      document.getElementById('com-titulo').value = '';
+      document.getElementById('com-msg').value = '';
+      showToast("Comunicado publicado!");
+    }
+
+    function addEvento() {
+      const nome = document.getElementById('ev-nome').value;
+      const data = document.getElementById('ev-data').value;
+      const local = document.getElementById('ev-local').value;
+      if (!nome || !data) return showToast("Preencha nome e data do evento!", "ph-warning");
+
+      state.eventos.push({ id: Date.now(), nome, data, local });
+      saveState();
+      document.getElementById('ev-nome').value = '';
+      document.getElementById('ev-data').value = '';
+      document.getElementById('ev-local').value = '';
+      showToast("Evento agendado!");
+    }
+
+    function addMeta() {
+      const titulo = document.getElementById('meta-titulo').value;
+      const progresso = parseInt(document.getElementById('meta-progresso').value) || 0;
+      if (!titulo) return showToast("Preencha o título da meta!", "ph-warning");
+
+      state.metas.push({ id: Date.now(), titulo, progresso: Math.min(100, Math.max(0, progresso)) });
+      saveState();
+      document.getElementById('meta-titulo').value = '';
+      document.getElementById('meta-progresso').value = '';
+      showToast("Meta cadastrada!");
     }
 
     // ATAS
@@ -613,9 +757,9 @@
     // FILTRO PESQUISA
     function filterContent() {
       const query = document.getElementById('globalSearch').value.toLowerCase();
-      document.querySelectorAll('.item-list li').forEach(li => {
-        const text = li.innerText.toLowerCase();
-        li.style.display = text.includes(query) ? 'flex' : 'none';
+      document.querySelectorAll('.item-list li, #public-metas-list .meta-card').forEach(el => {
+        const text = el.innerText.toLowerCase();
+        el.style.display = text.includes(query) ? 'flex' : 'none';
       });
     }
 
@@ -672,7 +816,41 @@
       elemSaldo.innerText = `R$ ${saldoTotal.toFixed(2)}`;
       elemSaldo.style.color = saldoTotal < 0 ? '#E11D48' : 'var(--verde-light)';
 
-      // Lista Financeira Detalhada (Aba Financeiro)
+      // Comunicados
+      const htmlComunicados = state.comunicados.map(c => `
+        <li style="border-left-color: var(--dourado);">
+          <div><strong>${c.titulo}</strong><p style="font-size:0.85rem; opacity:0.8; margin-top:4px;">${c.msg}</p></div>
+        </li>
+      `).join('');
+      document.getElementById('dash-comunicados-list').innerHTML = htmlComunicados;
+      document.getElementById('public-mural-list').innerHTML = htmlComunicados;
+
+      // Eventos
+      const htmlEventos = state.eventos.map(e => `
+        <li style="border-left-color: var(--verde-light);">
+          <div>
+            <strong>${e.nome}</strong>
+            <p style="font-size:0.8rem; opacity:0.7;"><i class="ph ph-clock"></i> ${e.data} • <i class="ph ph-map-pin"></i> ${e.local || 'Escola'}</p>
+          </div>
+        </li>
+      `).join('');
+      document.getElementById('dash-eventos-list').innerHTML = htmlEventos;
+      document.getElementById('public-eventos-list').innerHTML = htmlEventos;
+
+      // Metas
+      document.getElementById('public-metas-list').innerHTML = state.metas.map(m => `
+        <div class="meta-card" style="margin-bottom: 15px;">
+          <div style="display:flex; justify-content:space-between; font-weight:600; font-size:0.9rem;">
+            <span>${m.titulo}</span>
+            <span>${m.progresso}%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: ${m.progresso}%;"></div>
+          </div>
+        </div>
+      `).join('');
+
+      // Lista Financeira
       document.getElementById('public-financeiro-list').innerHTML = state.financeiro.map(f => `
         <li style="border-left-color: ${f.tipo === 'receita' ? '#32C85A' : '#E11D48'};">
           <div>
@@ -722,13 +900,6 @@
         <li>
           <div><strong>${p.nome}</strong><p style="font-size:0.8rem; opacity:0.7;">${p.desc}</p></div>
           <span class="status-badge status-progress">Ativo</span>
-        </li>
-      `).join('');
-
-      // Comunicados
-      document.getElementById('dash-comunicados-list').innerHTML = state.comunicados.map(c => `
-        <li style="border-left-color: var(--dourado);">
-          <div><strong>${c.titulo}</strong><p style="font-size:0.8rem; opacity:0.7;">${c.msg}</p></div>
         </li>
       `).join('');
 
