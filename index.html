@@ -104,7 +104,7 @@
     .item-actions { display: flex; gap: 6px; }
 
     /* CALENDÁRIO */
-    .calendar-header { display: flex; justify-content: space-between; align-align: center; margin-bottom: 15px; }
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
     .calendar-day-head { font-weight: 700; font-size: 0.85rem; padding: 8px; opacity: 0.7; }
     .calendar-day-cell { background: rgba(0,0,0,0.03); min-height: 80px; padding: 6px; border-radius: 8px; text-align: left; font-size: 0.8rem; border: 1px solid transparent; }
@@ -333,14 +333,10 @@
         <div id="admin-lock" class="card" style="text-align: center; padding: 40px 20px;">
           <i class="ph ph-lock-key" style="font-size: 3rem; color: var(--roxo); margin-bottom: 15px;"></i>
           <h2>Autenticação da Diretoria</h2>
-          <p style="opacity: 0.7; margin-bottom: 20px;">Entre com seu e-mail e senha de administrador.</p>
+          <p style="opacity: 0.7; margin-bottom: 20px;">Digite a senha de administrador da Diretoria para gerenciar.</p>
           <div style="max-width: 320px; margin: 0 auto;">
-            <input type="email" id="admin-email" class="form-control" placeholder="Seu E-mail (ex: admin@gmail.com)" style="margin-bottom: 10px;">
-            <input type="password" id="admin-pass" class="form-control" placeholder="Sua Senha (mínimo 6 caracteres)" style="margin-bottom: 15px;">
-            <div style="display: flex; gap: 10px;">
-              <button class="btn" style="flex: 1; justify-content: center;" id="btnLogin"><i class="ph ph-key"></i> Entrar</button>
-              <button class="btn btn-secondary" style="flex: 1; justify-content: center;" id="btnRegister"><i class="ph ph-user-plus"></i> Criar Conta</button>
-            </div>
+            <input type="password" id="admin-pass" class="form-control" placeholder="Senha da Diretoria" style="margin-bottom: 15px;">
+            <button class="btn" style="width: 100%; justify-content: center;" id="btnLogin"><i class="ph ph-key"></i> Entrar no Painel</button>
           </div>
         </div>
 
@@ -435,7 +431,6 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
@@ -452,7 +447,6 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
 
@@ -472,7 +466,7 @@
       metas: [],
       financeiro: [],
       atas: [],
-      currentUser: null
+      currentUser: JSON.parse(sessionStorage.getItem('gremio_admin_session')) || null
     };
 
     // --- SESSÃO LOCAL & PERFIL ---
@@ -563,52 +557,39 @@
       if (window.innerWidth <= 900) closeSidebar();
     };
 
-    // --- FIREBASE AUTH ---
-    document.getElementById('btnLogin').addEventListener('click', async () => {
-      const email = document.getElementById('admin-email').value;
+    // --- AUTENTICAÇÃO LOCAL (SENHA DIRETA) ---
+    document.getElementById('btnLogin').addEventListener('click', () => {
       const pass = document.getElementById('admin-pass').value;
-      if (!email || !pass) return showToast("Informe e-mail e senha!");
-
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
+      if (pass === "Gremio26") {
+        state.currentUser = { role: "Diretoria", email: "diretoria@gremio.com" };
+        sessionStorage.setItem('gremio_admin_session', JSON.stringify(state.currentUser));
+        document.getElementById('admin-pass').value = '';
         showToast("Acesso autorizado!");
-      } catch (error) {
-        showToast("Erro: " + error.message);
+        updateAdminUI();
+        render();
+      } else {
+        showToast("Senha incorreta!");
       }
     });
 
-    document.getElementById('btnRegister').addEventListener('click', async () => {
-      const email = document.getElementById('admin-email').value;
-      const pass = document.getElementById('admin-pass').value;
-
-      if (!email || !pass) return showToast("Preencha e-mail e senha para cadastrar!");
-      if (pass.length < 6) return showToast("A senha precisa ter no mínimo 6 caracteres!");
-
-      try {
-        await createUserWithEmailAndPassword(auth, email, pass);
-        showToast("Conta criada e logada!");
-      } catch (error) {
-        showToast("Erro: " + error.message);
-      }
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      state.currentUser = null;
+      sessionStorage.removeItem('gremio_admin_session');
+      showToast("Sessão de administração encerrada.");
+      updateAdminUI();
+      render();
     });
 
-    document.getElementById('btnLogout').addEventListener('click', async () => {
-      await signOut(auth);
-      showToast("Sessão encerrada.");
-    });
-
-    onAuthStateChanged(auth, user => {
-      state.currentUser = user;
-      if (user) {
+    function updateAdminUI() {
+      if (state.currentUser) {
         document.getElementById('admin-lock').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
-        document.getElementById('user-email-display').innerText = user.email;
+        document.getElementById('user-email-display').innerText = state.currentUser.email;
       } else {
         document.getElementById('admin-lock').style.display = 'block';
         document.getElementById('admin-panel').style.display = 'none';
       }
-      render();
-    });
+    }
 
     // --- LISTENERS TEMPO REAL ---
     function setupRealtimeListeners() {
@@ -627,7 +608,6 @@
         render();
       });
 
-      // Ordenação de comunicados do mais recente ao mais antigo
       const qComunicados = query(collection(db, "comunicados"), orderBy("createdAt", "desc"));
       onSnapshot(qComunicados, snapshot => {
         state.comunicados = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -782,7 +762,7 @@
       showToast("Tarefa salva!");
     });
 
-    // Upload com validações
+    // Upload com validações aprimoradas por MIME type
     document.getElementById('btnSalvarAta').addEventListener('click', async () => {
       const titulo = document.getElementById('ata-titulo').value;
       const conteudo = document.getElementById('ata-conteudo').value;
@@ -799,10 +779,10 @@
           return showToast("Erro: Arquivo maior que 5 MB!");
         }
 
-        // Formatos aceitos
-        const ext = file.name.split('.').pop().toLowerCase();
-        if (!['pdf', 'png', 'jpg', 'jpeg'].includes(ext)) {
-          return showToast("Erro: Apenas PDF, PNG e JPG são aceitos!");
+        // Validação estrita de formato por MIME Type
+        const allowedTypes = ["application/pdf", "image/png", "image/jpeg"];
+        if (!allowedTypes.includes(file.type)) {
+          return showToast("Erro: Formato inválido! Apenas PDF, PNG e JPG são permitidos.");
         }
 
         const storageRef = ref(storage, 'documentos/' + Date.now() + '_' + file.name);
@@ -826,7 +806,7 @@
 
     // --- EXCLUSÃO E EDIÇÃO ---
     window.deleteItem = async function(col, id) {
-      if (!auth.currentUser) return showToast("Acesso restrito à diretoria autenticada.");
+      if (!state.currentUser) return showToast("Acesso restrito à diretoria autenticada.");
       if (confirm("Deseja realmente remover este item?")) {
         await deleteDoc(doc(db, col, id));
         showToast("Item removido!");
@@ -975,7 +955,7 @@
     // --- RENDERIZAÇÃO COMPLETA ---
     function render() {
       applyTheme();
-      const isAdmin = !!auth.currentUser;
+      const isAdmin = !!state.currentUser;
 
       document.getElementById('dash-membro-count').innerText = state.membros.length;
       document.getElementById('dash-task-count').innerText = state.tarefas.length;
@@ -1129,6 +1109,7 @@
 
     // INICIALIZAÇÃO
     checarIdentificacao();
+    updateAdminUI();
     setupRealtimeListeners();
   </script>
 </body>
