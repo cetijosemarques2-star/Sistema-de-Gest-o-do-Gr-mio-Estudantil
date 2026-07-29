@@ -28,12 +28,21 @@
       --text-muted: #6B7280;
       --border-color: #E5E7EB;
       --vermelho-light: #EF4444;
+      --sidebar-bg: #341A84;
+    }
+
+    body.dark-mode {
+      --bg-color: #0F172A;
+      --card-bg: #1E293B;
+      --text-color: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border-color: #334155;
+      --sidebar-bg: #0F172A;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+    body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
 
-    /* Header & Logo */
     header {
       background: var(--gradiente-header);
       color: var(--branco);
@@ -45,39 +54,18 @@
       z-index: 100;
     }
 
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand-logo img {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      border: 2px solid var(--amarelo);
-      object-fit: cover;
-      background: var(--branco);
-    }
-
+    .brand-logo { display: flex; align-items: center; gap: 12px; }
+    .brand-logo img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--amarelo); object-fit: cover; background: var(--branco); }
     .brand-title h1 { font-size: 1.2rem; font-weight: 700; color: var(--branco); }
     .brand-title p { font-size: 0.75rem; color: var(--amarelo); }
 
-    .menu-toggle {
-      background: none;
-      border: none;
-      color: var(--branco);
-      font-size: 1.5rem;
-      cursor: pointer;
-      display: none;
-    }
+    .menu-toggle { background: none; border: none; color: var(--branco); font-size: 1.5rem; cursor: pointer; display: none; }
 
-    /* Layout & Navegação */
     .app-container { display: flex; flex: 1; position: relative; }
     
     sidebar {
       width: 240px;
-      background: var(--roxo-escuro);
+      background: var(--sidebar-bg);
       border-right: 1px solid var(--border-color);
       padding: 20px 10px;
       display: flex;
@@ -115,18 +103,30 @@
       border: 1px dashed var(--amarelo);
     }
 
-    .nav-btn.admin-btn:hover, .nav-btn.admin-btn.active {
-      background: var(--amarelo);
-      color: #1E293B;
+    .theme-toggle-btn {
+      background: rgba(255,255,255,0.1);
+      color: var(--branco);
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     main { flex: 1; padding: 25px; overflow-y: auto; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Componentes Gerais */
-    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-    
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+
+    .kpi-card {
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .kpi-icon { font-size: 2rem; color: var(--verde); }
+
     .card {
       background: var(--card-bg);
       border-radius: 12px;
@@ -136,21 +136,9 @@
       border-bottom: 2px solid var(--roxo);
       box-shadow: 0 4px 12px rgba(0,0,0,0.04);
       margin-bottom: 20px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-    }
-
-    .card h3 {
-      color: var(--roxo);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 15px;
-    }
+    .card h3 { color: var(--roxo); display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
 
     .btn {
       background: var(--gradiente-botao);
@@ -164,13 +152,8 @@
       align-items: center;
       gap: 6px;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 6px rgba(11, 142, 47, 0.25);
     }
-    .btn:hover { 
-      opacity: 0.95; 
-      transform: translateY(-1px);
-      box-shadow: 0 4px 10px rgba(11, 142, 47, 0.35);
-    }
+    .btn:hover { opacity: 0.95; transform: translateY(-1px); }
     .btn-warning { background: var(--amarelo); color: #1E293B; }
     .btn-danger { background: var(--vermelho-light); color: var(--branco); }
     .btn-sm { padding: 4px 10px; font-size: 0.8rem; }
@@ -196,100 +179,48 @@
       justify-content: center;
       font-weight: bold;
       font-size: 0.9rem;
-      border: 2px solid var(--branco);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      position: relative;
+      background-size: cover;
+      background-position: center;
     }
 
-    /* Calendário */
+    .online-indicator {
+      width: 10px;
+      height: 10px;
+      background: #10B981;
+      border-radius: 50%;
+      border: 2px solid var(--card-bg);
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
     .calendar-day-header { text-align: center; font-size: 0.75rem; font-weight: bold; color: var(--text-muted); }
-    .calendar-day-cell {
-      min-height: 70px;
-      background: rgba(0,0,0,0.02);
-      border-radius: 6px;
-      padding: 6px;
-      font-size: 0.8rem;
-      border: 1px solid var(--border-color);
-    }
+    .calendar-day-cell { min-height: 70px; background: rgba(0,0,0,0.02); border-radius: 6px; padding: 6px; font-size: 0.8rem; border: 1px solid var(--border-color); }
     .calendar-day-cell.today { border: 2px solid var(--roxo); background: rgba(75, 42, 168, 0.05); font-weight: bold; }
 
-    /* Chat Layout */
     .chat-layout { display: flex; gap: 15px; height: 450px; }
     .chat-rooms { width: 150px; display: flex; flex-direction: column; gap: 6px; }
-    .room-btn {
-      padding: 10px;
-      background: rgba(0,0,0,0.04);
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      text-align: left;
-      font-size: 0.85rem;
-      color: var(--text-color);
-    }
+    .room-btn { padding: 10px; background: rgba(0,0,0,0.04); border: none; border-radius: 6px; cursor: pointer; text-align: left; font-size: 0.85rem; color: var(--text-color); }
     .room-btn.active { background: var(--roxo); color: var(--branco); }
     .chat-main { flex: 1; display: flex; flex-direction: column; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; }
-    
-    .chat-msg {
-      margin-bottom: 12px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      max-width: 80%;
-      background: var(--verde-claro);
-      color: #06230B;
-      border: 1px solid var(--border-color);
-    }
-    .chat-msg.me {
-      margin-left: auto;
-      background: var(--roxo);
-      color: var(--branco);
-      border: none;
-    }
-    .chat-msg .meta {
-      font-size: 0.72rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 4px;
-      opacity: 0.85;
-    }
+    .chat-msg { margin-bottom: 12px; padding: 10px 14px; border-radius: 10px; max-width: 80%; background: var(--verde-claro); color: #06230B; }
+    .chat-msg.me { margin-left: auto; background: var(--roxo); color: var(--branco); }
+    .chat-msg .meta { font-size: 0.72rem; display: flex; justify-content: space-between; gap: 12px; margin-bottom: 4px; opacity: 0.85; }
 
-    /* Tag de Status para Projetos */
-    .badge-status {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: bold;
-      color: white;
-    }
+    .badge-status { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; color: white; }
     .badge-em_andamento { background: var(--amarelo); color: #1E293B; }
     .badge-concluido { background: var(--verde); }
     .badge-planejamento { background: var(--roxo); }
 
-    /* Toast Notification */
     #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
-    .toast {
-      padding: 12px 20px;
-      background: var(--amarelo);
-      color: #1E293B;
-      font-weight: 600;
-      border-radius: 8px;
-      margin-top: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
+    .toast { padding: 12px 20px; background: var(--amarelo); color: #1E293B; font-weight: 600; border-radius: 8px; margin-top: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
-    /* Responsividade */
     @media (max-width: 768px) {
       .menu-toggle { display: block; }
-      sidebar {
-        position: absolute;
-        left: -250px;
-        top: 0;
-        height: 100%;
-        box-shadow: 4px 0 10px rgba(0,0,0,0.2);
-      }
+      sidebar { position: absolute; left: -250px; top: 0; height: 100%; box-shadow: 4px 0 10px rgba(0,0,0,0.2); }
       sidebar.open { left: 0; }
       .chat-layout { flex-direction: column; height: 550px; }
       .chat-rooms { width: 100%; flex-direction: row; }
@@ -300,15 +231,15 @@
 
   <header>
     <div class="brand-logo">
-      <button class="menu-toggle" id="btnToggleMenu" onclick="toggleSidebar()"><i class="ph ph-list"></i></button>
-      <img id="app-logo-header" src="logo.png" alt="Logo Grêmio Estudantil CETI José Marques" onerror="this.src='https://via.placeholder.com/45/0B8E2F/ffffff?text=GE'">
+      <button class="menu-toggle" onclick="toggleSidebar()"><i class="ph ph-list"></i></button>
+      <img id="app-logo-header" src="logo.png" alt="Logo Grêmio" onerror="this.src='https://via.placeholder.com/45/0B8E2F/ffffff?text=GE'">
       <div class="brand-title">
-        <h1 id="chapa-header-title">Gestão Grêmio</h1>
-        <p id="chapa-header-sub">Grêmio Estudantil • CETI José Marques</p>
+        <h1>Gestão Grêmio</h1>
+        <p>CETI José Marques</p>
       </div>
     </div>
     <div style="display: flex; align-items: center; gap: 12px;">
-      <div class="avatar-circle" id="headerAvatar">GE</div>
+      <div class="avatar-circle" id="headerAvatar">GE<div class="online-indicator"></div></div>
       <div>
         <div id="headerName" style="font-weight: bold; font-size: 0.88rem;">Estudante</div>
         <div id="headerRole" style="font-size: 0.72rem; color: var(--amarelo);">Membro</div>
@@ -335,20 +266,36 @@
       <button class="nav-btn" onclick="switchTab('calendario', this)"><i class="ph ph-calendar"></i> Calendário</button>
       <button class="nav-btn" onclick="switchTab('chat', this)"><i class="ph ph-chats-teardrop"></i> Chat Interno</button>
       <button class="nav-btn" onclick="switchTab('financeiro', this)"><i class="ph ph-chart-pie"></i> Financeiro</button>
+      
+      <button class="nav-btn theme-toggle-btn" onclick="toggleDarkMode()"><i class="ph ph-moon"></i> Modo Escuro</button>
       <button class="nav-btn admin-btn" onclick="switchTab('admin', this)"><i class="ph ph-lock-key"></i> Área Restrita</button>
     </sidebar>
 
     <main>
       <section id="tab-dashboard" class="tab-content active">
+        <div class="grid-4">
+          <div class="kpi-card">
+            <i class="ph ph-users kpi-icon"></i>
+            <div><p style="font-size:0.75rem; color:var(--text-muted);">Integrantes</p><h3 id="kpi-membros">0</h3></div>
+          </div>
+          <div class="kpi-card">
+            <i class="ph ph-folder-open kpi-icon"></i>
+            <div><p style="font-size:0.75rem; color:var(--text-muted);">Projetos Ativos</p><h3 id="kpi-projetos">0</h3></div>
+          </div>
+          <div class="kpi-card">
+            <i class="ph ph-calendar-event kpi-icon"></i>
+            <div><p style="font-size:0.75rem; color:var(--text-muted);">Eventos</p><h3 id="kpi-eventos">0</h3></div>
+          </div>
+          <div class="kpi-card">
+            <i class="ph ph-wallet kpi-icon"></i>
+            <div><p style="font-size:0.75rem; color:var(--text-muted);">Saldo Caixa</p><h3 id="dash-saldo" style="color:var(--verde);">R$ 0,00</h3></div>
+          </div>
+        </div>
+
         <div class="grid-2">
           <div class="card">
             <h3><i class="ph ph-info"></i> Último Comunicado</h3>
-            <div id="dash-ultimo-comunicado"><p style="color:var(--text-muted);">Sincronizando com o Firebase...</p></div>
-          </div>
-          <div class="card">
-            <h3><i class="ph ph-wallet"></i> Balanço Rápido</h3>
-            <p style="font-size:0.85rem; color:var(--text-muted);">Saldo Atual em Caixa:</p>
-            <h2 id="dash-saldo" style="color:var(--verde); margin-top:5px;">R$ 0,00</h2>
+            <div id="dash-ultimo-comunicado"><p style="color:var(--text-muted);">Sincronizando...</p></div>
           </div>
         </div>
       </section>
@@ -356,6 +303,7 @@
       <section id="tab-mural" class="tab-content">
         <div class="card">
           <h3><i class="ph ph-megaphone"></i> Mural de Avisos</h3>
+          <input type="text" id="search-mural" class="form-control" placeholder="🔍 Pesquisar avisos..." onkeyup="filterList('public-mural-list', this.value)">
           <ul id="public-mural-list" style="list-style:none;"></ul>
         </div>
       </section>
@@ -363,6 +311,7 @@
       <section id="tab-projetos" class="tab-content">
         <div class="card">
           <h3><i class="ph ph-folder"></i> Projetos da Gestão</h3>
+          <input type="text" id="search-projetos" class="form-control" placeholder="🔍 Pesquisar projetos..." onkeyup="filterProjects(this.value)">
           <div id="public-projetos-list"></div>
         </div>
       </section>
@@ -370,6 +319,7 @@
       <section id="tab-membros" class="tab-content">
         <div class="card">
           <h3><i class="ph ph-users"></i> Integrantes da Gestão</h3>
+          <input type="text" id="search-membros" class="form-control" placeholder="🔍 Pesquisar integrantes..." onkeyup="filterList('public-membros-list', this.value)">
           <ul id="public-membros-list" style="list-style:none;"></ul>
         </div>
       </section>
@@ -385,13 +335,7 @@
             </div>
           </div>
           <div class="calendar-grid">
-            <div class="calendar-day-header">Dom</div>
-            <div class="calendar-day-header">Seg</div>
-            <div class="calendar-day-header">Ter</div>
-            <div class="calendar-day-header">Qua</div>
-            <div class="calendar-day-header">Qui</div>
-            <div class="calendar-day-header">Sex</div>
-            <div class="calendar-day-header">Sáb</div>
+            <div class="calendar-day-header">Dom</div><div class="calendar-day-header">Seg</div><div class="calendar-day-header">Ter</div><div class="calendar-day-header">Qua</div><div class="calendar-day-header">Qui</div><div class="calendar-day-header">Sex</div><div class="calendar-day-header">Sáb</div>
           </div>
           <div id="calendarDays" class="calendar-grid"></div>
         </div>
@@ -399,7 +343,7 @@
 
       <section id="tab-chat" class="tab-content">
         <div class="card">
-          <h3><i class="ph ph-chats-teardrop"></i> Comunicação Interna Online</h3>
+          <h3><i class="ph ph-chats-teardrop"></i> Chat Interno Online</h3>
           <div class="chat-layout">
             <div class="chat-rooms">
               <button class="room-btn active" onclick="switchChatRoom('geral', this)"># Geral</button>
@@ -408,8 +352,8 @@
             </div>
             <div class="chat-main">
               <div class="chat-messages" id="chatMessages"></div>
-              <form class="chat-input-area" id="chatForm">
-                <input type="text" id="chatInput" class="form-control" placeholder="Digite sua mensagem ao vivo..." required>
+              <form id="chatForm" style="display:flex; gap:8px;">
+                <input type="text" id="chatInput" class="form-control" style="margin-bottom:0;" placeholder="Digite sua mensagem ao vivo..." required>
                 <button type="submit" class="btn"><i class="ph ph-paper-plane-right"></i></button>
               </form>
             </div>
@@ -446,17 +390,19 @@
 
           <div class="grid-2">
             <div class="card">
-              <h3><i class="ph ph-megaphone"></i> Novo Aviso no Mural</h3>
+              <h3 id="adm-mural-form-title"><i class="ph ph-megaphone"></i> Novo Aviso no Mural</h3>
+              <input type="hidden" id="adm-mural-id">
               <input type="text" id="adm-mural-titulo" class="form-control" placeholder="Título do aviso">
               <textarea id="adm-mural-texto" class="form-control" rows="3" placeholder="Descrição do comunicado"></textarea>
-              <button class="btn" onclick="addMuralItem()"><i class="ph ph-plus"></i> Publicar Aviso</button>
+              <button class="btn" onclick="saveMuralItem()"><i class="ph ph-floppy-disk"></i> Salvar Aviso</button>
               <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
               <h4>Avisos Publicados</h4>
               <ul id="adm-mural-list" style="list-style:none; margin-top:10px;"></ul>
             </div>
 
             <div class="card">
-              <h3><i class="ph ph-folder-plus"></i> Novo Projeto</h3>
+              <h3 id="adm-proj-form-title"><i class="ph ph-folder-plus"></i> Novo Projeto</h3>
+              <input type="hidden" id="adm-proj-id">
               <input type="text" id="adm-proj-nome" class="form-control" placeholder="Nome do Projeto">
               <textarea id="adm-proj-desc" class="form-control" rows="2" placeholder="Descrição detalhada"></textarea>
               <select id="adm-proj-status" class="form-control">
@@ -464,7 +410,7 @@
                 <option value="em_andamento">Em Andamento</option>
                 <option value="concluido">Concluído</option>
               </select>
-              <button class="btn" onclick="addProjetoItem()"><i class="ph ph-plus"></i> Cadastrar Projeto</button>
+              <button class="btn" onclick="saveProjetoItem()"><i class="ph ph-floppy-disk"></i> Salvar Projeto</button>
               <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
               <h4>Projetos Cadastrados</h4>
               <div id="adm-projetos-list" style="margin-top:10px;"></div>
@@ -472,33 +418,26 @@
 
             <div class="card">
               <h3><i class="ph ph-user-plus"></i> Novo Integrante</h3>
+              <input type="hidden" id="adm-membro-id">
               <input type="text" id="adm-membro-nome" class="form-control" placeholder="Nome completo">
               <input type="text" id="adm-membro-cargo" class="form-control" placeholder="Cargo (Ex: Presidente, Diretor)">
-              <button class="btn" onclick="addMembroItem()"><i class="ph ph-plus"></i> Adicionar Integrante</button>
+              <button class="btn" onclick="saveMembroItem()"><i class="ph ph-floppy-disk"></i> Salvar Integrante</button>
               <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
               <h4>Integrantes Cadastrados</h4>
               <ul id="adm-membros-list" style="list-style:none; margin-top:10px;"></ul>
             </div>
 
             <div class="card">
-              <h3><i class="ph ph-calendar-plus"></i> Novo Evento no Calendário</h3>
-              <input type="text" id="adm-evento-nome" class="form-control" placeholder="Nome do Evento">
-              <input type="date" id="adm-evento-data" class="form-control">
-              <button class="btn" onclick="addEventoItem()"><i class="ph ph-plus"></i> Agendar Evento</button>
-              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-              <h4>Eventos Agendados</h4>
-              <ul id="adm-eventos-list" style="list-style:none; margin-top:10px;"></ul>
-            </div>
-
-            <div class="card">
               <h3><i class="ph ph-currency-dollar-simple"></i> Novo Lançamento Financeiro</h3>
+              <input type="hidden" id="adm-fin-id">
               <input type="text" id="adm-fin-desc" class="form-control" placeholder="Descrição do gasto/receita">
               <input type="number" id="adm-fin-valor" class="form-control" placeholder="Valor (R$)" step="0.01">
               <select id="adm-fin-tipo" class="form-control">
                 <option value="receita">Entrada (Receita)</option>
                 <option value="despesa">Saída (Despesa)</option>
               </select>
-              <button class="btn" onc              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              <button class="btn" onclick="saveFinanceiroItem()"><i class="ph ph-floppy-disk"></i> Salvar Lançamento</button>
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
               <h4>Histórico de Lançamentos</h4>
               <ul id="adm-financeiro-list" style="list-style:none; margin-top:10px;"></ul>
             </div>
@@ -528,13 +467,8 @@
     const database = getDatabase(app);
 
     window.db = {
-      cfg: { chapa: "Gestão Grêmio", sub: "Grêmio Estudantil • CETI José Marques" },
       perfil: JSON.parse(localStorage.getItem('fala_estudante_perfil')) || null,
-      mural: [],
-      projetos: [],
-      eventos: [],
-      membros: [],
-      financeiro: [],
+      mural: [], projetos: [], eventos: [], membros: [], financeiro: [],
       chat: { geral: [], eventos: [], financeiro: [] }
     };
 
@@ -571,19 +505,16 @@
     let currentYear = new Date().getFullYear();
     let chartInstance = null;
 
-    function setSafeText(id, val) { const el = document.getElementById(id); if (el) el.innerText = val; }
-    function setSafeHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
 
-    function obterIniciais(nome) {
-      if (!nome) return "GE";
-      const partes = nome.trim().split(" ");
-      if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
-      return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+    function toggleSidebar() {
+      document.getElementById('mainSidebar').classList.toggle('open');
     }
 
     function showToast(msg) {
       const container = document.getElementById('toast-container');
-      if (!container) return;
       const toast = document.createElement('div');
       toast.className = 'toast';
       toast.innerText = msg;
@@ -591,12 +522,31 @@
       setTimeout(() => toast.remove(), 3000);
     }
 
-    function toggleSidebar() {
-      const sidebar = document.getElementById('mainSidebar');
-      if (sidebar) sidebar.classList.toggle('open');
+    function setSafeText(id, val) { const el = document.getElementById(id); if (el) el.innerText = val; }
+    function setSafeHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+
+    function obterIniciais(nome) {
+      if (!nome) return "GE";
+      const partes = nome.trim().split(" ");
+      return partes.length === 1 ? partes[0].substring(0, 2).toUpperCase() : (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
     }
 
-    /* AUTENTICAÇÃO ÁREA RESTRITA */
+    /* FILTROS E PESQUISA */
+    function filterList(listId, query) {
+      const items = document.querySelectorAll(`#${listId} li`);
+      items.forEach(item => {
+        item.style.display = item.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
+      });
+    }
+
+    function filterProjects(query) {
+      const items = document.querySelectorAll('#public-projetos-list > div');
+      items.forEach(item => {
+        item.style.display = item.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
+      });
+    }
+
+    /* AUTENTICAÇÃO E PERMISSÕES */
     function autenticarAdmin() {
       const input = document.getElementById('adminPasswordInput');
       if (input && input.value === SENHA_ADMIN) {
@@ -604,7 +554,7 @@
         document.getElementById('admin-login-card').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
         input.value = '';
-        showToast('Acesso concedido à Área Restrita!');
+        showToast('Acesso concedido!');
         renderAdminLists();
       } else {
         showToast('Senha incorreta!');
@@ -615,155 +565,169 @@
       isAdminAuth = false;
       document.getElementById('admin-login-card').style.display = 'block';
       document.getElementById('admin-panel').style.display = 'none';
-      showToast('Sessão administrativa encerrada.');
     }
 
-    /* FUNÇÕES EDICAO ADMIN */
-    function addMuralItem() {
+    /* SALVAR / EDITAR ITENS (CRUD) */
+    function saveMuralItem() {
+      const id = document.getElementById('adm-mural-id').value;
       const tit = document.getElementById('adm-mural-titulo').value.trim();
       const txt = document.getElementById('adm-mural-texto').value.trim();
-      if (!tit || !txt) return showToast('Preencha todos os campos do aviso.');
+      if (!tit || !txt) return showToast('Preencha os campos.');
 
-      window.db.mural.push({ id: Date.now(), titulo: tit, texto: txt, data: new Date().toLocaleDateString('pt-BR') });
+      if (id) {
+        const idx = window.db.mural.findIndex(m => m.id == id);
+        if (idx !== -1) window.db.mural[idx] = { ...window.db.mural[idx], titulo: tit, texto: txt };
+      } else {
+        window.db.mural.push({ id: Date.now(), titulo: tit, texto: txt, data: new Date().toLocaleDateString('pt-BR') });
+      }
+      
       window.saveDB();
+      document.getElementById('adm-mural-id').value = '';
       document.getElementById('adm-mural-titulo').value = '';
       document.getElementById('adm-mural-texto').value = '';
-      showToast('Aviso publicado!');
+      showToast('Aviso salvo!');
+    }
+
+    function editMuralItem(id) {
+      const item = window.db.mural.find(m => m.id === id);
+      if (!item) return;
+      document.getElementById('adm-mural-id').value = item.id;
+      document.getElementById('adm-mural-titulo').value = item.titulo;
+      document.getElementById('adm-mural-texto').value = item.texto;
     }
 
     function delMuralItem(id) {
       window.db.mural = window.db.mural.filter(m => m.id !== id);
       window.saveDB();
-      showToast('Aviso removido!');
     }
 
-    function addProjetoItem() {
+    function saveProjetoItem() {
+      const id = document.getElementById('adm-proj-id').value;
       const nome = document.getElementById('adm-proj-nome').value.trim();
       const desc = document.getElementById('adm-proj-desc').value.trim();
       const status = document.getElementById('adm-proj-status').value;
-      if (!nome || !desc) return showToast('Preencha os campos do projeto.');
+      if (!nome || !desc) return showToast('Preencha os campos.');
 
-      window.db.projetos.push({ id: Date.now(), nome, desc, status });
+      if (id) {
+        const idx = window.db.projetos.findIndex(p => p.id == id);
+        if (idx !== -1) window.db.projetos[idx] = { ...window.db.projetos[idx], nome, desc, status };
+      } else {
+        window.db.projetos.push({ id: Date.now(), nome, desc, status });
+      }
+
       window.saveDB();
+      document.getElementById('adm-proj-id').value = '';
       document.getElementById('adm-proj-nome').value = '';
       document.getElementById('adm-proj-desc').value = '';
-      showToast('Projeto cadastrado!');
+      showToast('Projeto salvo!');
+    }
+
+    function editProjetoItem(id) {
+      const item = window.db.projetos.find(p => p.id === id);
+      if (!item) return;
+      document.getElementById('adm-proj-id').value = item.id;
+      document.getElementById('adm-proj-nome').value = item.nome;
+      document.getElementById('adm-proj-desc').value = item.desc;
+      document.getElementById('adm-proj-status').value = item.status;
     }
 
     function delProjetoItem(id) {
       window.db.projetos = window.db.projetos.filter(p => p.id !== id);
       window.saveDB();
-      showToast('Projeto removido!');
     }
 
-    function addMembroItem() {
+    function saveMembroItem() {
+      const id = document.getElementById('adm-membro-id').value;
       const nome = document.getElementById('adm-membro-nome').value.trim();
       const cargo = document.getElementById('adm-membro-cargo').value.trim();
-      if (!nome || !cargo) return showToast('Preencha os dados do integrante.');
+      if (!nome || !cargo) return showToast('Preencha os dados.');
 
-      window.db.membros.push({ id: Date.now(), nome, cargo, avatar: obterIniciais(nome) });
+      if (id) {
+        const idx = window.db.membros.findIndex(m => m.id == id);
+        if (idx !== -1) window.db.membros[idx] = { ...window.db.membros[idx], nome, cargo, avatar: obterIniciais(nome) };
+      } else {
+        window.db.membros.push({ id: Date.now(), nome, cargo, avatar: obterIniciais(nome) });
+      }
+
       window.saveDB();
+      document.getElementById('adm-membro-id').value = '';
       document.getElementById('adm-membro-nome').value = '';
       document.getElementById('adm-membro-cargo').value = '';
-      showToast('Integrante adicionado!');
+      showToast('Integrante salvo!');
+    }
+
+    function editMembroItem(id) {
+      const item = window.db.membros.find(m => m.id === id);
+      if (!item) return;
+      document.getElementById('adm-membro-id').value = item.id;
+      document.getElementById('adm-membro-nome').value = item.nome;
+      document.getElementById('adm-membro-cargo').value = item.cargo;
     }
 
     function delMembroItem(id) {
       window.db.membros = window.db.membros.filter(m => m.id !== id);
       window.saveDB();
-      showToast('Integrante removido!');
     }
 
-    function addEventoItem() {
-      const nome = document.getElementById('adm-evento-nome').value.trim();
-      const data = document.getElementById('adm-evento-data').value;
-      if (!nome || !data) return showToast('Informe o nome e a data do evento.');
-
-      window.db.eventos.push({ id: Date.now(), nome, data, cor: "#0B8E2F" });
-      window.saveDB();
-      document.getElementById('adm-evento-nome').value = '';
-      document.getElementById('adm-evento-data').value = '';
-      showToast('Evento agendado!');
-    }
-
-    function delEventoItem(id) {
-      window.db.eventos = window.db.eventos.filter(e => e.id !== id);
-      window.saveDB();
-      showToast('Evento removido!');
-    }
-
-    function addFinanceiroItem() {
+    function saveFinanceiroItem() {
+      const id = document.getElementById('adm-fin-id').value;
       const desc = document.getElementById('adm-fin-desc').value.trim();
       const valor = parseFloat(document.getElementById('adm-fin-valor').value);
       const tipo = document.getElementById('adm-fin-tipo').value;
-      if (!desc || isNaN(valor) || valor <= 0) return showToast('Preencha a descrição e valor válidos.');
+      if (!desc || isNaN(valor) || valor <= 0) return showToast('Preencha os valores.');
 
-      window.db.financeiro.push({ 
-        id: Date.now(), 
-        desc, 
-        valor, 
-        tipo, 
-        data: new Date().toLocaleDateString('pt-BR') 
-      });
+      if (id) {
+        const idx = window.db.financeiro.findIndex(f => f.id == id);
+        if (idx !== -1) window.db.financeiro[idx] = { ...window.db.financeiro[idx], desc, valor, tipo };
+      } else {
+        window.db.financeiro.push({ id: Date.now(), desc, valor, tipo, data: new Date().toLocaleDateString('pt-BR') });
+      }
+
       window.saveDB();
+      document.getElementById('adm-fin-id').value = '';
       document.getElementById('adm-fin-desc').value = '';
       document.getElementById('adm-fin-valor').value = '';
-      showToast('Lançamento registrado!');
+      showToast('Lançamento salvo!');
+    }
+
+    function editFinanceiroItem(id) {
+      const item = window.db.financeiro.find(f => f.id === id);
+      if (!item) return;
+      document.getElementById('adm-fin-id').value = item.id;
+      document.getElementById('adm-fin-desc').value = item.desc;
+      document.getElementById('adm-fin-valor').value = item.valor;
+      document.getElementById('adm-fin-tipo').value = item.tipo;
     }
 
     function delFinanceiroItem(id) {
       window.db.financeiro = window.db.financeiro.filter(f => f.id !== id);
       window.saveDB();
-      showToast('Lançamento removido!');
     }
 
     /* INICIALIZAÇÃO */
     document.addEventListener("DOMContentLoaded", () => {
       if (!window.db.perfil) {
-        const welcomeModal = document.getElementById('welcome-screen');
-        if (welcomeModal) welcomeModal.style.display = 'flex';
+        document.getElementById('welcome-screen').style.display = 'flex';
       } else {
         updateProfileUI();
       }
 
       document.getElementById('btnSalvarPerfilInicial')?.addEventListener('click', () => {
-        const nomeInput = document.getElementById('welcome-nome');
-        const cargoInput = document.getElementById('welcome-cargo');
-        const nome = nomeInput ? nomeInput.value.trim() : '';
-        const cargo = (cargoInput && cargoInput.value.trim()) ? cargoInput.value.trim() : 'Estudante';
+        const nome = document.getElementById('welcome-nome')?.value.trim();
+        const cargo = document.getElementById('welcome-cargo')?.value.trim() || 'Estudante';
 
         if (nome) {
           window.db.perfil = { nome, cargo };
           localStorage.setItem('fala_estudante_perfil', JSON.stringify(window.db.perfil));
 
-          const jaExiste = window.db.membros.some(m => m.nome.trim().toLowerCase() === nome.toLowerCase());
-          if (!jaExiste) {
-            window.db.membros.push({ id: Date.now(), nome: nome, cargo: cargo, avatar: obterIniciais(nome) });
-            if (window.saveDB) window.saveDB();
+          if (!window.db.membros.some(m => m.nome.toLowerCase() === nome.toLowerCase())) {
+            window.db.membros.push({ id: Date.now(), nome, cargo, avatar: obterIniciais(nome) });
+            window.saveDB();
           }
 
           document.getElementById('welcome-screen').style.display = 'none';
           updateProfileUI();
-          showToast(`Bem-vindo(a), ${nome}!`);
         }
-      });
-
-      document.getElementById('btnPrevMonth')?.addEventListener('click', () => {
-        currentMonth--;
-        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-        renderCalendar();
-      });
-
-      document.getElementById('btnNextMonth')?.addEventListener('click', () => {
-        currentMonth++;
-        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-        renderCalendar();
-      });
-
-      document.getElementById('btnToday')?.addEventListener('click', () => {
-        currentMonth = new Date().getMonth();
-        currentYear = new Date().getFullYear();
-        renderCalendar();
       });
 
       document.getElementById('chatForm')?.addEventListener('submit', (e) => {
@@ -783,8 +747,8 @@
           time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
         });
 
-        if (window.saveDB) window.saveDB();
-        if (input) { input.value = ''; input.focus(); }
+        window.saveDB();
+        input.value = '';
       });
     });
 
@@ -792,12 +756,9 @@
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       
-      const target = document.getElementById(`tab-${tabName}`);
-      if (target) target.classList.add('active');
+      document.getElementById(`tab-${tabName}`)?.classList.add('active');
       if (btn) btn.classList.add('active');
-
-      const sidebar = document.getElementById('mainSidebar');
-      if (sidebar) sidebar.classList.remove('open');
+      document.getElementById('mainSidebar')?.classList.remove('open');
     };
 
     function updateProfileUI() {
@@ -827,9 +788,7 @@
           <div class="chat-msg ${isMe ? 'me' : ''}">
             <div class="meta">
               <span><strong>${isMe ? 'Você' : m.sender}</strong> (${m.role})</span>
-              <span>${m.date || ''} ${m.time}
-                <button class="delete-btn" onclick="deletarMensagem('${currentRoom}', ${index})"><i class="ph ph-trash"></i></button>
-              </span>
+              <span>${m.time}</span>
             </div>
             <div>${m.text}</div>
           </div>
@@ -839,29 +798,13 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    window.deletarMensagem = function(room, index) {
-      const msg = window.db.chat[room][index];
-      if (!msg || !window.db.perfil) return;
-
-      const usuarioAtual = window.db.perfil.nome.trim().toLowerCase();
-      const cargoAtual = (window.db.perfil.cargo || '').trim().toLowerCase();
-
-      const ehDono = msg.sender.trim().toLowerCase() === usuarioAtual;
-      const ehAdmin = cargoAtual === "presidente" || cargoAtual === "vice-presidente";
-
-      if (ehDono || ehAdmin || isAdminAuth) {
-        if (confirm("Deseja apagar esta mensagem online?")) {
-          window.db.chat[room].splice(index, 1);
-          if (window.saveDB) window.saveDB();
-          showToast('Mensagem removida para todos!');
-        }
-      } else {
-        showToast('Apenas o autor ou presidente pode apagar.');
-      }
-    };
-
     /* RENDER GERAL */
     window.renderApp = function() {
+      // KPIs
+      setSafeText('kpi-membros', window.db.membros.length);
+      setSafeText('kpi-projetos', window.db.projetos.filter(p => p.status !== 'concluido').length);
+      setSafeText('kpi-eventos', window.db.eventos.length);
+
       // Mural
       const muralOrdenado = [...window.db.mural].sort((a,b) => b.id - a.id);
       const ultAviso = muralOrdenado[0];
@@ -879,13 +822,8 @@
         </li>
       `).join('') || '<p style="color:var(--text-muted);">Nenhum aviso no mural.</p>');
 
-      // Projetos Publicos
-      const statusLabels = {
-        planejamento: "Em Planejamento",
-        em_andamento: "Em Andamento",
-        concluido: "Concluído"
-      };
-
+      // Projetos
+      const statusLabels = { planejamento: "Em Planejamento", em_andamento: "Em Andamento", concluido: "Concluído" };
       setSafeHTML('public-projetos-list', window.db.projetos.map(p => `
         <div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; margin-bottom:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
@@ -896,17 +834,8 @@
         </div>
       `).join('') || '<p style="color:var(--text-muted);">Nenhum projeto cadastrado.</p>');
 
-      // Integrantes
-      const ordemCargos = ["presidente", "vice", "secretário", "secretaria", "tesoureiro", "diretor"];
-      const membrosOrdenados = [...window.db.membros].sort((a,b) => {
-        const cargoA = (a.cargo || '').toLowerCase();
-        const cargoB = (b.cargo || '').toLowerCase();
-        const indexA = ordemCargos.findIndex(c => cargoA.includes(c));
-        const indexB = ordemCargos.findIndex(c => cargoB.includes(c));
-        return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
-      });
-
-      setSafeHTML('public-membros-list', membrosOrdenados.map(m => `
+      // Membros
+      setSafeHTML('public-membros-list', window.db.membros.map(m => `
         <li style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border-color);">
           <div class="avatar-circle">${m.avatar || obterIniciais(m.nome)}</div>
           <div>
@@ -925,10 +854,7 @@
 
       setSafeHTML('public-financeiro-list', window.db.financeiro.map(f => `
         <li style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-color);">
-          <div>
-            <strong>${f.desc}</strong>
-            <p style="font-size:0.75rem; color:var(--text-muted);">${f.data}</p>
-          </div>
+          <div><strong>${f.desc}</strong><p style="font-size:0.75rem; color:var(--text-muted);">${f.data}</p></div>
           <span style="font-weight:bold; color:${f.tipo === 'receita' ? 'var(--verde)' : 'var(--vermelho-light)'};">
             ${f.tipo === 'receita' ? '+' : '-'} ${f.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </span>
@@ -939,51 +865,49 @@
       renderChatMessages();
       renderFinanceChart(totalReceita, totalDespesa);
 
-      if (isAdminAuth) {
-        renderAdminLists();
-      }
+      if (isAdminAuth) renderAdminLists();
     };
 
     function renderAdminLists() {
-      // Admin Mural
       setSafeHTML('adm-mural-list', window.db.mural.map(m => `
         <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
           <span><strong>${m.titulo}</strong></span>
-          <button class="btn btn-danger btn-sm" onclick="delMuralItem(${m.id})"><i class="ph ph-trash"></i></button>
+          <div>
+            <button class="btn btn-warning btn-sm" onclick="editMuralItem(${m.id})"><i class="ph ph-pencil"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="delMuralItem(${m.id})"><i class="ph ph-trash"></i></button>
+          </div>
         </li>
-      `).join('') || '<p style="font-size:0.8rem; color:var(--text-muted);">Sem avisos.</p>');
+      `).join(''));
 
-      // Admin Projetos
       setSafeHTML('adm-projetos-list', window.db.projetos.map(p => `
         <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
-          <span><strong>${p.nome}</strong> (${p.status})</span>
-          <button class="btn btn-danger btn-sm" onclick="delProjetoItem(${p.id})"><i class="ph ph-trash"></i></button>
+          <span><strong>${p.nome}</strong></span>
+          <div>
+            <button class="btn btn-warning btn-sm" onclick="editProjetoItem(${p.id})"><i class="ph ph-pencil"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="delProjetoItem(${p.id})"><i class="ph ph-trash"></i></button>
+          </div>
         </div>
-      `).join('') || '<p style="font-size:0.8rem; color:var(--text-muted);">Sem projetos.</p>');
+      `).join(''));
 
-      // Admin Membros
       setSafeHTML('adm-membros-list', window.db.membros.map(m => `
         <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
-          <span>${m.nome} - <em>${m.cargo}</em></span>
-          <button class="btn btn-danger btn-sm" onclick="delMembroItem(${m.id})"><i class="ph ph-trash"></i></button>
+          <span>${m.nome} (${m.cargo})</span>
+          <div>
+            <button class="btn btn-warning btn-sm" onclick="editMembroItem(${m.id})"><i class="ph ph-pencil"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="delMembroItem(${m.id})"><i class="ph ph-trash"></i></button>
+          </div>
         </li>
-      `).join('') || '<p style="font-size:0.8rem; color:var(--text-muted);">Sem integrantes.</p>');
+      `).join(''));
 
-      // Admin Eventos
-      setSafeHTML('adm-eventos-list', window.db.eventos.map(e => `
-        <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
-          <span>${e.nome} (${e.data})</span>
-          <button class="btn btn-danger btn-sm" onclick="delEventoItem(${e.id})"><i class="ph ph-trash"></i></button>
-        </li>
-      `).join('') || '<p style="font-size:0.8rem; color:var(--text-muted);">Sem eventos.</p>');
-
-      // Admin Financeiro
       setSafeHTML('adm-financeiro-list', window.db.financeiro.map(f => `
         <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
-          <span>${f.desc} - R$ ${f.valor.toFixed(2)} (${f.tipo})</span>
-          <button class="btn btn-danger btn-sm" onclick="delFinanceiroItem(${f.id})"><i class="ph ph-trash"></i></button>
+          <span>${f.desc} - R$ ${f.valor.toFixed(2)}</span>
+          <div>
+            <button class="btn btn-warning btn-sm" onclick="editFinanceiroItem(${f.id})"><i class="ph ph-pencil"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="delFinanceiroItem(${f.id})"><i class="ph ph-trash"></i></button>
+          </div>
         </li>
-      `).join('') || '<p style="font-size:0.8rem; color:var(--text-muted);">Sem lançamentos.</p>');
+      `).join(''));
     }
 
     function renderCalendar() {
@@ -1047,6 +971,26 @@
         options: { responsive: true, maintainAspectRatio: false }
       });
     }
+
+    // NAVEGAÇÃO DO CALENDÁRIO
+    document.getElementById('btnPrevMonth')?.addEventListener('click', () => {
+      currentMonth--;
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+      renderCalendar();
+    });
+
+    document.getElementById('btnNextMonth')?.addEventListener('click', () => {
+      currentMonth++;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      renderCalendar();
+    });
+
+    document.getElementById('btnToday')?.addEventListener('click', () => {
+      const now = new Date();
+      currentMonth = now.getMonth();
+      currentYear = now.getFullYear();
+      renderCalendar();
+    });
   </script>
 </body>
 </html>
