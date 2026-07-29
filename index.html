@@ -4,17 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grêmio Estudantil - Fala Estudante!</title>
+  
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
+      /* Identidade Visual do Grêmio */
       --gremio-roxo: #4B2AA8;
       --gremio-roxo-escuro: #2A1566;
       --gremio-roxo-light: #6B38C3;
       --gremio-dourado: #F4C430;
+      
+      /* Degradês Oficiais */
       --gremio-degrade: linear-gradient(135deg, #4B2AA8 0%, #2A1566 100%);
-      --gremio-degrade-gold: linear-gradient(135deg, #F4C430 0%, #E0A800 100%);
+      --gremio-degrade-dourado: linear-gradient(135deg, #F4C430 0%, #D4A017 100%);
+      
       --bg-color: #F4F5F9;
       --card-bg: #FFFFFF;
       --text-color: #2D3748;
@@ -33,9 +38,93 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-color); display: flex; min-height: 100vh; }
+    body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; }
 
-    /* Estilos Principais */
+    /* Header & Logo */
+    header {
+      background: var(--gremio-degrade);
+      color: #FFF;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      border: 2px solid var(--gremio-dourado);
+      object-fit: cover;
+      background: #fff;
+    }
+
+    .brand-title h1 { font-size: 1.2rem; font-weight: 700; color: #FFF; }
+    .brand-title p { font-size: 0.75rem; color: var(--gremio-dourado); }
+
+    /* Layout & Navegação */
+    .app-container { display: flex; flex: 1; }
+    
+    sidebar {
+      width: 240px;
+      background: var(--card-bg);
+      border-right: 1px solid var(--border-color);
+      padding: 20px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-color);
+      padding: 12px;
+      text-align: left;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      background: var(--gremio-degrade);
+      color: #FFF;
+    }
+
+    main { flex: 1; padding: 25px; overflow-y: auto; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Componentes Gerais */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      color: var(--gremio-roxo);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
     .btn {
       background: var(--gremio-degrade);
       color: #fff;
@@ -50,24 +139,70 @@
       transition: opacity 0.2s;
     }
     .btn:hover { opacity: 0.9; }
-    .btn-danger { background: var(--vermelho-light); }
+    .btn-secondary { background: var(--gremio-degrade-dourado); color: #1E293B; }
+    .btn-danger { background: var(--vermelho-light); color: #fff; }
     .btn-sm { padding: 4px 10px; font-size: 0.8rem; }
 
-    .card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 20px;
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 6px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      background: var(--card-bg);
+      color: var(--text-color);
     }
 
-    /* Estilo de Mensagens no Chat */
+    /* Avatar Inicial */
+    .avatar-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gremio-degrade);
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      border: 2px solid var(--gremio-dourado);
+    }
+
+    /* Calendário */
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+    .calendar-day-header { text-align: center; font-size: 0.75rem; font-weight: bold; color: var(--text-muted); }
+    .calendar-day-cell {
+      min-height: 70px;
+      background: rgba(0,0,0,0.02);
+      border-radius: 6px;
+      padding: 6px;
+      font-size: 0.8rem;
+      border: 1px solid var(--border-color);
+    }
+    .calendar-day-cell.today { border: 2px solid var(--gremio-roxo); font-weight: bold; }
+
+    /* Chat Layout */
+    .chat-layout { display: flex; gap: 15px; height: 450px; }
+    .chat-rooms { width: 150px; display: flex; flex-direction: column; gap: 6px; }
+    .room-btn {
+      padding: 10px;
+      background: rgba(0,0,0,0.04);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.85rem;
+      color: var(--text-color);
+    }
+    .room-btn.active { background: var(--gremio-degrade); color: #FFF; }
+    .chat-main { flex: 1; display: flex; flex-direction: column; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; }
+    
     .chat-msg {
       margin-bottom: 12px;
       padding: 10px 14px;
       border-radius: 10px;
       max-width: 80%;
-      position: relative;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
     }
@@ -82,39 +217,161 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       margin-bottom: 4px;
       opacity: 0.85;
     }
-    .chat-msg .delete-btn {
-      background: none;
-      border: none;
-      color: inherit;
-      cursor: pointer;
-      opacity: 0.6;
-      font-size: 0.9rem;
-    }
+    .chat-msg .delete-btn { background: none; border: none; color: inherit; cursor: pointer; opacity: 0.6; }
     .chat-msg .delete-btn:hover { opacity: 1; }
+
+    .chat-input-area { display: flex; gap: 8px; }
+    .chat-input-area input { flex: 1; margin-bottom: 0; }
+
+    /* Toast Notification */
+    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
+    .toast {
+      padding: 12px 20px;
+      background: var(--gremio-degrade);
+      color: #fff;
+      border-radius: 8px;
+      margin-top: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body>
 
-  <div id="welcome-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; z-index:9999;">
+  <header>
+    <div class="brand-logo">
+      <img id="app-logo-header" src="logo-gremio.png" alt="Logo Grêmio" onerror="this.src='https://via.placeholder.com/45/4B2AA8/ffffff?text=GE'">
+      <div class="brand-title">
+        <h1 id="chapa-header-title">Fala Estudante!</h1>
+        <p id="chapa-header-sub">Grêmio Estudantil • Várzea Branca - PI</p>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="avatar-circle" id="headerAvatar">GE</div>
+      <div>
+        <div id="headerName" style="font-weight: bold; font-size: 0.88rem;">Estudante</div>
+        <div id="headerRole" style="font-size: 0.72rem; color: var(--gremio-dourado);">Membro</div>
+      </div>
+    </div>
+  </header>
+
+  <div id="welcome-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); display:none; justify-content:center; align-items:center; z-index:9999;">
     <div class="card" style="max-width:400px; width:90%; text-align:center;">
-      <img id="welcome-logo-display" src="" style="width:80px; height:80px; border-radius:50%; margin-bottom:12px; object-fit:cover;">
-      <h2 style="color:var(--gremio-roxo);">Bem-vindo(a)!</h2>
-      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Identifique-se para acessar o painel do Grêmio.</p>
-      <input type="text" id="welcome-nome" class="form-control" placeholder="Seu Nome Completo" style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--border-color);" required>
-      <input type="text" id="welcome-cargo" class="form-control" placeholder="Seu Cargo (Ex: Diretor, Estudante, Secretário)" style="width:100%; padding:10px; margin-bottom:15px; border-radius:6px; border:1px solid var(--border-color);">
-      <button class="btn" id="btnSalvarPerfilInicial" style="width:100%; justify-content:center;"><i class="ph ph-check-circle"></i> Entrar no Painel</button>
+      <h2 style="color:var(--gremio-roxo); margin-bottom: 8px;">Bem-vindo(a)!</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Identifique-se para se conectar ao Grêmio Estudantil.</p>
+      <input type="text" id="welcome-nome" class="form-control" placeholder="Seu Nome Completo" required>
+      <input type="text" id="welcome-cargo" class="form-control" placeholder="Seu Cargo (Ex: Presidente, Diretor, Estudante)">
+      <button class="btn" id="btnSalvarPerfilInicial" style="width:100%; justify-content:center;"><i class="ph ph-check-circle"></i> Acessar Painel</button>
     </div>
   </div>
 
+  <div class="app-container">
+    <sidebar>
+      <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="ph ph-house"></i> Dashboard</button>
+      <button class="nav-btn" onclick="switchTab('mural', this)"><i class="ph ph-megaphone"></i> Mural</button>
+      <button class="nav-btn" onclick="switchTab('membros', this)"><i class="ph ph-users"></i> Integrantes</button>
+      <button class="nav-btn" onclick="switchTab('calendario', this)"><i class="ph ph-calendar"></i> Calendário</button>
+      <button class="nav-btn" onclick="switchTab('chat', this)"><i class="ph ph-chats-teardrop"></i> Chat Interno</button>
+      <button class="nav-btn" onclick="switchTab('financeiro', this)"><i class="ph ph-chart-pie"></i> Financeiro</button>
+    </sidebar>
+
+    <main>
+      <section id="tab-dashboard" class="tab-content active">
+        <div class="grid-2">
+          <div class="card">
+            <h3><i class="ph ph-info"></i> Último Comunicado</h3>
+            <div id="dash-ultimo-comunicado"><p style="color:var(--text-muted);">Carregando...</p></div>
+          </div>
+          <div class="card">
+            <h3><i class="ph ph-wallet"></i> Balanço Rápido</h3>
+            <p style="font-size:0.85rem; color:var(--text-muted);">Saldo Atual em Caixa:</p>
+            <h2 id="dash-saldo" style="color:var(--verde); margin-top:5px;">R$ 0,00</h2>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-mural" class="tab-content">
+        <div class="card">
+          <h3><i class="ph ph-megaphone"></i> Mural de Avisos</h3>
+          <ul id="public-mural-list" style="list-style:none;"></ul>
+        </div>
+      </section>
+
+      <section id="tab-membros" class="tab-content">
+        <div class="card">
+          <h3><i class="ph ph-users"></i> Integrantes da Gestão</h3>
+          <ul id="public-membros-list" style="list-style:none;"></ul>
+        </div>
+      </section>
+
+      <section id="tab-calendario" class="tab-content">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 id="calendarMonthYear"><i class="ph ph-calendar"></i> Calendário</h3>
+            <div>
+              <button class="btn btn-sm" id="btnPrevMonth"><i class="ph ph-caret-left"></i></button>
+              <button class="btn btn-sm" id="btnToday">Hoje</button>
+              <button class="btn btn-sm" id="btnNextMonth"><i class="ph ph-caret-right"></i></button>
+            </div>
+          </div>
+          <div class="calendar-grid">
+            <div class="calendar-day-header">Dom</div>
+            <div class="calendar-day-header">Seg</div>
+            <div class="calendar-day-header">Ter</div>
+            <div class="calendar-day-header">Qua</div>
+            <div class="calendar-day-header">Qui</div>
+            <div class="calendar-day-header">Sex</div>
+            <div class="calendar-day-header">Sáb</div>
+          </div>
+          <div id="calendarDays" class="calendar-grid"></div>
+        </div>
+      </section>
+
+      <section id="tab-chat" class="tab-content">
+        <div class="card">
+          <h3><i class="ph ph-chats-teardrop"></i> Comunicação Interna</h3>
+          <div class="chat-layout">
+            <div class="chat-rooms">
+              <button class="room-btn active" onclick="switchChatRoom('geral', this)"># Geral</button>
+              <button class="room-btn" onclick="switchChatRoom('eventos', this)"># Eventos</button>
+              <button class="room-btn" onclick="switchChatRoom('financeiro', this)"># Financeiro</button>
+            </div>
+            <div class="chat-main">
+              <div class="chat-messages" id="chatMessages"></div>
+              <form class="chat-input-area" id="chatForm">
+                <input type="text" id="chatInput" class="form-control" placeholder="Digite sua mensagem..." required>
+                <button type="submit" class="btn"><i class="ph ph-paper-plane-right"></i></button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-financeiro" class="tab-content">
+        <div class="grid-2">
+          <div class="card">
+            <h3><i class="ph ph-chart-pie"></i> Relatório Financeiro</h3>
+            <div style="height: 200px;"><canvas id="financeiroChart"></canvas></div>
+          </div>
+          <div class="card">
+            <h3><i class="ph ph-receipt"></i> Lançamentos</h3>
+            <ul id="public-financeiro-list" style="list-style:none;"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast-container"></div>
+
   <script>
     /* ===================================================
-       ESTADO DO BANCO DE DADOS LOCAL
+       ESTADO & BANCO DE DADOS LOCAL
     =================================================== */
-    const STORAGE_KEY = 'fala_estudante_gremio_v6';
+    const STORAGE_KEY = 'fala_estudante_gremio_v7';
 
     let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
       cfg: { chapa: "Fala Estudante!", sub: "Grêmio Estudantil • Várzea Branca - PI", logo: "logo-gremio.png" },
@@ -122,12 +379,8 @@
       mural: [],
       eventos: [],
       membros: [],
-      projetos: [],
-      metas: [],
-      tarefas: [],
       financeiro: [],
-      documentos: [],
-      chat: { geral: [], eventos: [], financeiro: [], projetos: [], diretoria: [] }
+      chat: { geral: [], eventos: [], financeiro: [] }
     };
 
     let currentRoom = 'geral';
@@ -135,88 +388,113 @@
     let currentYear = new Date().getFullYear();
     let chartInstance = null;
 
+    // Métodos Utilitários de Navegação Segura do DOM
+    function setSafeText(id, val) { const el = document.getElementById(id); if (el) el.innerText = val; }
+    function setSafeHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+
+    function obterIniciais(nome) {
+      if (!nome) return "GE";
+      const partes = nome.trim().split(" ");
+      if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
+      return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+    }
+
     function saveDB() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
       renderApp();
     }
 
-    function showToast(mensagem, tipo = 'info') {
-      const container = document.getElementById('toast-container') || document.body;
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
       const toast = document.createElement('div');
-      toast.style.cssText = "position:fixed; bottom:20px; right:20px; padding:12px 20px; background:var(--gremio-roxo); color:#fff; border-radius:8px; z-index:10000;";
-      toast.innerText = mensagem;
+      toast.className = 'toast';
+      toast.innerText = msg;
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
     }
 
     /* ===================================================
-       INICIALIZAÇÃO & EVENTOS
+       NAVEGAÇÃO E INICIALIZAÇÃO
     =================================================== */
     document.addEventListener("DOMContentLoaded", () => {
       if (!db.perfil) {
-        document.getElementById('welcome-screen').style.display = 'flex';
+        const welcomeModal = document.getElementById('welcome-screen');
+        if (welcomeModal) welcomeModal.style.display = 'flex';
       } else {
         updateProfileUI();
       }
 
-      // Perfil Inicial + Auto Cadastro na lista de Integrantes
-      document.getElementById('btnSalvarPerfilInicial').addEventListener('click', () => {
-        const nome = document.getElementById('welcome-nome').value.trim();
-        const cargo = document.getElementById('welcome-cargo').value.trim() || 'Estudante';
+      // Login/Perfil Inicial
+      const btnSalvarPerfil = document.getElementById('btnSalvarPerfilInicial');
+      if (btnSalvarPerfil) {
+        btnSalvarPerfil.addEventListener('click', () => {
+          const nomeInput = document.getElementById('welcome-nome');
+          const cargoInput = document.getElementById('welcome-cargo');
+          const nome = nomeInput ? nomeInput.value.trim() : '';
+          const cargo = (cargoInput && cargoInput.value.trim()) ? cargoInput.value.trim() : 'Estudante';
 
-        if (nome) {
-          db.perfil = { nome, cargo };
+          if (nome) {
+            db.perfil = { nome, cargo };
 
-          // Registra automaticamente o perfil na lista de integrantes
-          const jaExiste = db.membros.some(m => m.nome.toLowerCase() === nome.toLowerCase());
-          if (!jaExiste) {
-            db.membros.push({
-              id: Date.now(),
-              nome: nome,
-              cargo: cargo,
-              foto: ''
-            });
+            // Evita duplicatas na lista de integrantes
+            const jaExiste = db.membros.some(m => m.nome.trim().toLowerCase() === nome.toLowerCase());
+            if (!jaExiste) {
+              db.membros.push({ id: Date.now(), nome, cargo });
+            }
+
+            saveDB();
+            document.getElementById('welcome-screen').style.display = 'none';
+            updateProfileUI();
+            showToast(`Bem-vindo(a), ${nome}!`);
           }
+        });
+      }
 
-          saveDB();
-          document.getElementById('welcome-screen').style.display = 'none';
-          updateProfileUI();
-          showToast(`Bem-vindo(a), ${nome}!`, 'sucesso');
-        }
+      // Calendário: Correção de Incremento dos Anos
+      const btnPrev = document.getElementById('btnPrevMonth');
+      if (btnPrev) btnPrev.addEventListener('click', () => {
+        currentMonth--;
+        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+        renderCalendar();
       });
 
-      // Controles do Calendário
-      const btnPrev = document.getElementById('btnPrevMonth');
-      if(btnPrev) btnPrev.addEventListener('click', () => { currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(); });
-      
       const btnNext = document.getElementById('btnNextMonth');
-      if(btnNext) btnNext.addEventListener('click', () => { currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear = 2026; } renderCalendar(); });
+      if (btnNext) btnNext.addEventListener('click', () => {
+        currentMonth++;
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        renderCalendar();
+      });
 
       const btnToday = document.getElementById('btnToday');
-      if(btnToday) btnToday.addEventListener('click', () => { currentMonth = new Date().getMonth(); currentYear = new Date().getFullYear(); renderCalendar(); });
+      if (btnToday) btnToday.addEventListener('click', () => {
+        currentMonth = new Date().getMonth();
+        currentYear = new Date().getFullYear();
+        renderCalendar();
+      });
 
-      // Envio de Mensagem no Chat
+      // Chat Form
       const chatForm = document.getElementById('chatForm');
-      if(chatForm) {
+      if (chatForm) {
         chatForm.addEventListener('submit', (e) => {
           e.preventDefault();
           const input = document.getElementById('chatInput');
-          const text = input.value.trim();
-          if(!text || !db.perfil) return;
+          const text = input ? input.value.trim() : '';
+          if (!text || !db.perfil) return;
 
-          if(!db.chat) db.chat = { geral: [], eventos: [], financeiro: [], projetos: [], diretoria: [] };
-          if(!db.chat[currentRoom]) db.chat[currentRoom] = [];
+          if (!db.chat[currentRoom]) db.chat[currentRoom] = [];
 
           db.chat[currentRoom].push({
             id: Date.now(),
             sender: db.perfil.nome,
             role: db.perfil.cargo,
             text: text,
+            date: new Date().toLocaleDateString('pt-BR'),
             time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
           });
 
           saveDB();
-          input.value = '';
+          if (input) input.value = '';
           renderChatMessages();
         });
       }
@@ -224,17 +502,25 @@
       renderApp();
     });
 
+    window.switchTab = function(tabName, btn) {
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      
+      const target = document.getElementById(`tab-${tabName}`);
+      if (target) target.classList.add('active');
+      if (btn) btn.classList.add('active');
+    };
+
     function updateProfileUI() {
       if (db.perfil) {
-        const elName = document.getElementById('profile-display-name');
-        const elRole = document.getElementById('profile-display-role');
-        if(elName) elName.innerText = db.perfil.nome;
-        if(elRole) elRole.innerText = db.perfil.cargo;
+        setSafeText('headerName', db.perfil.nome.split(' ')[0]);
+        setSafeText('headerRole', db.perfil.cargo);
+        setSafeText('headerAvatar', obterIniciais(db.perfil.nome));
       }
     }
 
     /* ===================================================
-       CHAT INTERNO (COM INDICADOR E EXCLUSÃO)
+       CHAT INTERNO
     =================================================== */
     window.switchChatRoom = function(room, element) {
       currentRoom = room;
@@ -245,87 +531,120 @@
 
     function renderChatMessages() {
       const container = document.getElementById('chatMessages');
-      if(!container) return;
-      const msgs = (db.chat && db.chat[currentRoom]) ? db.chat[currentRoom] : [];
-      
+      if (!container) return;
+      const msgs = db.chat[currentRoom] || [];
+
       container.innerHTML = msgs.map((m, index) => {
         const isMe = db.perfil && m.sender === db.perfil.nome;
         return `
-          <div class="chat-msg ${isMe ? 'me' : 'other'}">
+          <div class="chat-msg ${isMe ? 'me' : ''}">
             <div class="meta">
-              <span><strong>${isMe ? 'Você' : m.sender}</strong> (${m.role || 'Membro'}) • ${m.time}</span>
-              <button class="delete-btn" onclick="deletarMensagem('${currentRoom}', ${index})" title="Apagar mensagem">
-                <i class="ph ph-trash"></i>
-              </button>
+              <span><strong>${isMe ? 'Você' : m.sender}</strong> (${m.role})</span>
+              <span>${m.date || ''} ${m.time}
+                <button class="delete-btn" onclick="deletarMensagem('${currentRoom}', ${index})"><i class="ph ph-trash"></i></button>
+              </span>
             </div>
             <div>${m.text}</div>
           </div>
         `;
-      }).join('') || '<p style="text-align:center; color:var(--text-muted); font-size:0.85rem; margin-top:20px;">Nenhuma mensagem nesta sala.</p>';
-      
+      }).join('') || '<p style="text-align:center; color:var(--text-muted); margin-top:20px;">Sem mensagens nesta sala.</p>';
+
       container.scrollTop = container.scrollHeight;
     }
 
     window.deletarMensagem = function(room, index) {
-      if (confirm("Deseja apagar esta mensagem?")) {
-        db.chat[room].splice(index, 1);
-        saveDB();
-        renderChatMessages();
-        showToast('Mensagem apagada!', 'aviso');
+      const msg = db.chat[room][index];
+      if (!msg || !db.perfil) return;
+
+      const usuarioAtual = db.perfil.nome.trim().toLowerCase();
+      const cargoAtual = (db.perfil.cargo || '').trim().toLowerCase();
+
+      const ehDono = msg.sender.trim().toLowerCase() === usuarioAtual;
+      const ehAdmin = cargoAtual === "presidente" || cargoAtual === "vice-presidente";
+
+      if (ehDono || ehAdmin) {
+        if (confirm("Deseja apagar esta mensagem?")) {
+          db.chat[room].splice(index, 1);
+          saveDB();
+          renderChatMessages();
+          showToast('Mensagem apagada!');
+        }
+      } else {
+        showToast('Apenas o autor ou presidente pode apagar.');
       }
     };
 
     /* ===================================================
-       RENDERIZAÇÃO GERAL
+       RENDERIZAÇÃO DA APLICAÇÃO
     =================================================== */
     function renderApp() {
-      // Lista de Integrantes Ordenada
-      const elMembros = document.getElementById('public-membros-list');
-      if (elMembros) {
-        const ordemCargos = ["presidente", "vice", "secretário", "secretaria", "tesoureiro", "diretor"];
-        const membrosOrdenados = [...db.membros].sort((a,b) => {
-          const cargoA = (a.cargo || '').toLowerCase();
-          const cargoB = (b.cargo || '').toLowerCase();
-          const indexA = ordemCargos.findIndex(c => cargoA.includes(c));
-          const indexB = ordemCargos.findIndex(c => cargoB.includes(c));
-          return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
-        });
+      // Atualiza Mural no Dashboard
+      const ultAviso = db.mural[0];
+      setSafeHTML('dash-ultimo-comunicado', ultAviso ? `
+        <h4 style="color:var(--gremio-roxo);">${ultAviso.titulo}</h4>
+        <p style="font-size:0.85rem;">${ultAviso.texto}</p>
+      ` : '<p style="color:var(--text-muted);">Nenhum aviso no mural.</p>');
 
-        elMembros.innerHTML = membrosOrdenados.map(m => `
-          <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color);">
-            <div style="display:flex; align-items:center; gap:12px;">
-              <div style="width:36px; height:36px; border-radius:50%; background:var(--gremio-degrade); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold;">
-                ${m.nome.charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <strong>${m.nome}</strong>
-                <p style="font-size:0.78rem; color:var(--gremio-roxo); font-weight:600;">${m.cargo}</p>
-              </div>
-            </div>
-            <button class="btn btn-sm btn-danger" onclick="deleteItem('membros', ${m.id})"><i class="ph ph-trash"></i></button>
-          </li>
-        `).join('') || '<p style="color:var(--text-muted);">Nenhum integrante cadastrado.</p>';
-      }
+      // Mural Completo
+      setSafeHTML('public-mural-list', db.mural.map(m => `
+        <li style="padding:10px 0; border-bottom:1px solid var(--border-color);">
+          <strong style="color:var(--gremio-roxo);">${m.titulo}</strong>
+          <p style="font-size:0.85rem;">${m.texto}</p>
+        </li>
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum aviso.</p>');
+
+      // Integrantes
+      const ordemCargos = ["presidente", "vice", "secretário", "secretaria", "tesoureiro", "diretor"];
+      const membrosOrdenados = [...db.membros].sort((a,b) => {
+        const cargoA = (a.cargo || '').toLowerCase();
+        const cargoB = (b.cargo || '').toLowerCase();
+        const indexA = ordemCargos.findIndex(c => cargoA.includes(c));
+        const indexB = ordemCargos.findIndex(c => cargoB.includes(c));
+        return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
+      });
+
+      setSafeHTML('public-membros-list', membrosOrdenados.map(m => `
+        <li style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border-color);">
+          <div class="avatar-circle">${obterIniciais(m.nome)}</div>
+          <div>
+            <strong>${m.nome}</strong>
+            <p style="font-size:0.78rem; color:var(--gremio-roxo); font-weight:600;">${m.cargo}</p>
+          </div>
+        </li>
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum integrante.</p>');
+
+      // Financeiro
+      const totalReceita = db.financeiro.filter(f => f.tipo === 'receita').reduce((a,b) => a + b.valor, 0);
+      const totalDespesa = db.financeiro.filter(f => f.tipo === 'despesa').reduce((a,b) => a + b.valor, 0);
+      const saldo = totalReceita - totalDespesa;
+      
+      setSafeText('dash-saldo', `R$ ${saldo.toFixed(2)}`);
+
+      // Lista Financeira na Aba Financeiro
+      setSafeHTML('public-financeiro-list', db.financeiro.map(f => `
+        <li style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-color);">
+          <div>
+            <strong>${f.desc}</strong>
+            <p style="font-size:0.75rem; color:var(--text-muted);">${f.data}</p>
+          </div>
+          <span style="font-weight:bold; color:${f.tipo === 'receita' ? 'var(--verde)' : 'var(--vermelho-light)'};">
+            ${f.tipo === 'receita' ? '+' : '-'} R$ ${f.valor.toFixed(2)}
+          </span>
+        </li>
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum lançamento.</p>');
 
       renderCalendar();
       renderChatMessages();
+      renderFinanceChart(totalReceita, totalDespesa);
     }
-
-    window.deleteItem = function(categoria, id) {
-      if (confirm('Deseja remover este registro?')) {
-        db[categoria] = db[categoria].filter(item => item.id !== id);
-        saveDB();
-      }
-    };
 
     function renderCalendar() {
       const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-      const elMonth = document.getElementById('calendarMonthYear');
-      if (elMonth) elMonth.innerText = `${monthNames[currentMonth]} ${currentYear}`;
+      setSafeText('calendarMonthYear', `${monthNames[currentMonth]} ${currentYear}`);
 
       const grid = document.getElementById('calendarDays');
       if (!grid) return;
-      
+
       const firstDay = new Date(currentYear, currentMonth, 1).getDay();
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
       grid.innerHTML = '';
@@ -339,8 +658,9 @@
       const today = new Date();
       for (let day = 1; day <= daysInMonth; day++) {
         const cell = document.createElement('div');
+        cell.className = 'calendar-day-cell';
         if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
-          cell.style.border = "2px solid var(--gremio-roxo)";
+          cell.classList.add('today');
         }
         cell.innerHTML = `<strong>${day}</strong>`;
 
@@ -350,13 +670,28 @@
 
         db.eventos.filter(e => e.data === dateStr).forEach(ev => {
           const tag = document.createElement('span');
-          tag.style.cssText = `background:${ev.cor || '#4B2AA8'}; color:#fff; font-size:0.7rem; border-radius:4px; padding:2px 4px; display:block; margin-top:2px;`;
+          tag.style.cssText = `background:${ev.cor || 'var(--gremio-roxo)'}; color:#fff; font-size:0.7rem; border-radius:4px; padding:2px 4px; display:block; margin-top:2px;`;
           tag.innerText = ev.nome;
           cell.appendChild(tag);
         });
 
         grid.appendChild(cell);
       }
+    }
+
+    function renderFinanceChart(receitas, despesas) {
+      const ctx = document.getElementById('financeiroChart');
+      if (!ctx) return;
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Entradas', 'Saídas'],
+          datasets: [{ data: [receitas, despesas], backgroundColor: ['#0B8F2A', '#EF4444'] }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
     }
   </script>
 </body>
