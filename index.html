@@ -3,52 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grêmio Estudantil - Fala Estudante!</title>
+  <title>Grêmio Estudantil - Fala Estudante! v9</title>
   
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
-      /* Identidade Visual do Grêmio */
-      --gremio-roxo: #4B2AA8;
-      --gremio-roxo-escuro: #2A1566;
-      --gremio-roxo-light: #6B38C3;
-      --gremio-dourado: #F4C430;
-      
-      /* Degradês Oficiais */
-      --gremio-degrade: linear-gradient(135deg, #4B2AA8 0%, #2A1566 100%);
-      --gremio-degrade-dourado: linear-gradient(135deg, #F4C430 0%, #D4A017 100%);
+      /* Identidade Visual do Grêmio - Nova Paleta v9 */
+      --verde: #0A8F2D;
+      --verde-claro: #3CBF2B;
+      --roxo: #4A28A8;
+      --roxo-escuro: #2D166F;
+      --amarelo: #F4C430;
+      --branco: #FFFFFF;
+
+      --gradiente-header: linear-gradient(135deg, #0A8F2D 0%, #4A28A8 100%);
+      --gradiente-card: linear-gradient(135deg, #4A28A8 0%, #2D166F 100%);
+      --gradiente-botao: linear-gradient(135deg, #0A8F2D 0%, #3CBF2B 100%);
       
       --bg-color: #F4F5F9;
       --card-bg: #FFFFFF;
       --text-color: #2D3748;
       --text-muted: #718096;
       --border-color: #E2E8F0;
-      --verde: #0B8F2A;
       --vermelho-light: #EF4444;
     }
 
-    body.dark-mode {
-      --bg-color: #0F172A;
-      --card-bg: #1E293B;
-      --text-color: #F8FAFC;
-      --text-muted: #94A3B8;
-      --border-color: #334155;
-    }
-
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; }
+    body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
 
     /* Header & Logo */
     header {
-      background: var(--gremio-degrade);
-      color: #FFF;
+      background: var(--gradiente-header);
+      color: var(--branco);
       padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 100;
     }
 
     .brand-logo {
@@ -61,31 +55,42 @@
       width: 45px;
       height: 45px;
       border-radius: 50%;
-      border: 2px solid var(--gremio-dourado);
+      border: 2px solid var(--amarelo);
       object-fit: cover;
-      background: #fff;
+      background: var(--branco);
     }
 
-    .brand-title h1 { font-size: 1.2rem; font-weight: 700; color: #FFF; }
-    .brand-title p { font-size: 0.75rem; color: var(--gremio-dourado); }
+    .brand-title h1 { font-size: 1.2rem; font-weight: 700; color: var(--branco); }
+    .brand-title p { font-size: 0.75rem; color: var(--amarelo); }
+
+    .menu-toggle {
+      background: none;
+      border: none;
+      color: var(--branco);
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: none;
+    }
 
     /* Layout & Navegação */
-    .app-container { display: flex; flex: 1; }
+    .app-container { display: flex; flex: 1; position: relative; }
     
     sidebar {
       width: 240px;
-      background: var(--card-bg);
+      background: var(--roxo-escuro);
       border-right: 1px solid var(--border-color);
       padding: 20px 10px;
       display: flex;
       flex-direction: column;
       gap: 8px;
+      transition: all 0.3s ease;
+      z-index: 90;
     }
 
     .nav-btn {
       background: transparent;
       border: none;
-      color: var(--text-color);
+      color: rgba(255, 255, 255, 0.8);
       padding: 12px;
       text-align: left;
       border-radius: 8px;
@@ -98,8 +103,9 @@
     }
 
     .nav-btn:hover, .nav-btn.active {
-      background: var(--gremio-degrade);
-      color: #FFF;
+      background: var(--gradiente-botao);
+      color: var(--branco);
+      box-shadow: 0 2px 8px rgba(10, 143, 45, 0.3);
     }
 
     main { flex: 1; padding: 25px; overflow-y: auto; }
@@ -108,17 +114,19 @@
 
     /* Componentes Gerais */
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+    
     .card {
       background: var(--card-bg);
       border-radius: 12px;
       padding: 20px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      border-top: 4px solid var(--verde);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       margin-bottom: 20px;
     }
 
     .card h3 {
-      color: var(--gremio-roxo);
+      color: var(--roxo);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -126,8 +134,8 @@
     }
 
     .btn {
-      background: var(--gremio-degrade);
-      color: #fff;
+      background: var(--gradiente-botao);
+      color: var(--branco);
       border: none;
       padding: 8px 16px;
       border-radius: 6px;
@@ -139,8 +147,8 @@
       transition: opacity 0.2s;
     }
     .btn:hover { opacity: 0.9; }
-    .btn-secondary { background: var(--gremio-degrade-dourado); color: #1E293B; }
-    .btn-danger { background: var(--vermelho-light); color: #fff; }
+    .btn-warning { background: var(--amarelo); color: #1E293B; }
+    .btn-danger { background: var(--vermelho-light); color: var(--branco); }
     .btn-sm { padding: 4px 10px; font-size: 0.8rem; }
 
     .form-control {
@@ -153,19 +161,20 @@
       color: var(--text-color);
     }
 
-    /* Avatar Inicial */
+    /* Avatar Inicial Verde */
     .avatar-circle {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background: var(--gremio-degrade);
-      color: #FFF;
+      background: var(--verde);
+      color: var(--branco);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
       font-size: 0.9rem;
-      border: 2px solid var(--gremio-dourado);
+      border: 2px solid var(--branco);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     /* Calendário */
@@ -179,7 +188,7 @@
       font-size: 0.8rem;
       border: 1px solid var(--border-color);
     }
-    .calendar-day-cell.today { border: 2px solid var(--gremio-roxo); font-weight: bold; }
+    .calendar-day-cell.today { border: 2px solid var(--roxo); background: rgba(74, 40, 168, 0.05); font-weight: bold; }
 
     /* Chat Layout */
     .chat-layout { display: flex; gap: 15px; height: 450px; }
@@ -194,22 +203,24 @@
       font-size: 0.85rem;
       color: var(--text-color);
     }
-    .room-btn.active { background: var(--gremio-degrade); color: #FFF; }
+    .room-btn.active { background: var(--roxo); color: var(--branco); }
     .chat-main { flex: 1; display: flex; flex-direction: column; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; }
     
+    /* Cores das mensagens do Chat */
     .chat-msg {
       margin-bottom: 12px;
       padding: 10px 14px;
       border-radius: 10px;
       max-width: 80%;
-      background: var(--card-bg);
+      background: var(--verde-claro);
+      color: #0F2D0C;
       border: 1px solid var(--border-color);
     }
     .chat-msg.me {
       margin-left: auto;
-      background: var(--gremio-degrade);
-      color: #FFF;
+      background: var(--roxo);
+      color: var(--branco);
       border: none;
     }
     .chat-msg .meta {
@@ -227,15 +238,31 @@
     .chat-input-area { display: flex; gap: 8px; }
     .chat-input-area input { flex: 1; margin-bottom: 0; }
 
-    /* Toast Notification */
+    /* Toast Notification Amarelo */
     #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
     .toast {
       padding: 12px 20px;
-      background: var(--gremio-degrade);
-      color: #fff;
+      background: var(--amarelo);
+      color: #1E293B;
+      font-weight: 600;
       border-radius: 8px;
       margin-top: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .menu-toggle { display: block; }
+      sidebar {
+        position: absolute;
+        left: -250px;
+        top: 0;
+        height: 100%;
+        box-shadow: 4px 0 10px rgba(0,0,0,0.2);
+      }
+      sidebar.open { left: 0; }
+      .chat-layout { flex-direction: column; height: 550px; }
+      .chat-rooms { width: 100%; flex-direction: row; }
     }
   </style>
 </head>
@@ -243,7 +270,8 @@
 
   <header>
     <div class="brand-logo">
-      <img id="app-logo-header" src="logo-gremio.png" alt="Logo Grêmio" onerror="this.src='https://via.placeholder.com/45/4B2AA8/ffffff?text=GE'">
+      <button class="menu-toggle" id="btnToggleMenu" onclick="toggleSidebar()"><i class="ph ph-list"></i></button>
+      <img id="app-logo-header" src="logo-gremio.png" alt="Logo Grêmio" onerror="this.src='https://via.placeholder.com/45/0A8F2D/ffffff?text=GE'">
       <div class="brand-title">
         <h1 id="chapa-header-title">Fala Estudante!</h1>
         <p id="chapa-header-sub">Grêmio Estudantil • Várzea Branca - PI</p>
@@ -253,23 +281,23 @@
       <div class="avatar-circle" id="headerAvatar">GE</div>
       <div>
         <div id="headerName" style="font-weight: bold; font-size: 0.88rem;">Estudante</div>
-        <div id="headerRole" style="font-size: 0.72rem; color: var(--gremio-dourado);">Membro</div>
+        <div id="headerRole" style="font-size: 0.72rem; color: var(--amarelo);">Membro</div>
       </div>
     </div>
   </header>
 
   <div id="welcome-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); display:none; justify-content:center; align-items:center; z-index:9999;">
     <div class="card" style="max-width:400px; width:90%; text-align:center;">
-      <h2 style="color:var(--gremio-roxo); margin-bottom: 8px;">Bem-vindo(a)!</h2>
-      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Identifique-se para se conectar ao Grêmio Estudantil.</p>
+      <h2 style="color:var(--roxo); margin-bottom: 8px;">Bem-vindo(a)!</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Conecte-se ao sistema em tempo real do Grêmio.</p>
       <input type="text" id="welcome-nome" class="form-control" placeholder="Seu Nome Completo" required>
       <input type="text" id="welcome-cargo" class="form-control" placeholder="Seu Cargo (Ex: Presidente, Diretor, Estudante)">
-      <button class="btn" id="btnSalvarPerfilInicial" style="width:100%; justify-content:center;"><i class="ph ph-check-circle"></i> Acessar Painel</button>
+      <button class="btn" id="btnSalvarPerfilInicial" style="width:100%; justify-content:center;"><i class="ph ph-check-circle"></i> Acessar Painel Online</button>
     </div>
   </div>
 
   <div class="app-container">
-    <sidebar>
+    <sidebar id="mainSidebar">
       <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="ph ph-house"></i> Dashboard</button>
       <button class="nav-btn" onclick="switchTab('mural', this)"><i class="ph ph-megaphone"></i> Mural</button>
       <button class="nav-btn" onclick="switchTab('membros', this)"><i class="ph ph-users"></i> Integrantes</button>
@@ -283,7 +311,7 @@
         <div class="grid-2">
           <div class="card">
             <h3><i class="ph ph-info"></i> Último Comunicado</h3>
-            <div id="dash-ultimo-comunicado"><p style="color:var(--text-muted);">Carregando...</p></div>
+            <div id="dash-ultimo-comunicado"><p style="color:var(--text-muted);">Sincronizando com o Firebase...</p></div>
           </div>
           <div class="card">
             <h3><i class="ph ph-wallet"></i> Balanço Rápido</h3>
@@ -332,7 +360,7 @@
 
       <section id="tab-chat" class="tab-content">
         <div class="card">
-          <h3><i class="ph ph-chats-teardrop"></i> Comunicação Interna</h3>
+          <h3><i class="ph ph-chats-teardrop"></i> Comunicação Interna Online</h3>
           <div class="chat-layout">
             <div class="chat-rooms">
               <button class="room-btn active" onclick="switchChatRoom('geral', this)"># Geral</button>
@@ -342,7 +370,7 @@
             <div class="chat-main">
               <div class="chat-messages" id="chatMessages"></div>
               <form class="chat-input-area" id="chatForm">
-                <input type="text" id="chatInput" class="form-control" placeholder="Digite sua mensagem..." required>
+                <input type="text" id="chatInput" class="form-control" placeholder="Digite sua mensagem ao vivo..." required>
                 <button type="submit" class="btn"><i class="ph ph-paper-plane-right"></i></button>
               </form>
             </div>
@@ -369,7 +397,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     // Configuração do Firebase
     const firebaseConfig = {
@@ -379,25 +407,17 @@
       projectId: "fala--estudante",
       storageBucket: "fala--estudante.firebasestorage.app",
       messagingSenderId: "424257046289",
-      appId: "1:424257046289:web:b56419eae80e7773c06eb0",
-      measurementId: "G-72YGM447NB"
+      appId: "1:424257046289:web:b56419eae80e7773c06eb0"
     };
 
-    // Inicialização do Firebase
+    // Inicialização do Firebase & Database
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    window.firebaseApp = app;
-  </script>
+    const database = getDatabase(app);
 
-  <script>
-    /* ===================================================
-       ESTADO & BANCO DE DADOS LOCAL
-    =================================================== */
-    const STORAGE_KEY = 'fala_estudante_gremio_v8';
-
-    let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
-      cfg: { chapa: "Fala Estudante!", sub: "Grêmio Estudantil • Várzea Branca - PI", logo: "logo-gremio.png" },
-      perfil: null,
+    // Estado da Aplicação em Memória
+    window.db = {
+      cfg: { chapa: "Fala Estudante!", sub: "Grêmio Estudantil • Várzea Branca - PI" },
+      perfil: JSON.parse(localStorage.getItem('fala_estudante_perfil')) || null,
       mural: [],
       eventos: [],
       membros: [],
@@ -405,12 +425,38 @@
       chat: { geral: [], eventos: [], financeiro: [] }
     };
 
+    // Função de Salvamento no Realtime Database (Nuvem)
+    window.saveDB = function() {
+      set(ref(database, "dados"), {
+        mural: window.db.mural || [],
+        eventos: window.db.eventos || [],
+        membros: window.db.membros || [],
+        financeiro: window.db.financeiro || [],
+        chat: window.db.chat || { geral: [], eventos: [], financeiro: [] }
+      });
+    };
+
+    // Sincronização Automática em Tempo Real (Ouvinte OnValue)
+    onValue(ref(database, "dados"), (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        window.db.mural = data.mural || [];
+        window.db.eventos = data.eventos || [];
+        window.db.membros = data.membros || [];
+        window.db.financeiro = data.financeiro || [];
+        window.db.chat = data.chat || { geral: [], eventos: [], financeiro: [] };
+      }
+      if (window.renderApp) window.renderApp();
+    });
+  </script>
+
+  <script>
     let currentRoom = 'geral';
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
     let chartInstance = null;
 
-    // Métodos Utilitários de Navegação Segura
+    // Utilitários do DOM
     function setSafeText(id, val) { const el = document.getElementById(id); if (el) el.innerText = val; }
     function setSafeHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
 
@@ -419,11 +465,6 @@
       const partes = nome.trim().split(" ");
       if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
       return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
-    }
-
-    function saveDB() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-      renderApp();
     }
 
     function showToast(msg) {
@@ -436,18 +477,21 @@
       setTimeout(() => toast.remove(), 3000);
     }
 
-    /* ===================================================
-       NAVEGAÇÃO E INICIALIZAÇÃO
-    =================================================== */
+    function toggleSidebar() {
+      const sidebar = document.getElementById('mainSidebar');
+      if (sidebar) sidebar.classList.toggle('open');
+    }
+
+    /* INICIALIZAÇÃO */
     document.addEventListener("DOMContentLoaded", () => {
-      if (!db.perfil) {
+      if (!window.db.perfil) {
         const welcomeModal = document.getElementById('welcome-screen');
         if (welcomeModal) welcomeModal.style.display = 'flex';
       } else {
         updateProfileUI();
       }
 
-      // Login/Perfil Inicial
+      // Salvar Perfil
       const btnSalvarPerfil = document.getElementById('btnSalvarPerfilInicial');
       if (btnSalvarPerfil) {
         btnSalvarPerfil.addEventListener('click', () => {
@@ -457,20 +501,20 @@
           const cargo = (cargoInput && cargoInput.value.trim()) ? cargoInput.value.trim() : 'Estudante';
 
           if (nome) {
-            db.perfil = { nome, cargo };
+            window.db.perfil = { nome, cargo };
+            localStorage.setItem('fala_estudante_perfil', JSON.stringify(window.db.perfil));
 
-            // Cadastro automático com avatar pré-gerado
-            const jaExiste = db.membros.some(m => m.nome.trim().toLowerCase() === nome.toLowerCase());
+            const jaExiste = window.db.membros.some(m => m.nome.trim().toLowerCase() === nome.toLowerCase());
             if (!jaExiste) {
-              db.membros.push({ 
+              window.db.membros.push({ 
                 id: Date.now(), 
                 nome: nome, 
                 cargo: cargo, 
                 avatar: obterIniciais(nome) 
               });
+              if (window.saveDB) window.saveDB();
             }
 
-            saveDB();
             document.getElementById('welcome-screen').style.display = 'none';
             updateProfileUI();
             showToast(`Bem-vindo(a), ${nome}!`);
@@ -479,57 +523,48 @@
       }
 
       // Calendário
-      const btnPrev = document.getElementById('btnPrevMonth');
-      if (btnPrev) btnPrev.addEventListener('click', () => {
+      document.getElementById('btnPrevMonth')?.addEventListener('click', () => {
         currentMonth--;
         if (currentMonth < 0) { currentMonth = 11; currentYear--; }
         renderCalendar();
       });
 
-      const btnNext = document.getElementById('btnNextMonth');
-      if (btnNext) btnNext.addEventListener('click', () => {
+      document.getElementById('btnNextMonth')?.addEventListener('click', () => {
         currentMonth++;
         if (currentMonth > 11) { currentMonth = 0; currentYear++; }
         renderCalendar();
       });
 
-      const btnToday = document.getElementById('btnToday');
-      if (btnToday) btnToday.addEventListener('click', () => {
+      document.getElementById('btnToday')?.addEventListener('click', () => {
         currentMonth = new Date().getMonth();
         currentYear = new Date().getFullYear();
         renderCalendar();
       });
 
-      // Chat Form
+      // Form do Chat
       const chatForm = document.getElementById('chatForm');
       if (chatForm) {
         chatForm.addEventListener('submit', (e) => {
           e.preventDefault();
           const input = document.getElementById('chatInput');
           const text = input ? input.value.trim() : '';
-          if (!text || !db.perfil) return;
+          if (!text || !window.db.perfil) return;
 
-          if (!db.chat[currentRoom]) db.chat[currentRoom] = [];
+          if (!window.db.chat[currentRoom]) window.db.chat[currentRoom] = [];
 
-          db.chat[currentRoom].push({
+          window.db.chat[currentRoom].push({
             id: Date.now(),
-            sender: db.perfil.nome,
-            role: db.perfil.cargo,
+            sender: window.db.perfil.nome,
+            role: window.db.perfil.cargo,
             text: text,
             date: new Date().toLocaleDateString('pt-BR'),
             time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
           });
 
-          saveDB();
-          if (input) {
-            input.value = '';
-            input.focus();
-          }
-          renderChatMessages();
+          if (window.saveDB) window.saveDB();
+          if (input) { input.value = ''; input.focus(); }
         });
       }
-
-      renderApp();
     });
 
     window.switchTab = function(tabName, btn) {
@@ -539,19 +574,21 @@
       const target = document.getElementById(`tab-${tabName}`);
       if (target) target.classList.add('active');
       if (btn) btn.classList.add('active');
+
+      // Fecha o menu no mobile ao escolher a opção
+      const sidebar = document.getElementById('mainSidebar');
+      if (sidebar) sidebar.classList.remove('open');
     };
 
     function updateProfileUI() {
-      if (db.perfil) {
-        setSafeText('headerName', db.perfil.nome.split(' ')[0]);
-        setSafeText('headerRole', db.perfil.cargo);
-        setSafeText('headerAvatar', obterIniciais(db.perfil.nome));
+      if (window.db.perfil) {
+        setSafeText('headerName', window.db.perfil.nome.split(' ')[0]);
+        setSafeText('headerRole', window.db.perfil.cargo);
+        setSafeText('headerAvatar', obterIniciais(window.db.perfil.nome));
       }
     }
 
-    /* ===================================================
-       CHAT INTERNO
-    =================================================== */
+    /* CHAT INTERNO */
     window.switchChatRoom = function(room, element) {
       currentRoom = room;
       document.querySelectorAll('.room-btn').forEach(btn => btn.classList.remove('active'));
@@ -562,10 +599,10 @@
     function renderChatMessages() {
       const container = document.getElementById('chatMessages');
       if (!container) return;
-      const msgs = db.chat[currentRoom] || [];
+      const msgs = window.db.chat[currentRoom] || [];
 
       container.innerHTML = msgs.map((m, index) => {
-        const isMe = db.perfil && m.sender === db.perfil.nome;
+        const isMe = window.db.perfil && m.sender === window.db.perfil.nome;
         return `
           <div class="chat-msg ${isMe ? 'me' : ''}">
             <div class="meta">
@@ -583,50 +620,47 @@
     }
 
     window.deletarMensagem = function(room, index) {
-      const msg = db.chat[room][index];
-      if (!msg || !db.perfil) return;
+      const msg = window.db.chat[room][index];
+      if (!msg || !window.db.perfil) return;
 
-      const usuarioAtual = db.perfil.nome.trim().toLowerCase();
-      const cargoAtual = (db.perfil.cargo || '').trim().toLowerCase();
+      const usuarioAtual = window.db.perfil.nome.trim().toLowerCase();
+      const cargoAtual = (window.db.perfil.cargo || '').trim().toLowerCase();
 
       const ehDono = msg.sender.trim().toLowerCase() === usuarioAtual;
       const ehAdmin = cargoAtual === "presidente" || cargoAtual === "vice-presidente";
 
       if (ehDono || ehAdmin) {
-        if (confirm("Deseja apagar esta mensagem?")) {
-          db.chat[room].splice(index, 1);
-          saveDB();
-          renderChatMessages();
-          showToast('Mensagem apagada!');
+        if (confirm("Deseja apagar esta mensagem online?")) {
+          window.db.chat[room].splice(index, 1);
+          if (window.saveDB) window.saveDB();
+          showToast('Mensagem removida para todos!');
         }
       } else {
         showToast('Apenas o autor ou presidente pode apagar.');
       }
     };
 
-    /* ===================================================
-       RENDERIZAÇÃO DA APLICAÇÃO
-    =================================================== */
-    function renderApp() {
-      // Mural Ordenado (Aviso mais recente primeiro)
-      const muralOrdenado = [...db.mural].sort((a,b) => b.id - a.id);
+    /* RENDERIZAÇÃO GERAL */
+    window.renderApp = function() {
+      // Mural
+      const muralOrdenado = [...window.db.mural].sort((a,b) => b.id - a.id);
       const ultAviso = muralOrdenado[0];
 
       setSafeHTML('dash-ultimo-comunicado', ultAviso ? `
-        <h4 style="color:var(--gremio-roxo);">${ultAviso.titulo}</h4>
+        <h4 style="color:var(--roxo);">${ultAviso.titulo}</h4>
         <p style="font-size:0.85rem;">${ultAviso.texto}</p>
       ` : '<p style="color:var(--text-muted);">Nenhum aviso no mural.</p>');
 
       setSafeHTML('public-mural-list', muralOrdenado.map(m => `
         <li style="padding:10px 0; border-bottom:1px solid var(--border-color);">
-          <strong style="color:var(--gremio-roxo);">${m.titulo}</strong>
+          <strong style="color:var(--roxo);">${m.titulo}</strong>
           <p style="font-size:0.85rem;">${m.texto}</p>
         </li>
       `).join('') || '<p style="color:var(--text-muted);">Nenhum aviso.</p>');
 
-      // Integrantes Ordenados por Cargo
+      // Integrantes
       const ordemCargos = ["presidente", "vice", "secretário", "secretaria", "tesoureiro", "diretor"];
-      const membrosOrdenados = [...db.membros].sort((a,b) => {
+      const membrosOrdenados = [...window.db.membros].sort((a,b) => {
         const cargoA = (a.cargo || '').toLowerCase();
         const cargoB = (b.cargo || '').toLowerCase();
         const indexA = ordemCargos.findIndex(c => cargoA.includes(c));
@@ -639,19 +673,19 @@
           <div class="avatar-circle">${m.avatar || obterIniciais(m.nome)}</div>
           <div>
             <strong>${m.nome}</strong>
-            <p style="font-size:0.78rem; color:var(--gremio-roxo); font-weight:600;">${m.cargo}</p>
+            <p style="font-size:0.78rem; color:var(--verde); font-weight:600;">${m.cargo}</p>
           </div>
         </li>
-      `).join('') || '<p style="color:var(--text-muted);">Nenhum integrante.</p>');
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum integrante cadastrado.</p>');
 
-      // Financeiro (Formatado em Moeda BRL)
-      const totalReceita = db.financeiro.filter(f => f.tipo === 'receita').reduce((a,b) => a + b.valor, 0);
-      const totalDespesa = db.financeiro.filter(f => f.tipo === 'despesa').reduce((a,b) => a + b.valor, 0);
+      // Financeiro
+      const totalReceita = window.db.financeiro.filter(f => f.tipo === 'receita').reduce((a,b) => a + b.valor, 0);
+      const totalDespesa = window.db.financeiro.filter(f => f.tipo === 'despesa').reduce((a,b) => a + b.valor, 0);
       const saldo = totalReceita - totalDespesa;
       
       setSafeText('dash-saldo', saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
 
-      setSafeHTML('public-financeiro-list', db.financeiro.map(f => `
+      setSafeHTML('public-financeiro-list', window.db.financeiro.map(f => `
         <li style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-color);">
           <div>
             <strong>${f.desc}</strong>
@@ -666,7 +700,7 @@
       renderCalendar();
       renderChatMessages();
       renderFinanceChart(totalReceita, totalDespesa);
-    }
+    };
 
     function renderCalendar() {
       const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -698,9 +732,9 @@
         const formattedMonth = String(currentMonth + 1).padStart(2, '0');
         const dateStr = `${currentYear}-${formattedMonth}-${formattedDay}`;
 
-        db.eventos.filter(e => e.data === dateStr).forEach(ev => {
+        window.db.eventos.filter(e => e.data === dateStr).forEach(ev => {
           const tag = document.createElement('span');
-          tag.style.backgroundColor = ev.cor || "#4B2AA8";
+          tag.style.backgroundColor = ev.cor || "#0A8F2D";
           tag.style.color = "#ffffff";
           tag.style.fontSize = "0.7rem";
           tag.style.borderRadius = "4px";
@@ -724,7 +758,7 @@
         type: 'doughnut',
         data: {
           labels: ['Entradas', 'Saídas'],
-          datasets: [{ data: [receitas, despesas], backgroundColor: ['#0B8F2A', '#EF4444'] }]
+          datasets: [{ data: [receitas, despesas], backgroundColor: ['#0A8F2D', '#EF4444'] }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
