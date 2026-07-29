@@ -3,30 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grêmio Estudantil - Fala Estudante! v9</title>
+  <title>Gestão Grêmio - CETI José Marques</title>
   
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
-      /* Identidade Visual do Grêmio - Nova Paleta v9 */
-      --verde: #0A8F2D;
-      --verde-claro: #3CBF2B;
-      --roxo: #4A28A8;
-      --roxo-escuro: #2D166F;
+      /* CORES OFICIAIS DO GRÊMIO */
+      --verde: #0B8E2F;
+      --verde-claro: #58C22D;
+      --roxo: #4B2AA8;
+      --roxo-escuro: #341A84;
       --amarelo: #F4C430;
       --branco: #FFFFFF;
 
-      --gradiente-header: linear-gradient(135deg, #0A8F2D 0%, #4A28A8 100%);
-      --gradiente-card: linear-gradient(135deg, #4A28A8 0%, #2D166F 100%);
-      --gradiente-botao: linear-gradient(135deg, #0A8F2D 0%, #3CBF2B 100%);
-      
-      --bg-color: #F4F5F9;
+      --gradiente-header: linear-gradient(135deg, #0B8E2F 0%, #4B2AA8 100%);
+      --gradiente-card: linear-gradient(135deg, #4B2AA8 0%, #341A84 100%);
+      --gradiente-botao: linear-gradient(135deg, #0B8E2F 0%, #58C22D 100%);
+
+      --bg-color: #F6F8FB;
       --card-bg: #FFFFFF;
       --text-color: #2D3748;
-      --text-muted: #718096;
-      --border-color: #E2E8F0;
+      --text-muted: #6B7280;
+      --border-color: #E5E7EB;
       --vermelho-light: #EF4444;
     }
 
@@ -41,7 +41,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       z-index: 100;
     }
 
@@ -90,7 +90,7 @@
     .nav-btn {
       background: transparent;
       border: none;
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.85);
       padding: 12px;
       text-align: left;
       border-radius: 8px;
@@ -99,13 +99,25 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      transition: all 0.2s;
+      transition: all 0.2s ease-in-out;
     }
 
     .nav-btn:hover, .nav-btn.active {
       background: var(--gradiente-botao);
       color: var(--branco);
-      box-shadow: 0 2px 8px rgba(10, 143, 45, 0.3);
+      box-shadow: 0 4px 10px rgba(11, 142, 47, 0.3);
+    }
+
+    .nav-btn.admin-btn {
+      margin-top: auto;
+      background: rgba(244, 196, 48, 0.15);
+      color: var(--amarelo);
+      border: 1px dashed var(--amarelo);
+    }
+
+    .nav-btn.admin-btn:hover, .nav-btn.admin-btn.active {
+      background: var(--amarelo);
+      color: #1E293B;
     }
 
     main { flex: 1; padding: 25px; overflow-y: auto; }
@@ -120,9 +132,16 @@
       border-radius: 12px;
       padding: 20px;
       border: 1px solid var(--border-color);
-      border-top: 4px solid var(--verde);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-top: 5px solid var(--verde);
+      border-bottom: 2px solid var(--roxo);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
       margin-bottom: 20px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
     }
 
     .card h3 {
@@ -144,9 +163,14 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: opacity 0.2s;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(11, 142, 47, 0.25);
     }
-    .btn:hover { opacity: 0.9; }
+    .btn:hover { 
+      opacity: 0.95; 
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(11, 142, 47, 0.35);
+    }
     .btn-warning { background: var(--amarelo); color: #1E293B; }
     .btn-danger { background: var(--vermelho-light); color: var(--branco); }
     .btn-sm { padding: 4px 10px; font-size: 0.8rem; }
@@ -161,7 +185,6 @@
       color: var(--text-color);
     }
 
-    /* Avatar Inicial Verde */
     .avatar-circle {
       width: 40px;
       height: 40px;
@@ -174,7 +197,7 @@
       font-weight: bold;
       font-size: 0.9rem;
       border: 2px solid var(--branco);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
     }
 
     /* Calendário */
@@ -188,7 +211,7 @@
       font-size: 0.8rem;
       border: 1px solid var(--border-color);
     }
-    .calendar-day-cell.today { border: 2px solid var(--roxo); background: rgba(74, 40, 168, 0.05); font-weight: bold; }
+    .calendar-day-cell.today { border: 2px solid var(--roxo); background: rgba(75, 42, 168, 0.05); font-weight: bold; }
 
     /* Chat Layout */
     .chat-layout { display: flex; gap: 15px; height: 450px; }
@@ -207,14 +230,13 @@
     .chat-main { flex: 1; display: flex; flex-direction: column; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; }
     
-    /* Cores das mensagens do Chat */
     .chat-msg {
       margin-bottom: 12px;
       padding: 10px 14px;
       border-radius: 10px;
       max-width: 80%;
       background: var(--verde-claro);
-      color: #0F2D0C;
+      color: #06230B;
       border: 1px solid var(--border-color);
     }
     .chat-msg.me {
@@ -232,13 +254,21 @@
       margin-bottom: 4px;
       opacity: 0.85;
     }
-    .chat-msg .delete-btn { background: none; border: none; color: inherit; cursor: pointer; opacity: 0.6; }
-    .chat-msg .delete-btn:hover { opacity: 1; }
 
-    .chat-input-area { display: flex; gap: 8px; }
-    .chat-input-area input { flex: 1; margin-bottom: 0; }
+    /* Tag de Status para Projetos */
+    .badge-status {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: white;
+    }
+    .badge-em_andamento { background: var(--amarelo); color: #1E293B; }
+    .badge-concluido { background: var(--verde); }
+    .badge-planejamento { background: var(--roxo); }
 
-    /* Toast Notification Amarelo */
+    /* Toast Notification */
     #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
     .toast {
       padding: 12px 20px;
@@ -271,10 +301,10 @@
   <header>
     <div class="brand-logo">
       <button class="menu-toggle" id="btnToggleMenu" onclick="toggleSidebar()"><i class="ph ph-list"></i></button>
-      <img id="app-logo-header" src="logo-gremio.png" alt="Logo Grêmio" onerror="this.src='https://via.placeholder.com/45/0A8F2D/ffffff?text=GE'">
+      <img id="app-logo-header" src="logo.png" alt="Logo Grêmio Estudantil CETI José Marques" onerror="this.src='https://via.placeholder.com/45/0B8E2F/ffffff?text=GE'">
       <div class="brand-title">
-        <h1 id="chapa-header-title">Fala Estudante!</h1>
-        <p id="chapa-header-sub">Grêmio Estudantil • Várzea Branca - PI</p>
+        <h1 id="chapa-header-title">Gestão Grêmio</h1>
+        <p id="chapa-header-sub">Grêmio Estudantil • CETI José Marques</p>
       </div>
     </div>
     <div style="display: flex; align-items: center; gap: 12px;">
@@ -292,7 +322,7 @@
       <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Conecte-se ao sistema em tempo real do Grêmio.</p>
       <input type="text" id="welcome-nome" class="form-control" placeholder="Seu Nome Completo" required>
       <input type="text" id="welcome-cargo" class="form-control" placeholder="Seu Cargo (Ex: Presidente, Diretor, Estudante)">
-      <button class="btn" id="btnSalvarPerfilInicial" style="width:100%; justify-content:center;"><i class="ph ph-check-circle"></i> Acessar Painel Online</button>
+      <button class="btn" id="btnSalvarPerfilInicial" style="width:100%; justify-content:center;"><i class="ph ph-check-circle"></i> Acessar Painel</button>
     </div>
   </div>
 
@@ -300,10 +330,12 @@
     <sidebar id="mainSidebar">
       <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="ph ph-house"></i> Dashboard</button>
       <button class="nav-btn" onclick="switchTab('mural', this)"><i class="ph ph-megaphone"></i> Mural</button>
+      <button class="nav-btn" onclick="switchTab('projetos', this)"><i class="ph ph-folder"></i> Projetos</button>
       <button class="nav-btn" onclick="switchTab('membros', this)"><i class="ph ph-users"></i> Integrantes</button>
       <button class="nav-btn" onclick="switchTab('calendario', this)"><i class="ph ph-calendar"></i> Calendário</button>
       <button class="nav-btn" onclick="switchTab('chat', this)"><i class="ph ph-chats-teardrop"></i> Chat Interno</button>
       <button class="nav-btn" onclick="switchTab('financeiro', this)"><i class="ph ph-chart-pie"></i> Financeiro</button>
+      <button class="nav-btn admin-btn" onclick="switchTab('admin', this)"><i class="ph ph-lock-key"></i> Área Restrita</button>
     </sidebar>
 
     <main>
@@ -325,6 +357,13 @@
         <div class="card">
           <h3><i class="ph ph-megaphone"></i> Mural de Avisos</h3>
           <ul id="public-mural-list" style="list-style:none;"></ul>
+        </div>
+      </section>
+
+      <section id="tab-projetos" class="tab-content">
+        <div class="card">
+          <h3><i class="ph ph-folder"></i> Projetos da Gestão</h3>
+          <div id="public-projetos-list"></div>
         </div>
       </section>
 
@@ -390,6 +429,82 @@
           </div>
         </div>
       </section>
+
+      <section id="tab-admin" class="tab-content">
+        <div id="admin-login-card" class="card" style="max-width: 400px; margin: 0 auto;">
+          <h3><i class="ph ph-lock"></i> Acesso Administrativo</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Digite a senha de gestão para gerenciar o sistema.</p>
+          <input type="password" id="adminPasswordInput" class="form-control" placeholder="Senha de acesso">
+          <button class="btn" onclick="autenticarAdmin()" style="width:100%; justify-content:center;"><i class="ph ph-key"></i> Entrar na Área Restrita</button>
+        </div>
+
+        <div id="admin-panel" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="color:var(--roxo);"><i class="ph ph-shield-check"></i> Painel de Gerenciamento</h2>
+            <button class="btn btn-warning btn-sm" onclick="deslogarAdmin()"><i class="ph ph-sign-out"></i> Sair do Admin</button>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <h3><i class="ph ph-megaphone"></i> Novo Aviso no Mural</h3>
+              <input type="text" id="adm-mural-titulo" class="form-control" placeholder="Título do aviso">
+              <textarea id="adm-mural-texto" class="form-control" rows="3" placeholder="Descrição do comunicado"></textarea>
+              <button class="btn" onclick="addMuralItem()"><i class="ph ph-plus"></i> Publicar Aviso</button>
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              <h4>Avisos Publicados</h4>
+              <ul id="adm-mural-list" style="list-style:none; margin-top:10px;"></ul>
+            </div>
+
+            <div class="card">
+              <h3><i class="ph ph-folder-plus"></i> Novo Projeto</h3>
+              <input type="text" id="adm-proj-nome" class="form-control" placeholder="Nome do Projeto">
+              <textarea id="adm-proj-desc" class="form-control" rows="2" placeholder="Descrição detalhada"></textarea>
+              <select id="adm-proj-status" class="form-control">
+                <option value="planejamento">Em Planejamento</option>
+                <option value="em_andamento">Em Andamento</option>
+                <option value="concluido">Concluído</option>
+              </select>
+              <button class="btn" onclick="addProjetoItem()"><i class="ph ph-plus"></i> Cadastrar Projeto</button>
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              <h4>Projetos Cadastrados</h4>
+              <div id="adm-projetos-list" style="margin-top:10px;"></div>
+            </div>
+
+            <div class="card">
+              <h3><i class="ph ph-user-plus"></i> Novo Integrante</h3>
+              <input type="text" id="adm-membro-nome" class="form-control" placeholder="Nome completo">
+              <input type="text" id="adm-membro-cargo" class="form-control" placeholder="Cargo (Ex: Presidente, Diretor)">
+              <button class="btn" onclick="addMembroItem()"><i class="ph ph-plus"></i> Adicionar Integrante</button>
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              <h4>Integrantes Cadastrados</h4>
+              <ul id="adm-membros-list" style="list-style:none; margin-top:10px;"></ul>
+            </div>
+
+            <div class="card">
+              <h3><i class="ph ph-calendar-plus"></i> Novo Evento no Calendário</h3>
+              <input type="text" id="adm-evento-nome" class="form-control" placeholder="Nome do Evento">
+              <input type="date" id="adm-evento-data" class="form-control">
+              <button class="btn" onclick="addEventoItem()"><i class="ph ph-plus"></i> Agendar Evento</button>
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              <h4>Eventos Agendados</h4>
+              <ul id="adm-eventos-list" style="list-style:none; margin-top:10px;"></ul>
+            </div>
+
+            <div class="card">
+              <h3><i class="ph ph-currency-dollar-simple"></i> Novo Lançamento Financeiro</h3>
+              <input type="text" id="adm-fin-desc" class="form-control" placeholder="Descrição do gasto/receita">
+              <input type="number" id="adm-fin-valor" class="form-control" placeholder="Valor (R$)" step="0.01">
+              <select id="adm-fin-tipo" class="form-control">
+                <option value="receita">Entrada (Receita)</option>
+                <option value="despesa">Saída (Despesa)</option>
+              </select>
+              <button class="btn" onc              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              <h4>Histórico de Lançamentos</h4>
+              <ul id="adm-financeiro-list" style="list-style:none; margin-top:10px;"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -399,7 +514,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // Configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyC2rnMOi-YMH9LthRFf9KCICFtKpGvDm78",
       authDomain: "fala--estudante.firebaseapp.com",
@@ -410,25 +524,24 @@
       appId: "1:424257046289:web:b56419eae80e7773c06eb0"
     };
 
-    // Inicialização do Firebase & Database
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    // Estado da Aplicação em Memória
     window.db = {
-      cfg: { chapa: "Fala Estudante!", sub: "Grêmio Estudantil • Várzea Branca - PI" },
+      cfg: { chapa: "Gestão Grêmio", sub: "Grêmio Estudantil • CETI José Marques" },
       perfil: JSON.parse(localStorage.getItem('fala_estudante_perfil')) || null,
       mural: [],
+      projetos: [],
       eventos: [],
       membros: [],
       financeiro: [],
       chat: { geral: [], eventos: [], financeiro: [] }
     };
 
-    // Função de Salvamento no Realtime Database (Nuvem)
     window.saveDB = function() {
       set(ref(database, "dados"), {
         mural: window.db.mural || [],
+        projetos: window.db.projetos || [],
         eventos: window.db.eventos || [],
         membros: window.db.membros || [],
         financeiro: window.db.financeiro || [],
@@ -436,11 +549,11 @@
       });
     };
 
-    // Sincronização Automática em Tempo Real (Ouvinte OnValue)
     onValue(ref(database, "dados"), (snapshot) => {
       const data = snapshot.val();
       if (data) {
         window.db.mural = data.mural || [];
+        window.db.projetos = data.projetos || [];
         window.db.eventos = data.eventos || [];
         window.db.membros = data.membros || [];
         window.db.financeiro = data.financeiro || [];
@@ -451,12 +564,13 @@
   </script>
 
   <script>
+    const SENHA_ADMIN = "gremio26";
+    let isAdminAuth = false;
     let currentRoom = 'geral';
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
     let chartInstance = null;
 
-    // Utilitários do DOM
     function setSafeText(id, val) { const el = document.getElementById(id); if (el) el.innerText = val; }
     function setSafeHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
 
@@ -482,6 +596,127 @@
       if (sidebar) sidebar.classList.toggle('open');
     }
 
+    /* AUTENTICAÇÃO ÁREA RESTRITA */
+    function autenticarAdmin() {
+      const input = document.getElementById('adminPasswordInput');
+      if (input && input.value === SENHA_ADMIN) {
+        isAdminAuth = true;
+        document.getElementById('admin-login-card').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        input.value = '';
+        showToast('Acesso concedido à Área Restrita!');
+        renderAdminLists();
+      } else {
+        showToast('Senha incorreta!');
+      }
+    }
+
+    function deslogarAdmin() {
+      isAdminAuth = false;
+      document.getElementById('admin-login-card').style.display = 'block';
+      document.getElementById('admin-panel').style.display = 'none';
+      showToast('Sessão administrativa encerrada.');
+    }
+
+    /* FUNÇÕES EDICAO ADMIN */
+    function addMuralItem() {
+      const tit = document.getElementById('adm-mural-titulo').value.trim();
+      const txt = document.getElementById('adm-mural-texto').value.trim();
+      if (!tit || !txt) return showToast('Preencha todos os campos do aviso.');
+
+      window.db.mural.push({ id: Date.now(), titulo: tit, texto: txt, data: new Date().toLocaleDateString('pt-BR') });
+      window.saveDB();
+      document.getElementById('adm-mural-titulo').value = '';
+      document.getElementById('adm-mural-texto').value = '';
+      showToast('Aviso publicado!');
+    }
+
+    function delMuralItem(id) {
+      window.db.mural = window.db.mural.filter(m => m.id !== id);
+      window.saveDB();
+      showToast('Aviso removido!');
+    }
+
+    function addProjetoItem() {
+      const nome = document.getElementById('adm-proj-nome').value.trim();
+      const desc = document.getElementById('adm-proj-desc').value.trim();
+      const status = document.getElementById('adm-proj-status').value;
+      if (!nome || !desc) return showToast('Preencha os campos do projeto.');
+
+      window.db.projetos.push({ id: Date.now(), nome, desc, status });
+      window.saveDB();
+      document.getElementById('adm-proj-nome').value = '';
+      document.getElementById('adm-proj-desc').value = '';
+      showToast('Projeto cadastrado!');
+    }
+
+    function delProjetoItem(id) {
+      window.db.projetos = window.db.projetos.filter(p => p.id !== id);
+      window.saveDB();
+      showToast('Projeto removido!');
+    }
+
+    function addMembroItem() {
+      const nome = document.getElementById('adm-membro-nome').value.trim();
+      const cargo = document.getElementById('adm-membro-cargo').value.trim();
+      if (!nome || !cargo) return showToast('Preencha os dados do integrante.');
+
+      window.db.membros.push({ id: Date.now(), nome, cargo, avatar: obterIniciais(nome) });
+      window.saveDB();
+      document.getElementById('adm-membro-nome').value = '';
+      document.getElementById('adm-membro-cargo').value = '';
+      showToast('Integrante adicionado!');
+    }
+
+    function delMembroItem(id) {
+      window.db.membros = window.db.membros.filter(m => m.id !== id);
+      window.saveDB();
+      showToast('Integrante removido!');
+    }
+
+    function addEventoItem() {
+      const nome = document.getElementById('adm-evento-nome').value.trim();
+      const data = document.getElementById('adm-evento-data').value;
+      if (!nome || !data) return showToast('Informe o nome e a data do evento.');
+
+      window.db.eventos.push({ id: Date.now(), nome, data, cor: "#0B8E2F" });
+      window.saveDB();
+      document.getElementById('adm-evento-nome').value = '';
+      document.getElementById('adm-evento-data').value = '';
+      showToast('Evento agendado!');
+    }
+
+    function delEventoItem(id) {
+      window.db.eventos = window.db.eventos.filter(e => e.id !== id);
+      window.saveDB();
+      showToast('Evento removido!');
+    }
+
+    function addFinanceiroItem() {
+      const desc = document.getElementById('adm-fin-desc').value.trim();
+      const valor = parseFloat(document.getElementById('adm-fin-valor').value);
+      const tipo = document.getElementById('adm-fin-tipo').value;
+      if (!desc || isNaN(valor) || valor <= 0) return showToast('Preencha a descrição e valor válidos.');
+
+      window.db.financeiro.push({ 
+        id: Date.now(), 
+        desc, 
+        valor, 
+        tipo, 
+        data: new Date().toLocaleDateString('pt-BR') 
+      });
+      window.saveDB();
+      document.getElementById('adm-fin-desc').value = '';
+      document.getElementById('adm-fin-valor').value = '';
+      showToast('Lançamento registrado!');
+    }
+
+    function delFinanceiroItem(id) {
+      window.db.financeiro = window.db.financeiro.filter(f => f.id !== id);
+      window.saveDB();
+      showToast('Lançamento removido!');
+    }
+
     /* INICIALIZAÇÃO */
     document.addEventListener("DOMContentLoaded", () => {
       if (!window.db.perfil) {
@@ -491,38 +726,28 @@
         updateProfileUI();
       }
 
-      // Salvar Perfil
-      const btnSalvarPerfil = document.getElementById('btnSalvarPerfilInicial');
-      if (btnSalvarPerfil) {
-        btnSalvarPerfil.addEventListener('click', () => {
-          const nomeInput = document.getElementById('welcome-nome');
-          const cargoInput = document.getElementById('welcome-cargo');
-          const nome = nomeInput ? nomeInput.value.trim() : '';
-          const cargo = (cargoInput && cargoInput.value.trim()) ? cargoInput.value.trim() : 'Estudante';
+      document.getElementById('btnSalvarPerfilInicial')?.addEventListener('click', () => {
+        const nomeInput = document.getElementById('welcome-nome');
+        const cargoInput = document.getElementById('welcome-cargo');
+        const nome = nomeInput ? nomeInput.value.trim() : '';
+        const cargo = (cargoInput && cargoInput.value.trim()) ? cargoInput.value.trim() : 'Estudante';
 
-          if (nome) {
-            window.db.perfil = { nome, cargo };
-            localStorage.setItem('fala_estudante_perfil', JSON.stringify(window.db.perfil));
+        if (nome) {
+          window.db.perfil = { nome, cargo };
+          localStorage.setItem('fala_estudante_perfil', JSON.stringify(window.db.perfil));
 
-            const jaExiste = window.db.membros.some(m => m.nome.trim().toLowerCase() === nome.toLowerCase());
-            if (!jaExiste) {
-              window.db.membros.push({ 
-                id: Date.now(), 
-                nome: nome, 
-                cargo: cargo, 
-                avatar: obterIniciais(nome) 
-              });
-              if (window.saveDB) window.saveDB();
-            }
-
-            document.getElementById('welcome-screen').style.display = 'none';
-            updateProfileUI();
-            showToast(`Bem-vindo(a), ${nome}!`);
+          const jaExiste = window.db.membros.some(m => m.nome.trim().toLowerCase() === nome.toLowerCase());
+          if (!jaExiste) {
+            window.db.membros.push({ id: Date.now(), nome: nome, cargo: cargo, avatar: obterIniciais(nome) });
+            if (window.saveDB) window.saveDB();
           }
-        });
-      }
 
-      // Calendário
+          document.getElementById('welcome-screen').style.display = 'none';
+          updateProfileUI();
+          showToast(`Bem-vindo(a), ${nome}!`);
+        }
+      });
+
       document.getElementById('btnPrevMonth')?.addEventListener('click', () => {
         currentMonth--;
         if (currentMonth < 0) { currentMonth = 11; currentYear--; }
@@ -541,30 +766,26 @@
         renderCalendar();
       });
 
-      // Form do Chat
-      const chatForm = document.getElementById('chatForm');
-      if (chatForm) {
-        chatForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const input = document.getElementById('chatInput');
-          const text = input ? input.value.trim() : '';
-          if (!text || !window.db.perfil) return;
+      document.getElementById('chatForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = document.getElementById('chatInput');
+        const text = input ? input.value.trim() : '';
+        if (!text || !window.db.perfil) return;
 
-          if (!window.db.chat[currentRoom]) window.db.chat[currentRoom] = [];
+        if (!window.db.chat[currentRoom]) window.db.chat[currentRoom] = [];
 
-          window.db.chat[currentRoom].push({
-            id: Date.now(),
-            sender: window.db.perfil.nome,
-            role: window.db.perfil.cargo,
-            text: text,
-            date: new Date().toLocaleDateString('pt-BR'),
-            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-          });
-
-          if (window.saveDB) window.saveDB();
-          if (input) { input.value = ''; input.focus(); }
+        window.db.chat[currentRoom].push({
+          id: Date.now(),
+          sender: window.db.perfil.nome,
+          role: window.db.perfil.cargo,
+          text: text,
+          date: new Date().toLocaleDateString('pt-BR'),
+          time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
         });
-      }
+
+        if (window.saveDB) window.saveDB();
+        if (input) { input.value = ''; input.focus(); }
+      });
     });
 
     window.switchTab = function(tabName, btn) {
@@ -575,7 +796,6 @@
       if (target) target.classList.add('active');
       if (btn) btn.classList.add('active');
 
-      // Fecha o menu no mobile ao escolher a opção
       const sidebar = document.getElementById('mainSidebar');
       if (sidebar) sidebar.classList.remove('open');
     };
@@ -588,7 +808,7 @@
       }
     }
 
-    /* CHAT INTERNO */
+    /* CHAT */
     window.switchChatRoom = function(room, element) {
       currentRoom = room;
       document.querySelectorAll('.room-btn').forEach(btn => btn.classList.remove('active'));
@@ -629,7 +849,7 @@
       const ehDono = msg.sender.trim().toLowerCase() === usuarioAtual;
       const ehAdmin = cargoAtual === "presidente" || cargoAtual === "vice-presidente";
 
-      if (ehDono || ehAdmin) {
+      if (ehDono || ehAdmin || isAdminAuth) {
         if (confirm("Deseja apagar esta mensagem online?")) {
           window.db.chat[room].splice(index, 1);
           if (window.saveDB) window.saveDB();
@@ -640,7 +860,7 @@
       }
     };
 
-    /* RENDERIZAÇÃO GERAL */
+    /* RENDER GERAL */
     window.renderApp = function() {
       // Mural
       const muralOrdenado = [...window.db.mural].sort((a,b) => b.id - a.id);
@@ -655,8 +875,26 @@
         <li style="padding:10px 0; border-bottom:1px solid var(--border-color);">
           <strong style="color:var(--roxo);">${m.titulo}</strong>
           <p style="font-size:0.85rem;">${m.texto}</p>
+          <span style="font-size:0.75rem; color:var(--text-muted);">${m.data || ''}</span>
         </li>
-      `).join('') || '<p style="color:var(--text-muted);">Nenhum aviso.</p>');
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum aviso no mural.</p>');
+
+      // Projetos Publicos
+      const statusLabels = {
+        planejamento: "Em Planejamento",
+        em_andamento: "Em Andamento",
+        concluido: "Concluído"
+      };
+
+      setSafeHTML('public-projetos-list', window.db.projetos.map(p => `
+        <div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <strong style="color:var(--roxo); font-size:1rem;">${p.nome}</strong>
+            <span class="badge-status badge-${p.status}">${statusLabels[p.status] || p.status}</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-color);">${p.desc}</p>
+        </div>
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum projeto cadastrado.</p>');
 
       // Integrantes
       const ordemCargos = ["presidente", "vice", "secretário", "secretaria", "tesoureiro", "diretor"];
@@ -700,7 +938,53 @@
       renderCalendar();
       renderChatMessages();
       renderFinanceChart(totalReceita, totalDespesa);
+
+      if (isAdminAuth) {
+        renderAdminLists();
+      }
     };
+
+    function renderAdminLists() {
+      // Admin Mural
+      setSafeHTML('adm-mural-list', window.db.mural.map(m => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
+          <span><strong>${m.titulo}</strong></span>
+          <button class="btn btn-danger btn-sm" onclick="delMuralItem(${m.id})"><i class="ph ph-trash"></i></button>
+        </li>
+      `).join('') || '<p style="font-size:0.8rem; color:var(--text-muted);">Sem avisos.</p>');
+
+      // Admin Projetos
+      setSafeHTML('adm-projetos-list', window.db.projetos.map(p => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
+          <span><strong>${p.nome}</strong> (${p.status})</span>
+          <button class="btn btn-danger btn-sm" onclick="delProjetoItem(${p.id})"><i class="ph ph-trash"></i></button>
+        </div>
+      `).join('') || '<p style="font-size:0.8rem; color:var(--text-muted);">Sem projetos.</p>');
+
+      // Admin Membros
+      setSafeHTML('adm-membros-list', window.db.membros.map(m => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
+          <span>${m.nome} - <em>${m.cargo}</em></span>
+          <button class="btn btn-danger btn-sm" onclick="delMembroItem(${m.id})"><i class="ph ph-trash"></i></button>
+        </li>
+      `).join('') || '<p style="font-size:0.8rem; color:var(--text-muted);">Sem integrantes.</p>');
+
+      // Admin Eventos
+      setSafeHTML('adm-eventos-list', window.db.eventos.map(e => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
+          <span>${e.nome} (${e.data})</span>
+          <button class="btn btn-danger btn-sm" onclick="delEventoItem(${e.id})"><i class="ph ph-trash"></i></button>
+        </li>
+      `).join('') || '<p style="font-size:0.8rem; color:var(--text-muted);">Sem eventos.</p>');
+
+      // Admin Financeiro
+      setSafeHTML('adm-financeiro-list', window.db.financeiro.map(f => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
+          <span>${f.desc} - R$ ${f.valor.toFixed(2)} (${f.tipo})</span>
+          <button class="btn btn-danger btn-sm" onclick="delFinanceiroItem(${f.id})"><i class="ph ph-trash"></i></button>
+        </li>
+      `).join('') || '<p style="font-size:0.8rem; color:var(--text-muted);">Sem lançamentos.</p>');
+    }
 
     function renderCalendar() {
       const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -734,7 +1018,7 @@
 
         window.db.eventos.filter(e => e.data === dateStr).forEach(ev => {
           const tag = document.createElement('span');
-          tag.style.backgroundColor = ev.cor || "#0A8F2D";
+          tag.style.backgroundColor = ev.cor || "#0B8E2F";
           tag.style.color = "#ffffff";
           tag.style.fontSize = "0.7rem";
           tag.style.borderRadius = "4px";
@@ -758,7 +1042,7 @@
         type: 'doughnut',
         data: {
           labels: ['Entradas', 'Saídas'],
-          datasets: [{ data: [receitas, despesas], backgroundColor: ['#0A8F2D', '#EF4444'] }]
+          datasets: [{ data: [receitas, despesas], backgroundColor: ['#0B8E2F', '#EF4444'] }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
