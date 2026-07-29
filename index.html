@@ -367,11 +367,33 @@
 
   <div id="toast-container"></div>
 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyC2rnMOi-YMH9LthRFf9KCICFtKpGvDm78",
+      authDomain: "fala--estudante.firebaseapp.com",
+      databaseURL: "https://fala--estudante-default-rtdb.firebaseio.com",
+      projectId: "fala--estudante",
+      storageBucket: "fala--estudante.firebasestorage.app",
+      messagingSenderId: "424257046289",
+      appId: "1:424257046289:web:b56419eae80e7773c06eb0",
+      measurementId: "G-72YGM447NB"
+    };
+
+    // Inicialização do Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    window.firebaseApp = app;
+  </script>
+
   <script>
     /* ===================================================
        ESTADO & BANCO DE DADOS LOCAL
     =================================================== */
-    const STORAGE_KEY = 'fala_estudante_gremio_v7';
+    const STORAGE_KEY = 'fala_estudante_gremio_v8';
 
     let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
       cfg: { chapa: "Fala Estudante!", sub: "Grêmio Estudantil • Várzea Branca - PI", logo: "logo-gremio.png" },
@@ -388,7 +410,7 @@
     let currentYear = new Date().getFullYear();
     let chartInstance = null;
 
-    // Métodos Utilitários de Navegação Segura do DOM
+    // Métodos Utilitários de Navegação Segura
     function setSafeText(id, val) { const el = document.getElementById(id); if (el) el.innerText = val; }
     function setSafeHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
 
@@ -437,10 +459,15 @@
           if (nome) {
             db.perfil = { nome, cargo };
 
-            // Evita duplicatas na lista de integrantes
+            // Cadastro automático com avatar pré-gerado
             const jaExiste = db.membros.some(m => m.nome.trim().toLowerCase() === nome.toLowerCase());
             if (!jaExiste) {
-              db.membros.push({ id: Date.now(), nome, cargo });
+              db.membros.push({ 
+                id: Date.now(), 
+                nome: nome, 
+                cargo: cargo, 
+                avatar: obterIniciais(nome) 
+              });
             }
 
             saveDB();
@@ -451,7 +478,7 @@
         });
       }
 
-      // Calendário: Correção de Incremento dos Anos
+      // Calendário
       const btnPrev = document.getElementById('btnPrevMonth');
       if (btnPrev) btnPrev.addEventListener('click', () => {
         currentMonth--;
@@ -494,7 +521,10 @@
           });
 
           saveDB();
-          if (input) input.value = '';
+          if (input) {
+            input.value = '';
+            input.focus();
+          }
           renderChatMessages();
         });
       }
@@ -578,22 +608,23 @@
        RENDERIZAÇÃO DA APLICAÇÃO
     =================================================== */
     function renderApp() {
-      // Atualiza Mural no Dashboard
-      const ultAviso = db.mural[0];
+      // Mural Ordenado (Aviso mais recente primeiro)
+      const muralOrdenado = [...db.mural].sort((a,b) => b.id - a.id);
+      const ultAviso = muralOrdenado[0];
+
       setSafeHTML('dash-ultimo-comunicado', ultAviso ? `
         <h4 style="color:var(--gremio-roxo);">${ultAviso.titulo}</h4>
         <p style="font-size:0.85rem;">${ultAviso.texto}</p>
       ` : '<p style="color:var(--text-muted);">Nenhum aviso no mural.</p>');
 
-      // Mural Completo
-      setSafeHTML('public-mural-list', db.mural.map(m => `
+      setSafeHTML('public-mural-list', muralOrdenado.map(m => `
         <li style="padding:10px 0; border-bottom:1px solid var(--border-color);">
           <strong style="color:var(--gremio-roxo);">${m.titulo}</strong>
           <p style="font-size:0.85rem;">${m.texto}</p>
         </li>
       `).join('') || '<p style="color:var(--text-muted);">Nenhum aviso.</p>');
 
-      // Integrantes
+      // Integrantes Ordenados por Cargo
       const ordemCargos = ["presidente", "vice", "secretário", "secretaria", "tesoureiro", "diretor"];
       const membrosOrdenados = [...db.membros].sort((a,b) => {
         const cargoA = (a.cargo || '').toLowerCase();
@@ -605,7 +636,7 @@
 
       setSafeHTML('public-membros-list', membrosOrdenados.map(m => `
         <li style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border-color);">
-          <div class="avatar-circle">${obterIniciais(m.nome)}</div>
+          <div class="avatar-circle">${m.avatar || obterIniciais(m.nome)}</div>
           <div>
             <strong>${m.nome}</strong>
             <p style="font-size:0.78rem; color:var(--gremio-roxo); font-weight:600;">${m.cargo}</p>
@@ -613,14 +644,13 @@
         </li>
       `).join('') || '<p style="color:var(--text-muted);">Nenhum integrante.</p>');
 
-      // Financeiro
+      // Financeiro (Formatado em Moeda BRL)
       const totalReceita = db.financeiro.filter(f => f.tipo === 'receita').reduce((a,b) => a + b.valor, 0);
       const totalDespesa = db.financeiro.filter(f => f.tipo === 'despesa').reduce((a,b) => a + b.valor, 0);
       const saldo = totalReceita - totalDespesa;
       
-      setSafeText('dash-saldo', `R$ ${saldo.toFixed(2)}`);
+      setSafeText('dash-saldo', saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
 
-      // Lista Financeira na Aba Financeiro
       setSafeHTML('public-financeiro-list', db.financeiro.map(f => `
         <li style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-color);">
           <div>
@@ -628,7 +658,7 @@
             <p style="font-size:0.75rem; color:var(--text-muted);">${f.data}</p>
           </div>
           <span style="font-weight:bold; color:${f.tipo === 'receita' ? 'var(--verde)' : 'var(--vermelho-light)'};">
-            ${f.tipo === 'receita' ? '+' : '-'} R$ ${f.valor.toFixed(2)}
+            ${f.tipo === 'receita' ? '+' : '-'} ${f.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </span>
         </li>
       `).join('') || '<p style="color:var(--text-muted);">Nenhum lançamento.</p>');
@@ -670,7 +700,13 @@
 
         db.eventos.filter(e => e.data === dateStr).forEach(ev => {
           const tag = document.createElement('span');
-          tag.style.cssText = `background:${ev.cor || 'var(--gremio-roxo)'}; color:#fff; font-size:0.7rem; border-radius:4px; padding:2px 4px; display:block; margin-top:2px;`;
+          tag.style.backgroundColor = ev.cor || "#4B2AA8";
+          tag.style.color = "#ffffff";
+          tag.style.fontSize = "0.7rem";
+          tag.style.borderRadius = "4px";
+          tag.style.padding = "2px 4px";
+          tag.style.display = "block";
+          tag.style.marginTop = "2px";
           tag.innerText = ev.nome;
           cell.appendChild(tag);
         });
