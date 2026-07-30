@@ -10,7 +10,6 @@
 
   <style>
     :root {
-      /* CORES OFICIAIS DO GRÊMIO */
       --verde: #0B8E2F;
       --verde-claro: #58C22D;
       --roxo: #4B2AA8;
@@ -180,14 +179,23 @@
       font-weight: bold;
       font-size: 0.9rem;
       position: relative;
-      background-size: cover;
-      background-position: center;
     }
 
     .online-indicator {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       background: #10B981;
+      border-radius: 50%;
+      border: 2px solid var(--card-bg);
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+
+    .offline-indicator {
+      width: 12px;
+      height: 12px;
+      background: #94A3B8;
       border-radius: 50%;
       border: 2px solid var(--card-bg);
       position: absolute;
@@ -200,20 +208,27 @@
     .calendar-day-cell { min-height: 70px; background: rgba(0,0,0,0.02); border-radius: 6px; padding: 6px; font-size: 0.8rem; border: 1px solid var(--border-color); }
     .calendar-day-cell.today { border: 2px solid var(--roxo); background: rgba(75, 42, 168, 0.05); font-weight: bold; }
 
-    .chat-layout { display: flex; gap: 15px; height: 450px; }
+    .chat-layout { display: flex; gap: 15px; height: 480px; }
     .chat-rooms { width: 150px; display: flex; flex-direction: column; gap: 6px; }
     .room-btn { padding: 10px; background: rgba(0,0,0,0.04); border: none; border-radius: 6px; cursor: pointer; text-align: left; font-size: 0.85rem; color: var(--text-color); }
     .room-btn.active { background: var(--roxo); color: var(--branco); }
     .chat-main { flex: 1; display: flex; flex-direction: column; }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; }
-    .chat-msg { margin-bottom: 12px; padding: 10px 14px; border-radius: 10px; max-width: 80%; background: var(--verde-claro); color: #06230B; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; }
+    .chat-msg { margin-bottom: 12px; padding: 10px 14px; border-radius: 10px; max-width: 80%; background: var(--verde-claro); color: #06230B; position: relative; }
     .chat-msg.me { margin-left: auto; background: var(--roxo); color: var(--branco); }
     .chat-msg .meta { font-size: 0.72rem; display: flex; justify-content: space-between; gap: 12px; margin-bottom: 4px; opacity: 0.85; }
+    .chat-msg .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 0.75rem; }
+    .delete-msg-btn { background: none; border: none; color: #EF4444; cursor: pointer; font-size: 0.8rem; padding: 0 4px; }
+    .chat-msg.me .delete-msg-btn { color: #FCA5A5; }
+
+    .typing-status { font-size: 0.75rem; font-style: italic; color: var(--text-muted); height: 18px; margin-bottom: 4px; }
 
     .badge-status { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; color: white; }
     .badge-em_andamento { background: var(--amarelo); color: #1E293B; }
     .badge-concluido { background: var(--verde); }
     .badge-planejamento { background: var(--roxo); }
+
+    .fin-summary-box { background: rgba(11, 142, 47, 0.1); border: 1px dashed var(--verde); border-radius: 8px; padding: 15px; text-align: center; margin-bottom: 15px; }
 
     #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
     .toast { padding: 12px 20px; background: var(--amarelo); color: #1E293B; font-weight: 600; border-radius: 8px; margin-top: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
@@ -297,7 +312,7 @@
           </div>
           <div class="kpi-card">
             <i class="ph ph-wallet kpi-icon"></i>
-            <div><p style="font-size:0.75rem; color:var(--text-muted);">Saldo Caixa</p><h3 id="dash-saldo" style="color:var(--verde);">R$ 0,00</h3></div>
+            <div><p style="font-size:0.75rem; color:var(--text-muted);">Saldo Caixa Grêmio</p><h3 id="dash-saldo" style="color:var(--verde);">R$ 0,00</h3></div>
           </div>
         </div>
 
@@ -361,9 +376,10 @@
             </div>
             <div class="chat-main">
               <div class="chat-messages" id="chatMessages"></div>
+              <div class="typing-status" id="typingStatus"></div>
               <form id="chatForm" style="display:flex; gap:8px;">
-                <input type="text" id="chatInput" class="form-control" style="margin-bottom:0;" placeholder="Digite sua mensagem ao vivo..." required>
-                <button type="submit" class="btn"><i class="ph ph-paper-plane-right"></i></button>
+                <input type="text" id="chatInput" class="form-control" style="margin-bottom:0;" placeholder="Digite sua mensagem ao vivo..." oninput="handleChatTyping()" required>
+                <button type="submit" class="btn"><i class="ph ph-paper-plane-right"></i> Enviar</button>
               </form>
             </div>
           </div>
@@ -371,10 +387,16 @@
       </section>
 
       <section id="tab-financeiro" class="tab-content">
+        <div class="fin-summary-box">
+          <p style="font-size:0.9rem; color:var(--text-muted);">Saldo Total Disponível no Grêmio</p>
+          <h2 id="fin-saldo-destaque" style="color:var(--verde); font-size:2rem; margin:5px 0;">R$ 0,00</h2>
+          <p id="fin-percentual-resumo" style="font-size:0.85rem; font-weight:bold; color:var(--roxo);"></p>
+        </div>
+
         <div class="grid-2">
           <div class="card">
-            <h3><i class="ph ph-chart-pie"></i> Relatório Financeiro</h3>
-            <div style="height: 200px;"><canvas id="financeiroChart"></canvas></div>
+            <h3><i class="ph ph-chart-pie"></i> Distribuição Financeira (%)</h3>
+            <div style="height: 220px;"><canvas id="financeiroChart"></canvas></div>
           </div>
           <div class="card">
             <h3><i class="ph ph-receipt"></i> Lançamentos</h3>
@@ -392,12 +414,29 @@
         </div>
 
         <div id="admin-panel" style="display:none;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="color:var(--roxo);"><i class="ph ph-shield-check"></i> Painel de Gerenciamento</h2>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+            <div>
+              <h2 style="color:var(--roxo);"><i class="ph ph-shield-check"></i> Painel de Gerenciamento</h2>
+              <span style="font-size:0.9rem; font-weight:bold; color:var(--verde);">Caixa do Grêmio: <span id="admin-saldo-caixa">R$ 0,00</span></span>
+            </div>
             <button class="btn btn-warning btn-sm" onclick="deslogarAdmin()"><i class="ph ph-sign-out"></i> Sair do Admin</button>
           </div>
 
           <div class="grid-2">
+            <div class="card">
+              <h3><i class="ph ph-check-square-offset"></i> Presença em Reuniões</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Registre a frequência dos membros na última reunião.</p>
+              
+              <div id="adm-chamada-list" style="max-height:200px; overflow-y:auto; margin-bottom:12px;"></div>
+              
+              <button class="btn" onclick="salvarChamada()"><i class="ph ph-floppy-disk"></i> Salvar Frequência</button>
+
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              
+              <h4>Assiduidade Geral</h4>
+              <div style="height: 180px; margin-top:10px;"><canvas id="presencaChart"></canvas></div>
+            </div>
+
             <div class="card">
               <h3 id="adm-mural-form-title"><i class="ph ph-megaphone"></i> Novo Aviso no Mural</h3>
               <input type="hidden" id="adm-mural-id">
@@ -450,6 +489,12 @@
               <h4>Histórico de Lançamentos</h4>
               <ul id="adm-financeiro-list" style="list-style:none; margin-top:10px;"></ul>
             </div>
+
+            <div class="card" style="border-top-color: var(--vermelho-light);">
+              <h3><i class="ph ph-trash"></i> Lixeira da Gestão</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Itens excluídos podem ser restaurados ou apagados permanentemente.</p>
+              <ul id="adm-lixeira-list" style="list-style:none;"></ul>
+            </div>
           </div>
         </div>
       </section>
@@ -478,7 +523,10 @@
     window.db = {
       perfil: JSON.parse(localStorage.getItem('fala_estudante_perfil')) || null,
       mural: [], projetos: [], eventos: [], membros: [], financeiro: [],
-      chat: { geral: [], eventos: [], financeiro: [] }
+      chat: { geral: [], eventos: [], financeiro: [] },
+      lixeira: [],
+      presencas: {},
+      digitando: {}
     };
 
     window.saveDB = function() {
@@ -488,7 +536,10 @@
         eventos: window.db.eventos || [],
         membros: window.db.membros || [],
         financeiro: window.db.financeiro || [],
-        chat: window.db.chat || { geral: [], eventos: [], financeiro: [] }
+        chat: window.db.chat || { geral: [], eventos: [], financeiro: [] },
+        lixeira: window.db.lixeira || [],
+        presencas: window.db.presencas || {},
+        digitando: window.db.digitando || {}
       });
     };
 
@@ -501,6 +552,9 @@
         window.db.membros = data.membros || [];
         window.db.financeiro = data.financeiro || [];
         window.db.chat = data.chat || { geral: [], eventos: [], financeiro: [] };
+        window.db.lixeira = data.lixeira || [];
+        window.db.presencas = data.presencas || {};
+        window.db.digitando = data.digitando || {};
       }
       if (window.renderApp) window.renderApp();
     });
@@ -513,6 +567,8 @@
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
     let chartInstance = null;
+    let chartPresencaInstance = null;
+    let typingTimeout = null;
 
     function toggleDarkMode() {
       document.body.classList.toggle('dark-mode');
@@ -540,7 +596,6 @@
       return partes.length === 1 ? partes[0].substring(0, 2).toUpperCase() : (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
     }
 
-    /* FILTROS E PESQUISA */
     function filterList(listId, query) {
       const items = document.querySelectorAll(`#${listId} li`);
       items.forEach(item => {
@@ -555,7 +610,6 @@
       });
     }
 
-    /* LOGOUT DO USUÁRIO */
     function logoutUser() {
       localStorage.removeItem('fala_estudante_perfil');
       window.db.perfil = null;
@@ -572,7 +626,6 @@
       showToast('Você saiu da sua conta.');
     }
 
-    /* AUTENTICAÇÃO ADMIN */
     function autenticarAdmin() {
       const input = document.getElementById('adminPasswordInput');
       if (input && input.value === SENHA_ADMIN) {
@@ -593,7 +646,37 @@
       document.getElementById('admin-panel').style.display = 'none';
     }
 
-    /* CRUD OPERAÇÕES */
+    /* SISTEMA DE DIGITANDO DO CHAT */
+    function handleChatTyping() {
+      if (!window.db.perfil) return;
+      window.db.digitando[window.db.perfil.nome] = true;
+      window.saveDB();
+
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        delete window.db.digitando[window.db.perfil.nome];
+        window.saveDB();
+      }, 2000);
+    }
+
+    /* APAGAR MENSAGEM DO CHAT */
+    window.deleteChatMessage = function(msgId) {
+      if (!window.db.chat[currentRoom]) return;
+      window.db.chat[currentRoom] = window.db.chat[currentRoom].filter(m => m.id !== msgId);
+      window.saveDB();
+      showToast('Mensagem apagada.');
+    };
+
+    /* OPERAÇÕES CRUD E LIXEIRA */
+    function moverParaLixeira(tipo, item) {
+      window.db.lixeira.push({
+        id: Date.now(),
+        tipoOrigem: tipo,
+        dados: item,
+        dataExclusao: new Date().toLocaleDateString('pt-BR')
+      });
+    }
+
     function saveMuralItem() {
       const id = document.getElementById('adm-mural-id').value;
       const tit = document.getElementById('adm-mural-titulo').value.trim();
@@ -614,17 +697,14 @@
       showToast('Aviso salvo!');
     }
 
-    function editMuralItem(id) {
-      const item = window.db.mural.find(m => m.id === id);
-      if (!item) return;
-      document.getElementById('adm-mural-id').value = item.id;
-      document.getElementById('adm-mural-titulo').value = item.titulo;
-      document.getElementById('adm-mural-texto').value = item.texto;
-    }
-
     function delMuralItem(id) {
-      window.db.mural = window.db.mural.filter(m => m.id !== id);
-      window.saveDB();
+      const item = window.db.mural.find(m => m.id === id);
+      if (item) {
+        moverParaLixeira('mural', item);
+        window.db.mural = window.db.mural.filter(m => m.id !== id);
+        window.saveDB();
+        showToast('Movidos para a lixeira.');
+      }
     }
 
     function saveProjetoItem() {
@@ -648,18 +728,14 @@
       showToast('Projeto salvo!');
     }
 
-    function editProjetoItem(id) {
-      const item = window.db.projetos.find(p => p.id === id);
-      if (!item) return;
-      document.getElementById('adm-proj-id').value = item.id;
-      document.getElementById('adm-proj-nome').value = item.nome;
-      document.getElementById('adm-proj-desc').value = item.desc;
-      document.getElementById('adm-proj-status').value = item.status;
-    }
-
     function delProjetoItem(id) {
-      window.db.projetos = window.db.projetos.filter(p => p.id !== id);
-      window.saveDB();
+      const item = window.db.projetos.find(p => p.id === id);
+      if (item) {
+        moverParaLixeira('projetos', item);
+        window.db.projetos = window.db.projetos.filter(p => p.id !== id);
+        window.saveDB();
+        showToast('Projeto movido para a lixeira.');
+      }
     }
 
     function saveMembroItem() {
@@ -672,7 +748,7 @@
         const idx = window.db.membros.findIndex(m => m.id == id);
         if (idx !== -1) window.db.membros[idx] = { ...window.db.membros[idx], nome, cargo, avatar: obterIniciais(nome) };
       } else {
-        window.db.membros.push({ id: Date.now(), nome, cargo, avatar: obterIniciais(nome) });
+        window.db.membros.push({ id: Date.now(), nome, cargo, avatar: obterIniciais(nome), online: true });
       }
 
       window.saveDB();
@@ -682,17 +758,10 @@
       showToast('Integrante salvo!');
     }
 
-    function editMembroItem(id) {
-      const item = window.db.membros.find(m => m.id === id);
-      if (!item) return;
-      document.getElementById('adm-membro-id').value = item.id;
-      document.getElementById('adm-membro-nome').value = item.nome;
-      document.getElementById('adm-membro-cargo').value = item.cargo;
-    }
-
     function delMembroItem(id) {
       window.db.membros = window.db.membros.filter(m => m.id !== id);
       window.saveDB();
+      showToast('Integrante removido.');
     }
 
     function saveFinanceiroItem() {
@@ -716,19 +785,46 @@
       showToast('Lançamento salvo!');
     }
 
-    function editFinanceiroItem(id) {
+    function delFinanceiroItem(id) {
       const item = window.db.financeiro.find(f => f.id === id);
-      if (!item) return;
-      document.getElementById('adm-fin-id').value = item.id;
-      document.getElementById('adm-fin-desc').value = item.desc;
-      document.getElementById('adm-fin-valor').value = item.valor;
-      document.getElementById('adm-fin-tipo').value = item.tipo;
+      if (item) {
+        moverParaLixeira('financeiro', item);
+        window.db.financeiro = window.db.financeiro.filter(f => f.id !== id);
+        window.saveDB();
+        showToast('Lançamento movido para a lixeira.');
+      }
     }
 
-    function delFinanceiroItem(id) {
-      window.db.financeiro = window.db.financeiro.filter(f => f.id !== id);
+    /* FUNÇÕES DA LIXEIRA */
+    window.restaurarLixeira = function(lixeiraId) {
+      const item = window.db.lixeira.find(l => l.id === lixeiraId);
+      if (!item) return;
+
+      if (item.tipoOrigem === 'mural') window.db.mural.push(item.dados);
+      else if (item.tipoOrigem === 'projetos') window.db.projetos.push(item.dados);
+      else if (item.tipoOrigem === 'financeiro') window.db.financeiro.push(item.dados);
+
+      window.db.lixeira = window.db.lixeira.filter(l => l.id !== lixeiraId);
       window.saveDB();
-    }
+      showToast('Item restaurado com sucesso!');
+    };
+
+    window.excluirPermanenteLixeira = function(lixeiraId) {
+      window.db.lixeira = window.db.lixeira.filter(l => l.id !== lixeiraId);
+      window.saveDB();
+      showToast('Item excluído permanentemente.');
+    };
+
+    /* PRESENÇA / CHAMADA */
+    window.salvarChamada = function() {
+      const inputs = document.querySelectorAll('.presenca-input');
+      inputs.forEach(inp => {
+        const membroId = inp.dataset.id;
+        window.db.presencas[membroId] = inp.value;
+      });
+      window.saveDB();
+      showToast('Frequência salva!');
+    };
 
     function updateProfileUI() {
       if (window.db.perfil) {
@@ -760,12 +856,13 @@
         window.db.perfil = { nome, cargo, turma };
         localStorage.setItem('fala_estudante_perfil', JSON.stringify(window.db.perfil));
 
-        if (!window.db.membros.some(m => m.nome.toLowerCase() === nome.toLowerCase())) {
+        if (!window.db.membros.some(m => m.nome.toLowerCase().includes(nome.toLowerCase()))) {
           window.db.membros.push({ 
             id: Date.now(), 
             nome: `${nome} (${turma})`, 
             cargo, 
-            avatar: obterIniciais(nome) 
+            avatar: obterIniciais(nome),
+            online: true 
           });
           window.saveDB();
         }
@@ -789,8 +886,13 @@
           role: window.db.perfil.cargo,
           text: text,
           date: new Date().toLocaleDateString('pt-BR'),
-          time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+          time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+          visto: true
         });
+
+        if (window.db.digitando[window.db.perfil.nome]) {
+          delete window.db.digitando[window.db.perfil.nome];
+        }
 
         window.saveDB();
         input.value = '';
@@ -806,7 +908,7 @@
       document.getElementById('mainSidebar')?.classList.remove('open');
     };
 
-    /* CHAT */
+    /* CHAT ROOM */
     window.switchChatRoom = function(room, element) {
       currentRoom = room;
       document.querySelectorAll('.room-btn').forEach(btn => btn.classList.remove('active'));
@@ -822,20 +924,28 @@
       container.innerHTML = msgs.map((m) => {
         const isMe = window.db.perfil && m.sender.startsWith(window.db.perfil.nome);
         return `
-          <div class="chat-msg ${isMe ? 'me' : ''}">
+          <div-msg ${isMe ? 'me' : ''}">
             <div class="meta">
               <span><strong>${isMe ? 'Você' : m.sender}</strong> (${m.role})</span>
               <span>${m.time}</span>
             </div>
             <div>${m.text}</div>
+            <div class="actions">
+              <span style="opacity:0.8;" title="Mensagem Visualizada"><i class="ph ph-check-double"></i> Visto</span>
+              ${isMe || isAdminAuth ? `<button class="delete-msg-btn" onclick="deleteChatMessage(${m.id})" title="Apagar Mensagem"><i class="ph ph-trash"></i> Apagar</button>` : ''}
+            </div>
           </div>
         `;
       }).join('') || '<p style="text-align:center; color:var(--text-muted); margin-top:20px;">Sem mensagens nesta sala.</p>';
 
       container.scrollTop = container.scrollHeight;
+
+      // Status de digitando
+      const quemDigita = Object.keys(window.db.digitando || {}).filter(n => n !== window.db.perfil?.nome);
+      setSafeText('typingStatus', quemDigita.length > 0 ? `${quemDigita.join(', ')} está digitando...` : '');
     }
 
-    /* RENDER GERAL */
+    /* RENDER PRINCIPAL DO APP */
     window.renderApp = function() {
       setSafeText('kpi-membros', window.db.membros.length);
       setSafeText('kpi-projetos', window.db.projetos.filter(p => p.status !== 'concluido').length);
@@ -868,21 +978,38 @@
         </div>
       `).join('') || '<p style="color:var(--text-muted);">Nenhum projeto cadastrado.</p>');
 
-      setSafeHTML('public-membros-list', window.db.membros.map(m => `
-        <li style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border-color);">
-          <div class="avatar-circle">${m.avatar || obterIniciais(m.nome)}</div>
-          <div>
-            <strong>${m.nome}</strong>
-            <p style="font-size:0.78rem; color:var(--verde); font-weight:600;">${m.cargo}</p>
-          </div>
-        </li>
-      `).join('') || '<p style="color:var(--text-muted);">Nenhum integrante cadastrado.</p>');
+      // Integrantes com Indicador Online/Offline
+      setSafeHTML('public-membros-list', window.db.membros.map(m => {
+        const isOnline = m.online !== false;
+        return `
+          <li style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border-color);">
+            <div class="avatar-circle">
+              ${m.avatar || obterIniciais(m.nome)}
+              <div class="${isOnline ? 'online-indicator' : 'offline-indicator'}" title="${isOnline ? 'Online' : 'Offline'}"></div>
+            </div>
+            <div>
+              <strong>${m.nome}</strong>
+              <p style="font-size:0.78rem; color:var(--verde); font-weight:600;">${m.cargo}</p>
+            </div>
+          </li>
+        `;
+      }).join('') || '<p style="color:var(--text-muted);">Nenhum integrante cadastrado.</p>');
 
+      // Financeiro e Porcentagens
       const totalReceita = window.db.financeiro.filter(f => f.tipo === 'receita').reduce((a,b) => a + b.valor, 0);
       const totalDespesa = window.db.financeiro.filter(f => f.tipo === 'despesa').reduce((a,b) => a + b.valor, 0);
       const saldo = totalReceita - totalDespesa;
+      const totalMovimentado = totalReceita + totalDespesa;
       
-      setSafeText('dash-saldo', saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
+      const pctReceita = totalMovimentado > 0 ? ((totalReceita / totalMovimentado) * 100).toFixed(1) : 0;
+      const pctDespesa = totalMovimentado > 0 ? ((totalDespesa / totalMovimentado) * 100).toFixed(1) : 0;
+
+      const saldoFormatado = saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      setSafeText('dash-saldo', saldoFormatado);
+      setSafeText('fin-saldo-destaque', saldoFormatado);
+      setSafeText('admin-saldo-caixa', saldoFormatado);
+      
+      setSafeText('fin-percentual-resumo', `Entradas: ${pctReceita}% | Saídas: ${pctDespesa}%`);
 
       setSafeHTML('public-financeiro-list', window.db.financeiro.map(f => `
         <li style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-color);">
@@ -895,7 +1022,7 @@
 
       renderCalendar();
       renderChatMessages();
-      renderFinanceChart(totalReceita, totalDespesa);
+      renderFinanceChart(totalReceita, totalDespesa, pctReceita, pctDespesa);
 
       if (isAdminAuth) renderAdminLists();
     };
@@ -905,8 +1032,7 @@
         <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
           <span><strong>${m.titulo}</strong></span>
           <div>
-            <button class="btn btn-warning btn-sm" onclick="editMuralItem(${m.id})"><i class="ph ph-pencil"></i></button>
-            <button class="btn btn-danger btn-sm" onclick="delMuralItem(${m.id})"><i class="ph ph-trash"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="delMuralItem(${m.id})"><i class="ph ph-trash"></i> Excluir</button>
           </div>
         </li>
       `).join(''));
@@ -915,8 +1041,7 @@
         <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
           <span><strong>${p.nome}</strong></span>
           <div>
-            <button class="btn btn-warning btn-sm" onclick="editProjetoItem(${p.id})"><i class="ph ph-pencil"></i></button>
-            <button class="btn btn-danger btn-sm" onclick="delProjetoItem(${p.id})"><i class="ph ph-trash"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="delProjetoItem(${p.id})"><i class="ph ph-trash"></i> Excluir</button>
           </div>
         </div>
       `).join(''));
@@ -925,8 +1050,7 @@
         <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
           <span>${m.nome} (${m.cargo})</span>
           <div>
-            <button class="btn btn-warning btn-sm" onclick="editMembroItem(${m.id})"><i class="ph ph-pencil"></i></button>
-            <button class="btn btn-danger btn-sm" onclick="delMembroItem(${m.id})"><i class="ph ph-trash"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="delMembroItem(${m.id})"><i class="ph ph-trash"></i> Remover</button>
           </div>
         </li>
       `).join(''));
@@ -935,11 +1059,40 @@
         <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
           <span>${f.desc} - R$ ${f.valor.toFixed(2)}</span>
           <div>
-            <button class="btn btn-warning btn-sm" onclick="editFinanceiroItem(${f.id})"><i class="ph ph-pencil"></i></button>
-            <button class="btn btn-danger btn-sm" onclick="delFinanceiroItem(${f.id})"><i class="ph ph-trash"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="delFinanceiroItem(${f.id})"><i class="ph ph-trash"></i> Excluir</button>
           </div>
         </li>
       `).join(''));
+
+      // Render Lixeira
+      setSafeHTML('adm-lixeira-list', window.db.lixeira.map(l => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color); font-size:0.85rem;">
+          <div>
+            <strong style="text-transform:capitalize; color:var(--roxo);">[${l.tipoOrigem}]</strong> 
+            ${l.dados.titulo || l.dados.nome || l.dados.desc}
+          </div>
+          <div style="display:flex; gap:4px;">
+            <button class="btn btn-sm" onclick="restaurarLixeira(${l.id})" title="Restaurar"><i class="ph ph-arrow-u-up-left"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="excluirPermanenteLixeira(${l.id})" title="Apagar Definitivamente"><i class="ph ph-x"></i></button>
+          </div>
+        </li>
+      `).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Lixeira vazia.</p>');
+
+      // Render Chamada de Presença
+      setSafeHTML('adm-chamada-list', window.db.membros.map(m => {
+        const pVal = window.db.presencas[m.id] || 'presente';
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
+            <span style="font-size:0.85rem;"><strong>${m.nome}</strong></span>
+            <select class="form-control presenca-input" data-id="${m.id}" style="width:120px; margin-bottom:0; padding:4px;">
+              <option value="presente" ${pVal === 'presente' ? 'selected' : ''}>Presente</option>
+              <option value="ausente" ${pVal === 'ausente' ? 'selected' : ''}>Ausente</option>
+            </select>
+          </div>
+        `;
+      }).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Nenhum membro cadastrado.</p>');
+
+      renderPresencaChart();
     }
 
     function renderCalendar() {
@@ -989,7 +1142,7 @@
       }
     }
 
-    function renderFinanceChart(receitas, despesas) {
+    function renderFinanceChart(receitas, despesas, pctR, pctD) {
       const ctx = document.getElementById('financeiroChart');
       if (!ctx) return;
       if (chartInstance) chartInstance.destroy();
@@ -997,10 +1150,37 @@
       chartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['Entradas', 'Saídas'],
+          labels: [`Entradas (${pctR}%)`, `Saídas (${pctD}%)`],
           datasets: [{ data: [receitas, despesas], backgroundColor: ['#0B8E2F', '#EF4444'] }]
         },
         options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    function renderPresencaChart() {
+      const ctx = document.getElementById('presencaChart');
+      if (!ctx) return;
+      if (chartPresencaInstance) chartPresencaInstance.destroy();
+
+      const vals = Object.values(window.db.presencas || {});
+      const presentes = vals.filter(v => v === 'presente').length;
+      const ausentes = vals.filter(v => v === 'ausente').length;
+
+      chartPresencaInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Presentes', 'Ausentes'],
+          datasets: [{
+            label: 'Integrantes',
+            data: [presentes, ausentes],
+            backgroundColor: ['#0B8E2F', '#EF4444']
+          }]
+        },
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
       });
     }
 
