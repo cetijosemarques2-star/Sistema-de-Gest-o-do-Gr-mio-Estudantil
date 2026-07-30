@@ -213,9 +213,29 @@
     .room-btn { padding: 10px; background: rgba(0,0,0,0.04); border: none; border-radius: 6px; cursor: pointer; text-align: left; font-size: 0.85rem; color: var(--text-color); }
     .room-btn.active { background: var(--roxo); color: var(--branco); }
     .chat-main { flex: 1; display: flex; flex-direction: column; }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; }
-    .chat-msg { margin-bottom: 12px; padding: 10px 14px; border-radius: 10px; max-width: 80%; background: var(--verde-claro); color: #06230B; position: relative; }
-    .chat-msg.me { margin-left: auto; background: var(--roxo); color: var(--branco); }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; display: flex; flex-direction: column; }
+    
+    /* CHAT AJUSTADO: ESQUERDA (VERDE - RECEBIDO), DIREITA (ROXO - ENVIADO) */
+    .chat-msg { 
+      margin-bottom: 12px; 
+      padding: 10px 14px; 
+      border-radius: 12px; 
+      max-width: 75%; 
+      position: relative;
+      background: var(--verde-claro); 
+      color: #06230B;
+      margin-right: auto;
+      margin-left: 0;
+      border-bottom-left-radius: 2px;
+    }
+    .chat-msg.me { 
+      margin-left: auto; 
+      margin-right: 0;
+      background: var(--roxo); 
+      color: var(--branco); 
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 2px;
+    }
     .chat-msg .meta { font-size: 0.72rem; display: flex; justify-content: space-between; gap: 12px; margin-bottom: 4px; opacity: 0.85; }
     .chat-msg .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 0.75rem; }
     .delete-msg-btn { background: none; border: none; color: #EF4444; cursor: pointer; font-size: 0.8rem; padding: 0 4px; }
@@ -287,6 +307,7 @@
       <button class="nav-btn" onclick="switchTab('mural', this)"><i class="ph ph-megaphone"></i> Mural</button>
       <button class="nav-btn" onclick="switchTab('projetos', this)"><i class="ph ph-folder"></i> Projetos</button>
       <button class="nav-btn" onclick="switchTab('membros', this)"><i class="ph ph-users"></i> Integrantes</button>
+      <button class="nav-btn" onclick="switchTab('votacao', this)"><i class="ph ph-check-square"></i> Votações</button>
       <button class="nav-btn" onclick="switchTab('calendario', this)"><i class="ph ph-calendar"></i> Calendário</button>
       <button class="nav-btn" onclick="switchTab('chat', this)"><i class="ph ph-chats-teardrop"></i> Chat Interno</button>
       <button class="nav-btn" onclick="switchTab('financeiro', this)"><i class="ph ph-chart-pie"></i> Financeiro</button>
@@ -345,6 +366,14 @@
           <h3><i class="ph ph-users"></i> Integrantes da Gestão</h3>
           <input type="text" id="search-membros" class="form-control" placeholder="🔍 Pesquisar integrantes..." onkeyup="filterList('public-membros-list', this.value)">
           <ul id="public-membros-list" style="list-style:none;"></ul>
+        </div>
+      </section>
+
+      <section id="tab-votacao" class="tab-content">
+        <div class="card">
+          <h3><i class="ph ph-check-square"></i> Votações Abertas</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Participe das decisões do Grêmio Estudantil votando nas enquetes e propostas ativas.</p>
+          <div id="public-votacao-list"></div>
         </div>
       </section>
 
@@ -429,7 +458,10 @@
               
               <div id="adm-chamada-list" style="max-height:200px; overflow-y:auto; margin-bottom:12px;"></div>
               
-              <button class="btn" onclick="salvarChamada()"><i class="ph ph-floppy-disk"></i> Salvar Frequência</button>
+              <div style="display:flex; gap:8px;">
+                <button class="btn" onclick="salvarChamada()"><i class="ph ph-floppy-disk"></i> Salvar Frequência</button>
+                <button class="btn btn-danger" onclick="limparChamada()"><i class="ph ph-trash"></i> Reiniciar Frequência</button>
+              </div>
 
               <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
               
@@ -523,6 +555,19 @@
     window.db = {
       perfil: JSON.parse(localStorage.getItem('fala_estudante_perfil')) || null,
       mural: [], projetos: [], eventos: [], membros: [], financeiro: [],
+      votacoes: [
+        {
+          id: 1,
+          titulo: "Escolha do Tema da Gincana Cultural",
+          descricao: "Vote na proposta temática para a competição entre as turmas deste ano.",
+          opcoes: [
+            { id: 'opt1', texto: "Cultura Pop e Anos 80/90", votos: 0 },
+            { id: 'opt2', texto: "Sustentabilidade & Futuro", votos: 0 },
+            { id: 'opt3', texto: "Folclore e Literatura Brasileira", votos: 0 }
+          ],
+          votosRegistrados: {}
+        }
+      ],
       chat: { geral: [], eventos: [], financeiro: [] },
       lixeira: [],
       presencas: {},
@@ -536,6 +581,7 @@
         eventos: window.db.eventos || [],
         membros: window.db.membros || [],
         financeiro: window.db.financeiro || [],
+        votacoes: window.db.votacoes || [],
         chat: window.db.chat || { geral: [], eventos: [], financeiro: [] },
         lixeira: window.db.lixeira || [],
         presencas: window.db.presencas || {},
@@ -551,6 +597,7 @@
         window.db.eventos = data.eventos || [];
         window.db.membros = data.membros || [];
         window.db.financeiro = data.financeiro || [];
+        window.db.votacoes = data.votacoes || window.db.votacoes;
         window.db.chat = data.chat || { geral: [], eventos: [], financeiro: [] };
         window.db.lixeira = data.lixeira || [];
         window.db.presencas = data.presencas || {};
@@ -826,6 +873,65 @@
       showToast('Frequência salva!');
     };
 
+    window.limparChamada = function() {
+      if (confirm("Tem certeza de que deseja apagar os dados de frequência da chamada atual?")) {
+        window.db.presencas = {};
+        window.saveDB();
+        showToast('Frequência reiniciada!');
+      }
+    };
+
+    /* VOTAÇÕES DA GESTÃO */
+    window.votarEnquete = function(votacaoId, opcaoId) {
+      if (!window.db.perfil) return showToast('Faça login primeiro.');
+
+      const votacao = window.db.votacoes.find(v => v.id === votacaoId);
+      if (!votacao) return;
+
+      if (!votacao.votosRegistrados) votacao.votosRegistrados = {};
+
+      const votoAnterior = votacao.votosRegistrados[window.db.perfil.nome];
+      if (votoAnterior) {
+        const opAnt = votacao.opcoes.find(o => o.id === votoAnterior);
+        if (opAnt && opAnt.votos > 0) opAnt.votos--;
+      }
+
+      const opNova = votacao.opcoes.find(o => o.id === opcaoId);
+      if (opNova) {
+        opNova.votos++;
+        votacao.votosRegistrados[window.db.perfil.nome] = opcaoId;
+        window.saveDB();
+        showToast('Seu voto foi registrado com sucesso!');
+      }
+    };
+
+    function renderVotacoes() {
+      const container = document.getElementById('public-votacao-list');
+      if (!container) return;
+
+      container.innerHTML = window.db.votacoes.map(v => {
+        const meuVoto = v.votosRegistrados ? v.votosRegistrados[window.db.perfil?.nome] : null;
+
+        return `
+          <div style="border:1px solid var(--border-color); border-radius:10px; padding:16px; margin-bottom:15px; background:var(--card-bg);">
+            <h4 style="color:var(--roxo); margin-bottom:6px;">${v.titulo}</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">${v.descricao}</p>
+            
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              ${v.opcoes.map(opt => `
+                <button class="btn ${meuVoto === opt.id ? '' : 'btn-warning'}" 
+                                          onclick="votarEnquete(${v.id}, '${opt.id}')" 
+                        style="justify-content:space-between; text-align:left;">
+                  <span>${opt.texto} ${meuVoto === opt.id ? '✓ (Seu Voto)' : ''}</span>
+                  <span class="badge-status badge-planejamento">${opt.votos} voto(s)</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('') || '<p style="color:var(--text-muted);">Nenhuma votação cadastrada.</p>';
+    }
+
     function updateProfileUI() {
       if (window.db.perfil) {
         setSafeText('headerName', window.db.perfil.nome.split(' ')[0]);
@@ -924,7 +1030,7 @@
       container.innerHTML = msgs.map((m) => {
         const isMe = window.db.perfil && m.sender.startsWith(window.db.perfil.nome);
         return `
-          <div-msg ${isMe ? 'me' : ''}">
+          <div class="chat-msg ${isMe ? 'me' : ''}">
             <div class="meta">
               <span><strong>${isMe ? 'Você' : m.sender}</strong> (${m.role})</span>
               <span>${m.time}</span>
@@ -1020,6 +1126,7 @@
         </li>
       `).join('') || '<p style="color:var(--text-muted);">Nenhum lançamento.</p>');
 
+      renderVotacoes();
       renderCalendar();
       renderChatMessages();
       renderFinanceChart(totalReceita, totalDespesa, pctReceita, pctDespesa);
