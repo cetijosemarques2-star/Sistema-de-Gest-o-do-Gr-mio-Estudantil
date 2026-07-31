@@ -3,411 +3,1212 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fala Estudante - Gestão Grêmio</title>
+  <title>Gestão Grêmio - CETI José Marques</title>
+  
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     :root {
-      --roxo: #6C5CE7;
-      --verde: #00B894;
-      --vermelho-light: #FF7675;
-      --bg-color: #F8F9FA;
+      --verde: #0B8E2F;
+      --verde-claro: #58C22D;
+      --roxo: #4B2AA8;
+      --roxo-escuro: #341A84;
+      --amarelo: #F4C430;
+      --branco: #FFFFFF;
+
+      --gradiente-header: linear-gradient(135deg, #0B8E2F 0%, #4B2AA8 100%);
+      --gradiente-card: linear-gradient(135deg, #4B2AA8 0%, #341A84 100%);
+      --gradiente-botao: linear-gradient(135deg, #0B8E2F 0%, #58C22D 100%);
+
+      --bg-color: #F6F8FB;
       --card-bg: #FFFFFF;
-      --text-color: #2D3436;
-      --text-muted: #636E72;
-      --border-color: #DFE6E9;
+      --text-color: #2D3748;
+      --text-muted: #6B7280;
+      --border-color: #E5E7EB;
+      --vermelho-light: #EF4444;
+      --sidebar-bg: #341A84;
     }
+
     body.dark-mode {
-      --bg-color: #1E1E2E;
-      --card-bg: #2D2D3F;
-      --text-color: #F8F9FA;
-      --text-muted: #A0A0B0;
-      --border-color: #3F3F56;
+      --bg-color: #0F172A;
+      --card-bg: #1E293B;
+      --text-color: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border-color: #334155;
+      --sidebar-bg: #0F172A;
     }
-    body { margin: 0; font-family: sans-serif; background: var(--bg-color); color: var(--text-color); }
-    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
-    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; margin-bottom: 15px; }
-    .form-control { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; background: var(--bg-color); color: var(--text-color); }
-    .btn { background: var(--roxo); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
-    .btn-warning { background: #FDCB6E; color: #2D3436; }
-    .btn-danger { background: var(--vermelho-light); color: white; }
-    .btn-sm { padding: 4px 8px; font-size: 0.8rem; }
-    .avatar-circle { position: relative; width: 35px; height: 35px; background: var(--roxo); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+
+    header {
+      background: var(--gradiente-header);
+      color: var(--branco);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 100;
+    }
+
+    .brand-logo { display: flex; align-items: center; gap: 12px; }
+    .brand-logo img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--amarelo); object-fit: cover; background: var(--branco); }
+    .brand-title h1 { font-size: 1.2rem; font-weight: 700; color: var(--branco); }
+    .brand-title p { font-size: 0.75rem; color: var(--amarelo); }
+
+    .menu-toggle { background: none; border: none; color: var(--branco); font-size: 1.5rem; cursor: pointer; display: none; }
+
+    .app-container { display: flex; flex: 1; position: relative; }
     
-    /* Indicador de Status Online em Tempo Real */
-    .online-indicator { position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; background-color: #00B894; border: 2px solid white; border-radius: 50%; }
-    .offline-indicator { position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; background-color: #B2BEC3; border: 2px solid white; border-radius: 50%; }
+    sidebar {
+      width: 240px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border-color);
+      padding: 20px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.3s ease;
+      z-index: 90;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.85);
+      padding: 12px;
+      text-align: left;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      background: var(--gradiente-botao);
+      color: var(--branco);
+      box-shadow: 0 4px 10px rgba(11, 142, 47, 0.3);
+    }
+
+    .nav-btn.admin-btn {
+      margin-top: auto;
+      background: rgba(244, 196, 48, 0.15);
+      color: var(--amarelo);
+      border: 1px dashed var(--amarelo);
+    }
+
+    .theme-toggle-btn {
+      background: rgba(255,255,255,0.1);
+      color: var(--branco);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    main { flex: 1; padding: 25px; overflow-y: auto; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+
+    .kpi-card {
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .kpi-icon { font-size: 2rem; color: var(--verde); }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-top: 5px solid var(--verde);
+      border-bottom: 2px solid var(--roxo);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+
+    .card h3 { color: var(--roxo); display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
+
+    .btn {
+      background: var(--gradiente-botao);
+      color: var(--branco);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn:hover { opacity: 0.95; transform: translateY(-1px); }
+    .btn-warning { background: var(--amarelo); color: #1E293B; }
+    .btn-danger { background: var(--vermelho-light); color: var(--branco); }
+    .btn-sm { padding: 4px 10px; font-size: 0.8rem; }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+    }
+
+    .avatar-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--verde);
+      color: var(--branco);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      position: relative;
+    }
+
+    .online-indicator {
+      width: 12px;
+      height: 12px;
+      background: #10B981;
+      border-radius: 50%;
+      border: 2px solid var(--card-bg);
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+
+    .offline-indicator {
+      width: 12px;
+      height: 12px;
+      background: #94A3B8;
+      border-radius: 50%;
+      border: 2px solid var(--card-bg);
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+    .calendar-day-header { text-align: center; font-size: 0.75rem; font-weight: bold; color: var(--text-muted); }
+    .calendar-day-cell { min-height: 70px; background: rgba(0,0,0,0.02); border-radius: 6px; padding: 6px; font-size: 0.8rem; border: 1px solid var(--border-color); }
+    .calendar-day-cell.today { border: 2px solid var(--roxo); background: rgba(75, 42, 168, 0.05); font-weight: bold; }
+
+    .chat-layout { display: flex; gap: 15px; height: 480px; }
+    .chat-rooms { width: 150px; display: flex; flex-direction: column; gap: 6px; }
+    .room-btn { padding: 10px; background: rgba(0,0,0,0.04); border: none; border-radius: 6px; cursor: pointer; text-align: left; font-size: 0.85rem; color: var(--text-color); }
+    .room-btn.active { background: var(--roxo); color: var(--branco); }
+    .chat-main { flex: 1; display: flex; flex-direction: column; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; display: flex; flex-direction: column; }
     
-    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; }
-    .toast { background: #2D3436; color: white; padding: 10px 15px; border-radius: 6px; margin-top: 5px; font-size: 0.9rem; }
+    .chat-msg { 
+      margin-bottom: 12px; 
+      padding: 10px 14px; 
+      border-radius: 12px; 
+      max-width: 75%; 
+      position: relative;
+      background: var(--verde-claro); 
+      color: #06230B;
+      margin-right: auto;
+      margin-left: 0;
+      border-bottom-left-radius: 2px;
+    }
+    .chat-msg.me { 
+      margin-left: auto; 
+      margin-right: 0;
+      background: var(--roxo); 
+      color: var(--branco); 
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 2px;
+    }
+    .chat-msg .meta { font-size: 0.72rem; display: flex; justify-content: space-between; gap: 12px; margin-bottom: 4px; opacity: 0.85; }
+    .chat-msg .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 0.75rem; }
+    .delete-msg-btn { background: none; border: none; color: #EF4444; cursor: pointer; font-size: 0.8rem; padding: 0 4px; }
+    .chat-msg.me .delete-msg-btn { color: #FCA5A5; }
+
+    .typing-status { font-size: 0.75rem; font-style: italic; color: var(--text-muted); height: 18px; margin-bottom: 4px; }
+
+    .badge-status { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; color: white; }
+    .badge-em_andamento { background: var(--amarelo); color: #1E293B; }
+    .badge-concluido { background: var(--verde); }
+    .badge-planejamento { background: var(--roxo); }
+
+    .fin-summary-box { background: rgba(11, 142, 47, 0.1); border: 1px dashed var(--verde); border-radius: 8px; padding: 15px; text-align: center; margin-bottom: 15px; }
+
+    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
+    .toast { padding: 12px 20px; background: var(--amarelo); color: #1E293B; font-weight: 600; border-radius: 8px; margin-top: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+    @media (max-width: 768px) {
+      .menu-toggle { display: block; }
+      sidebar { position: absolute; left: -250px; top: 0; height: 100%; box-shadow: 4px 0 10px rgba(0,0,0,0.2); }
+      sidebar.open { left: 0; }
+      .chat-layout { flex-direction: column; height: 550px; }
+      .chat-rooms { width: 100%; flex-direction: row; }
+    }
   </style>
 </head>
 <body>
 
-  <div id="admin-panel" style="padding: 20px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-      <h2><i class="ph ph-shield-check"></i> Painel de Administração</h2>
-      <button class="btn btn-warning btn-sm" onclick="deslogarAdmin()"><i class="ph ph-sign-out"></i> Sair do Admin</button>
+  <header>
+    <div class="brand-logo">
+      <button class="menu-toggle" onclick="toggleSidebar()"><i class="ph ph-list"></i></button>
+      <img id="app-logo-header" src="logo.png" alt="Logo Grêmio" onerror="this.src='https://via.placeholder.com/45/0B8E2F/ffffff?text=GE'">
+      <div class="brand-title">
+        <h1>Gestão Grêmio</h1>
+        <p>CETI José Marques</p>
+      </div>
     </div>
-
-    <div class="grid-2">
-
-      <div class="card">
-        <h3 id="adm-votacao-form-title"><i class="ph ph-check-square"></i> Gestão de Votações</h3>
-        <input type="hidden" id="adm-votacao-id">
-        <input type="text" id="adm-votacao-titulo" class="form-control" placeholder="Título da Votação">
-        <textarea id="adm-votacao-desc" class="form-control" rows="2" placeholder="Descrição detalhada"></textarea>
-        
-        <p style="font-size:0.8rem; color:var(--text-muted); margin: 6px 0;">Opções de Voto (separadas por vírgula):</p>
-        <input type="text" id="adm-votacao-opcoes" class="form-control" placeholder="Ex: Opção A, Opção B, Opção C">
-        
-        <div style="display:flex; gap:8px;">
-          <button class="btn" onclick="saveVotacaoItem()"><i class="ph ph-floppy-disk"></i> Salvar Votação</button>
-          <button class="btn btn-warning" onclick="limparFormVotacao()" style="display:none;" id="btn-cancelar-votacao">Cancelar</button>
-        </div>
-
-        <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-        <h4>Votações Cadastradas</h4>
-        <div id="adm-votacoes-list" style="margin-top:10px;"></div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="avatar-circle" id="headerAvatar">GE<div class="online-indicator" id="headerOnlineDot"></div></div>
+      <div style="text-align: left;">
+        <div id="headerName" style="font-weight: bold; font-size: 0.88rem;">Estudante</div>
+        <div id="headerRole" style="font-size: 0.72rem; color: var(--amarelo);">Membro</div>
+        <div id="headerTurma" style="font-size: 0.70rem; color: var(--branco); opacity: 0.8;">Turma</div>
       </div>
+      <button class="btn btn-danger btn-sm" onclick="logoutUser()" title="Sair da Conta" style="margin-left: 8px;">
+        <i class="ph ph-sign-out"></i> Sair
+      </button>
+    </div>
+  </header>
 
-      <div class="card">
-        <h3><i class="ph ph-check-square-offset"></i> Presença em Reuniões</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Registre a frequência dos membros na última reunião.</p>
-        <div id="adm-chamada-list" style="max-height:200px; overflow-y:auto; margin-bottom:12px;"></div>
-        <div style="display:flex; gap:8px;">
-          <button class="btn" onclick="salvarChamada()"><i class="ph ph-floppy-disk"></i> Salvar Frequência</button>
-          <button class="btn btn-danger" onclick="limparChamada()"><i class="ph ph-trash"></i> Reiniciar Frequência</button>
-        </div>
-        <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-        <h4>Assiduidade Geral</h4>
-        <div style="height: 180px; margin-top:10px;"><canvas id="presencaChart"></canvas></div>
-      </div>
-
-      <div class="card">
-        <h3 id="adm-mural-form-title"><i class="ph ph-megaphone"></i> Novo Aviso no Mural</h3>
-        <input type="hidden" id="adm-mural-id">
-        <input type="text" id="adm-mural-titulo" class="form-control" placeholder="Título do aviso">
-        <textarea id="adm-mural-texto" class="form-control" rows="3" placeholder="Descrição do comunicado"></textarea>
-        <button class="btn" onclick="saveMuralItem()"><i class="ph ph-floppy-disk"></i> Salvar Aviso</button>
-        <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-        <h4>Avisos Publicados</h4>
-        <ul id="adm-mural-list" style="list-style:none; margin-top:10px; padding:0;"></ul>
-      </div>
-
-      <div class="card">
-        <h3 id="adm-proj-form-title"><i class="ph ph-folder-plus"></i> Novo Projeto</h3>
-        <input type="hidden" id="adm-proj-id">
-        <input type="text" id="adm-proj-nome" class="form-control" placeholder="Nome do Projeto">
-        <textarea id="adm-proj-desc" class="form-control" rows="2" placeholder="Descrição detalhada"></textarea>
-        <select id="adm-proj-status" class="form-control">
-          <option value="planejamento">Em Planejamento</option>
-          <option value="em_andamento">Em Andamento</option>
-          <option value="concluido">Concluído</option>
-        </select>
-        <button class="btn" onclick="saveProjetoItem()"><i class="ph ph-floppy-disk"></i> Salvar Projeto</button>
-        <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-        <h4>Projetos Cadastrados</h4>
-        <div id="adm-projetos-list" style="margin-top:10px;"></div>
-      </div>
-
-      <div class="card">
-        <h3><i class="ph ph-user-plus"></i> Novo Integrante</h3>
-        <input type="hidden" id="adm-membro-id">
-        <input type="text" id="adm-membro-nome" class="form-control" placeholder="Nome completo">
-        <input type="text" id="adm-membro-cargo" class="form-control" placeholder="Cargo (Ex: Presidente, Diretor)">
-        <button class="btn" onclick="saveMembroItem()"><i class="ph ph-floppy-disk"></i> Salvar Integrante</button>
-        <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-        <h4>Integrantes Cadastrados</h4>
-        <ul id="adm-membros-list" style="list-style:none; margin-top:10px; padding:0;"></ul>
-      </div>
-
-      <div class="card">
-        <h3><i class="ph ph-currency-dollar-simple"></i> Novo Lançamento Financeiro</h3>
-        <input type="hidden" id="adm-fin-id">
-        <input type="text" id="adm-fin-desc" class="form-control" placeholder="Descrição do gasto/receita">
-        <input type="number" id="adm-fin-valor" class="form-control" placeholder="Valor (R$)" step="0.01">
-        <select id="adm-fin-tipo" class="form-control">
-          <option value="receita">Entrada (Receita)</option>
-          <option value="despesa">Saída (Despesa)</option>
-        </select>
-        <button class="btn" onclick="saveFinanceiroItem()"><i class="ph ph-floppy-disk"></i> Salvar Lançamento</button>
-        <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-        <h4>Histórico de Lançamentos</h4>
-        <ul id="adm-financeiro-list" style="list-style:none; margin-top:10px; padding:0;"></ul>
-      </div>
-
-      <div class="card" style="border-top-color: var(--vermelho-light);">
-        <h3><i class="ph ph-trash"></i> Lixeira da Gestão</h3>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Itens excluídos podem ser restaurados ou apagados permanentemente.</p>
-        <ul id="adm-lixeira-list" style="list-style:none; padding:0;"></ul>
-      </div>
-
+  <div id="welcome-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); display:none; justify-content:center; align-items:center; z-index:9999;">
+    <div class="card" style="max-width:400px; width:90%; text-align:center;">
+      <h2 style="color:var(--roxo); margin-bottom: 8px;">Bem-vindo(a)!</h2>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Conecte-se ao Painel de Gestão do Grêmio.</p>
+      
+      <input type="text" id="welcome-nome" class="form-control" placeholder="Seu Nome Completo" required>
+      <input type="text" id="welcome-cargo" class="form-control" placeholder="Seu Cargo (Ex: Presidente, Diretor, Estudante)">
+      <input type="text" id="welcome-turma" class="form-control" placeholder="Sua Turma (Ex: 3º Ano A, 1º Ano B)" required>
+      
+      <button class="btn" id="btnSalvarPerfilInicial" style="width:100%; justify-content:center; margin-top:10px;">
+        <i class="ph ph-check-circle"></i> Acessar Painel
+      </button>
     </div>
   </div>
 
-  <div style="padding:20px;">
-    <h3>Integrantes da Equipe</h3>
-    <ul id="public-membros-list" style="list-style:none; padding:0;"></ul>
-    
-    <h3>Votações Abertas</h3>
-    <div id="public-votacao-list"></div>
+  <div class="app-container">
+    <sidebar id="mainSidebar">
+      <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="ph ph-house"></i> Dashboard</button>
+      <button class="nav-btn" onclick="switchTab('mural', this)"><i class="ph ph-megaphone"></i> Mural</button>
+      <button class="nav-btn" onclick="switchTab('projetos', this)"><i class="ph ph-folder"></i> Projetos</button>
+      <button class="nav-btn" onclick="switchTab('membros', this)"><i class="ph ph-users"></i> Integrantes</button>
+      <button class="nav-btn" onclick="switchTab('votacao', this)"><i class="ph ph-check-square"></i> Votações</button>
+      <button class="nav-btn" onclick="switchTab('calendario', this)"><i class="ph ph-calendar"></i> Calendário</button>
+      <button class="nav-btn" onclick="switchTab('chat', this)"><i class="ph ph-chats-teardrop"></i> Chat Interno</button>
+      <button class="nav-btn" onclick="switchTab('financeiro', this)"><i class="ph ph-chart-pie"></i> Financeiro</button>
+      
+      <button class="nav-btn theme-toggle-btn" onclick="toggleDarkMode()"><i class="ph ph-moon"></i> Modo Escuro</button>
+      <button class="nav-btn admin-btn" onclick="switchTab('admin', this)"><i class="ph ph-lock-key"></i> Área Restrita</button>
+    </sidebar>
+
+    <main>
+      <section id="tab-dashboard" class="tab-content active">
+        <div class="grid-4">
+          <div class="kpi-card">
+            <i class="ph ph-users kpi-icon"></i>
+            <div><p style="font-size:0.75rem; color:var(--text-muted);">Integrantes</p><h3 id="kpi-membros">0</h3></div>
+          </div>
+          <div class="kpi-card">
+            <i class="ph ph-folder-open kpi-icon"></i>
+            <div><p style="font-size:0.75rem; color:var(--text-muted);">Projetos Ativos</p><h3 id="kpi-projetos">0</h3></div>
+          </div>
+          <div class="kpi-card">
+            <i class="ph ph-calendar-event kpi-icon"></i>
+            <div><p style="font-size:0.75rem; color:var(--text-muted);">Eventos</p><h3 id="kpi-eventos">0</h3></div>
+          </div>
+          <div class="kpi-card">
+            <i class="ph ph-wallet kpi-icon"></i>
+            <div><p style="font-size:0.75rem; color:var(--text-muted);">Saldo Caixa Grêmio</p><h3 id="dash-saldo" style="color:var(--verde);">R$ 0,00</h3></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3><i class="ph ph-info"></i> Último Comunicado</h3>
+            <div id="dash-ultimo-comunicado"><p style="color:var(--text-muted);">Sincronizando...</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-mural" class="tab-content">
+        <div class="card">
+          <h3><i class="ph ph-megaphone"></i> Mural de Avisos</h3>
+          <input type="text" id="search-mural" class="form-control" placeholder="🔍 Pesquisar avisos..." onkeyup="filterList('public-mural-list', this.value)">
+          <ul id="public-mural-list" style="list-style:none;"></ul>
+        </div>
+      </section>
+
+      <section id="tab-projetos" class="tab-content">
+        <div class="card">
+          <h3><i class="ph ph-folder"></i> Projetos da Gestão</h3>
+          <input type="text" id="search-projetos" class="form-control" placeholder="🔍 Pesquisar projetos..." onkeyup="filterProjects(this.value)">
+          <div id="public-projetos-list"></div>
+        </div>
+      </section>
+
+      <section id="tab-membros" class="tab-content">
+        <div class="card">
+          <h3><i class="ph ph-users"></i> Integrantes da Gestão</h3>
+          <input type="text" id="search-membros" class="form-control" placeholder="🔍 Pesquisar integrantes..." onkeyup="filterList('public-membros-list', this.value)">
+          <ul id="public-membros-list" style="list-style:none;"></ul>
+        </div>
+      </section>
+
+      <section id="tab-votacao" class="tab-content">
+        <div class="card">
+          <h3><i class="ph ph-check-square"></i> Votações Abertas</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Participe das decisões do Grêmio Estudantil votando nas enquetes e propostas ativas.</p>
+          <div id="public-votacao-list"></div>
+        </div>
+      </section>
+
+      <section id="tab-calendario" class="tab-content">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 id="calendarMonthYear"><i class="ph ph-calendar"></i> Calendário</h3>
+            <div>
+              <button class="btn btn-sm" id="btnPrevMonth"><i class="ph ph-caret-left"></i></button>
+              <button class="btn btn-sm" id="btnToday">Hoje</button>
+              <button class="btn btn-sm" id="btnNextMonth"><i class="ph ph-caret-right"></i></button>
+            </div>
+          </div>
+          <div class="calendar-grid">
+            <div class="calendar-day-header">Dom</div><div class="calendar-day-header">Seg</div><div class="calendar-day-header">Ter</div><div class="calendar-day-header">Qua</div><div class="calendar-day-header">Qui</div><div class="calendar-day-header">Sex</div><div class="calendar-day-header">Sáb</div>
+          </div>
+          <div id="calendarDays" class="calendar-grid"></div>
+        </div>
+      </section>
+
+      <section id="tab-chat" class="tab-content">
+        <div class="card">
+          <h3><i class="ph ph-chats-teardrop"></i> Chat Interno Online</h3>
+          <div class="chat-layout">
+            <div class="chat-rooms">
+              <button class="room-btn active" onclick="switchChatRoom('geral', this)"># Geral</button>
+              <button class="room-btn" onclick="switchChatRoom('eventos', this)"># Eventos</button>
+              <button class="room-btn" onclick="switchChatRoom('financeiro', this)"># Financeiro</button>
+            </div>
+            <div class="chat-main">
+              <div class="chat-messages" id="chatMessages"></div>
+              <div class="typing-status" id="typingStatus"></div>
+              <form id="chatForm" style="display:flex; gap:8px;">
+                <input type="text" id="chatInput" class="form-control" style="margin-bottom:0;" placeholder="Digite sua mensagem ao vivo..." oninput="handleChatTyping()" required>
+                <button type="submit" class="btn"><i class="ph ph-paper-plane-right"></i> Enviar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-financeiro" class="tab-content">
+        <div class="fin-summary-box">
+          <p style="font-size:0.9rem; color:var(--text-muted);">Saldo Total Disponível no Grêmio</p>
+          <h2 id="fin-saldo-destaque" style="color:var(--verde); font-size:2rem; margin:5px 0;">R$ 0,00</h2>
+          <p id="fin-percentual-resumo" style="font-size:0.85rem; font-weight:bold; color:var(--roxo);"></p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3><i class="ph ph-chart-pie"></i> Distribuição Financeira (%)</h3>
+            <div style="height: 220px;"><canvas id="financeiroChart"></canvas></div>
+          </div>
+          <div class="card">
+            <h3><i class="ph ph-receipt"></i> Lançamentos</h3>
+            <ul id="public-financeiro-list" style="list-style:none;"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-admin" class="tab-content">
+        <div id="admin-login-card" class="card" style="max-width: 400px; margin: 0 auto;">
+          <h3><i class="ph ph-lock"></i> Acesso Administrativo</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Digite a senha de gestão para gerenciar o sistema.</p>
+          <input type="password" id="adminPasswordInput" class="form-control" placeholder="Senha de acesso">
+          <button class="btn" onclick="autenticarAdmin()" style="width:100%; justify-content:center;"><i class="ph ph-key"></i> Entrar na Área Restrita</button>
+        </div>
+
+        <div id="admin-panel" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+            <div>
+              <h2 style="color:var(--roxo);"><i class="ph ph-shield-check"></i> Painel de Gerenciamento</h2>
+              <span style="font-size:0.9rem; font-weight:bold; color:var(--verde);">Caixa do Grêmio: <span id="admin-saldo-caixa">R$ 0,00</span></span>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="logoutAdmin()"><i class="ph ph-sign-out"></i> Sair do Modo Restrito</button>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-wrench"></i> Personalização e Identidade Visual</h3>
+            <div class="grid-2">
+              <div>
+                <label style="font-size:0.85rem; font-weight:bold;">URL da Logo do Grêmio</label>
+                <input type="text" id="admin-logo-url" class="form-control" placeholder="https://exemplo.com/logo.png">
+              </div>
+              <div>
+                <label style="font-size:0.85rem; font-weight:bold;">Nome da Escola / Grêmio</label>
+                <input type="text" id="admin-nome-escola" class="form-control" placeholder="CETI José Marques">
+              </div>
+            </div>
+            <button class="btn" onclick="salvarIdentidadeVisual()"><i class="ph ph-floppy-disk"></i> Salvar Identidade</button>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-megaphone-simple"></i> Novo Comunicado (Mural)</h3>
+            <input type="text" id="admin-mural-titulo" class="form-control" placeholder="Título do Comunicado">
+            <textarea id="admin-mural-conteudo" class="form-control" rows="3" placeholder="Descrição ou detalhes do comunicado..."></textarea>
+            <button class="btn" onclick="adicionarMural()"><i class="ph ph-plus-circle"></i> Publicar Aviso</button>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-folder-plus"></i> Novo Projeto</h3>
+            <input type="text" id="admin-proj-nome" class="form-control" placeholder="Nome do Projeto">
+            <textarea id="admin-proj-desc" class="form-control" rows="2" placeholder="Descrição do Projeto"></textarea>
+            <select id="admin-proj-status" class="form-control">
+              <option value="planejamento">Em Planejamento</option>
+              <option value="em_andamento">Em Andamento</option>
+              <option value="concluido">Concluído</option>
+            </select>
+            <button class="btn" onclick="adicionarProjeto()"><i class="ph ph-plus-circle"></i> Cadastrar Projeto</button>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-user-plus"></i> Adicionar Integrante</h3>
+            <input type="text" id="admin-membro-nome" class="form-control" placeholder="Nome Completo">
+            <input type="text" id="admin-membro-cargo" class="form-control" placeholder="Cargo (Ex: Diretor de Esportes)">
+            <input type="text" id="admin-membro-turma" class="form-control" placeholder="Turma">
+            <button class="btn" onclick="adicionarMembro()"><i class="ph ph-plus-circle"></i> Cadastrar Integrante</button>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-calendar-plus"></i> Novo Evento (Calendário)</h3>
+            <input type="text" id="admin-evento-titulo" class="form-control" placeholder="Título do Evento">
+            <input type="date" id="admin-evento-data" class="form-control">
+            <textarea id="admin-evento-desc" class="form-control" rows="2" placeholder="Descrição do evento"></textarea>
+            <button class="btn" onclick="adicionarEvento()"><i class="ph ph-plus-circle"></i> Agendar Evento</button>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-currency-dollar-simple"></i> Lançamento Financeiro</h3>
+            <input type="text" id="admin-fin-desc" class="form-control" placeholder="Descrição da Transação">
+            <input type="number" step="0.01" id="admin-fin-valor" class="form-control" placeholder="Valor (R$)">
+            <select id="admin-fin-tipo" class="form-control">
+              <option value="receita">Entrada (Receita)</option>
+              <option value="despesa">Saída (Despesa)</option>
+            </select>
+            <button class="btn" onclick="adicionarFinanceiro()"><i class="ph ph-plus-circle"></i> Registrar Lançamento</button>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-check-square-offset"></i> Nova Votação / Enquete</h3>
+            <input type="text" id="admin-votacao-titulo" class="form-control" placeholder="Pergunta / Pergunta da Votação">
+            <input type="text" id="admin-votacao-opcoes" class="form-control" placeholder="Opções separadas por vírgula (Ex: Sim, Não, Abstenção)">
+            <button class="btn" onclick="adicionarVotacao()"><i class="ph ph-plus-circle"></i> Criar Votação</button>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <div id="toast-container"></div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyC2rnMOi-YMH9LthRFf9KCICFtKpGvDm78",
-      authDomain: "fala--estudante.firebaseapp.com",
-      databaseURL: "https://fala--estudante-default-rtdb.firebaseio.com",
-      projectId: "fala--estudante",
-      storageBucket: "fala--estudante.firebasestorage.app",
-      messagingSenderId: "424257046289",
-      appId: "1:424257046289:web:b56419eae80e7773c06eb0"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-
-    window.db = {
-      perfil: JSON.parse(localStorage.getItem('fala_estudante_perfil')) || null,
-      mural: [], projetos: [], eventos: [], membros: [], financeiro: [],
-      votacoes: [],
-      chat: { geral: [], eventos: [], financeiro: [] },
-      lixeira: [], presencas: {}, digitando: {}, onlineStatus: {}
-    };
-
-    // REGISTRO DE PRESENÇA EM TEMPO REAL NO FIREBASE
-    if (window.db.perfil && window.db.perfil.nome) {
-      const userOnlineRef = ref(database, `onlineStatus/${window.db.perfil.nome.replace(/\./g, '_')}`);
-      const connectedRef = ref(database, ".info/connected");
-
-      onValue(connectedRef, (snap) => {
-        if (snap.val() === true) {
-          onDisconnect(userOnlineRef).set(false);
-          set(userOnlineRef, true);
-        }
-      });
-    }
-
-    // LISTENER DA TABELA DE PRESENÇA GLOBAL
-    onValue(ref(database, "onlineStatus"), (snapshot) => {
-      window.db.onlineStatus = snapshot.val() || {};
-      if (window.renderApp) window.renderApp();
-    });
-
-    window.saveDB = function() {
-      set(ref(database, "dados"), {
-        mural: window.db.mural || [],
-        projetos: window.db.projetos || [],
-        eventos: window.db.eventos || [],
-        membros: window.db.membros || [],
-        financeiro: window.db.financeiro || [],
-        votacoes: window.db.votacoes || [],
-        chat: window.db.chat || { geral: [], eventos: [], financeiro: [] },
-        lixeira: window.db.lixeira || [],
-        presencas: window.db.presencas || {},
-        digitando: window.db.digitando || {}
-      });
-    };
-
-    onValue(ref(database, "dados"), (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        window.db.mural = data.mural || [];
-        window.db.projetos = data.projetos || [];
-        window.db.eventos = data.eventos || [];
-        window.db.membros = data.membros || [];
-        window.db.financeiro = data.financeiro || [];
-        window.db.votacoes = data.votacoes || [];
-        window.db.chat = data.chat || { geral: [], eventos: [], financeiro: [] };
-        window.db.lixeira = data.lixeira || [];
-        window.db.presencas = data.presencas || {};
-        window.db.digitando = data.digitando || {};
-      }
-      if (window.renderApp) window.renderApp();
-    });
-  </script>
-
   <script>
-    let isAdminAuth = true;
+    // ESTADO E BANCO DE DADOS LOCAL (LocalStorage)
+    const ADMIN_PASSWORD_HASH = "1234"; // Senha padrão da administração
 
-    function showToast(msg) {
+    let appState = {
+      usuario: JSON.parse(localStorage.getItem('gremio_usuario')) || null,
+      mural: JSON.parse(localStorage.getItem('gremio_mural')) || [],
+      projetos: JSON.parse(localStorage.getItem('gremio_projetos')) || [],
+      membros: JSON.parse(localStorage.getItem('gremio_membros')) || [],
+      eventos: JSON.parse(localStorage.getItem('gremio_eventos')) || [],
+      financeiro: JSON.parse(localStorage.getItem('gremio_financeiro')) || [],
+      votacoes: JSON.parse(localStorage.getItem('gremio_votacoes')) || [],
+      chat: {
+        geral: JSON.parse(localStorage.getItem('gremio_chat_geral')) || [],
+        eventos: JSON.parse(localStorage.getItem('gremio_chat_eventos')) || [],
+        financeiro: JSON.parse(localStorage.getItem('gremio_chat_financeiro')) || []
+      },
+      currentChatRoom: 'geral',
+      currentDate: new Date(),
+      isAdmin: false
+    };
+
+    let chartInstance = null;
+    let typingTimer = null;
+
+    // INICIALIZAÇÃO DA APLICAÇÃO
+    document.addEventListener('DOMContentLoaded', () => {
+      checkUserProfile();
+      renderAllData();
+      initCalendar();
+
+      // Botões do calendário
+      document.getElementById('btnPrevMonth').addEventListener('click', () => changeMonth(-1));
+      document.getElementById('btnNextMonth').addEventListener('click', () => changeMonth(1));
+      document.getElementById('btnToday').addEventListener('click', () => {
+        appState.currentDate = new Date();
+        renderCalendar();
+      });
+
+      // Submit do Formulário de Chat
+      document.getElementById('chatForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        enviarMensagemChat();
+      });
+
+      // Event listener do perfil inicial
+      document.getElementById('btnSalvarPerfilInicial').addEventListener('click', salvarPerfilInicial);
+    });
+
+    // SISTEMA DE NOTIFICAÇÕES TOAST
+    function showToast(mensagem) {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = 'toast';
-      toast.innerText = msg;
+      toast.textContent = mensagem;
       container.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+      setTimeout(() => toast.remove(), 3500);
     }
 
-    function setSafeHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+    // NAVEGAÇÃO ENTRE ABAS E SIDEBAR
+    function switchTab(tabId, btnElement) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      if (btnElement) btnElement.classList.add('active');
 
-    function obterIniciais(nome) {
-      if (!nome) return "GE";
-      const partes = nome.trim().split(" ");
-      return partes.length === 1 ? partes[0].substring(0, 2).toUpperCase() : (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+      if (window.innerWidth <= 768) {
+        document.getElementById('mainSidebar').classList.remove('open');
+      }
+
+      if (tabId === 'financeiro') renderFinanceiroChart();
     }
 
-    function moverParaLixeira(tipo, item) {
-      window.db.lixeira.push({
-        id: Date.now(),
-        tipoOrigem: tipo,
-        dados: item,
-        dataExclusao: new Date().toLocaleDateString('pt-BR')
+    function toggleSidebar() {
+      document.getElementById('mainSidebar').classList.toggle('open');
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    // GESTÃO DE PERFIL E USUÁRIO
+    function checkUserProfile() {
+      if (!appState.usuario) {
+        document.getElementById('welcome-screen').style.display = 'flex';
+      } else {
+        document.getElementById('welcome-screen').style.display = 'none';
+        document.getElementById('headerName').textContent = appState.usuario.nome;
+        document.getElementById('headerRole').textContent = appState.usuario.cargo || 'Membro';
+        document.getElementById('headerTurma').textContent = appState.usuario.turma || '';
+        document.getElementById('headerAvatar').childNodes[0].nodeValue = getInitials(appState.usuario.nome);
+      }
+    }
+
+    function salvarPerfilInicial() {
+      const nome = document.getElementById('welcome-nome').value.trim();
+      const cargo = document.getElementById('welcome-cargo').value.trim();
+      const turma = document.getElementById('welcome-turma').value.trim();
+
+      if (!nome || !turma) {
+        showToast('Preencha seu nome e sua turma!');
+        return;
+      }
+
+      appState.usuario = { nome, cargo: cargo || 'Estudante', turma, id: Date.now() };
+      localStorage.setItem('gremio_usuario', JSON.stringify(appState.usuario));
+      checkUserProfile();
+      showToast('Perfil configurado com sucesso!');
+    }
+
+    function logoutUser() {
+      localStorage.removeItem('gremio_usuario');
+      appState.usuario = null;
+      checkUserProfile();
+    }
+
+    function getInitials(name) {
+      if (!name) return 'GE';
+      const parts = name.trim().split(' ');
+      if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      return parts[0].substring(0, 2).toUpperCase();
+    }
+
+    // SALVAMENTO GLOBAL DE DADOS
+    function saveData(key, value) {
+      appState[key] = value;
+      localStorage.setItem(`gremio_${key}`, JSON.stringify(value));
+      renderAllData();
+    }
+
+    // RENDERIZAÇÃO GERAL
+    function renderAllData() {
+      renderDashboard();
+      renderMural();
+      renderProjetos();
+      renderMembros();
+      renderVotacoes();
+      renderCalendar();
+      renderChatMessages();
+      renderFinanceiro();
+    }
+
+    // DASHBOARD
+    function renderDashboard() {
+      document.getElementById('kpi-membros').textContent = appState.membros.length;
+      document.getElementById('kpi-projetos').textContent = appState.projetos.filter(p => p.status !== 'concluido').length;
+      document.getElementById('kpi-eventos').textContent = appState.eventos.length;
+
+      const saldo = calcularSaldo();
+      const saldoStr = `R$ ${saldo.toFixed(2).replace('.', ',')}`;
+      document.getElementById('dash-saldo').textContent = saldoStr;
+      if (document.getElementById('admin-saldo-caixa')) {
+        document.getElementById('admin-saldo-caixa').textContent = saldoStr;
+      }
+
+      const ultimoCom = appState.mural[0];
+      const divUltimo = document.getElementById('dash-ultimo-comunicado');
+      if (ultimoCom) {
+        divUltimo.innerHTML = `
+          <h4 style="color:var(--text-color);">${ultimoCom.titulo}</h4>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-top:5px;">${ultimoCom.conteudo}</p>
+          <small style="font-size:0.7rem; color:var(--verde);">${ultimoCom.data}</small>
+        `;
+      } else {
+        divUltimo.innerHTML = '<p style="color:var(--text-muted);">Nenhum comunicado recente.</p>';
+      }
+    }
+
+    // MURAL
+    function renderMural() {
+      const ul = document.getElementById('public-mural-list');
+      ul.innerHTML = '';
+
+      if (appState.mural.length === 0) {
+        ul.innerHTML = '<li style="color:var(--text-muted); text-align:center; padding:10px;">Nenhum aviso no mural.</li>';
+        return;
+      }
+
+      appState.mural.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.style.cssText = 'padding: 12px; border-bottom: 1px solid var(--border-color); position: relative;';
+        li.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="color:var(--roxo);">${item.titulo}</strong>
+            <small style="color:var(--text-muted); font-size:0.75rem;">${item.data}</small>
+          </div>
+          <p style="font-size:0.88rem; margin-top:6px; color:var(--text-color);">${item.conteudo}</p>
+          ${appState.isAdmin ? `<button class="btn btn-danger btn-sm" onclick="removerMural(${index})" style="margin-top:8px;"><i class="ph ph-trash"></i> Excluir</button>` : ''}
+        `;
+        ul.appendChild(li);
       });
     }
 
-    /* GESTÃO DE VOTAÇÕES NA ÁREA RESTRITA */
-    function saveVotacaoItem() {
-      const id = document.getElementById('adm-votacao-id').value;
-      const titulo = document.getElementById('adm-votacao-titulo').value.trim();
-      const descricao = document.getElementById('adm-votacao-desc').value.trim();
-      const opcoesRaw = document.getElementById('adm-votacao-opcoes').value.trim();
+    function adicionarMural() {
+      const titulo = document.getElementById('admin-mural-titulo').value.trim();
+      const conteudo = document.getElementById('admin-mural-conteudo').value.trim();
 
-      if (!titulo || !descricao) {
-        return showToast('Preencha o título e a descrição.');
+      if (!titulo || !conteudo) return showToast('Preencha o título e o conteúdo do aviso!');
+
+      const novo = { titulo, conteudo, data: new Date().toLocaleDateString('pt-BR') };
+      const atualizados = [novo, ...appState.mural];
+      saveData('mural', atualizados);
+
+      document.getElementById('admin-mural-titulo').value = '';
+      document.getElementById('admin-mural-conteudo').value = '';
+      showToast('Aviso publicado no mural!');
+    }
+
+    function removerMural(index) {
+      const atualizados = appState.mural.filter((_, i) => i !== index);
+      saveData('mural', atualizados);
+      showToast('Aviso removido!');
+    }
+
+    // PROJETOS
+    function renderProjetos() {
+      const container = document.getElementById('public-projetos-list');
+      container.innerHTML = '';
+
+      if (appState.projetos.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted); text-align:center;">Nenhum projeto cadastrado.</p>';
+        return;
       }
 
-      const listaOpcoes = opcoesRaw
-        ? opcoesRaw.split(',').map((opt) => opt.trim()).filter(Boolean).map((texto, index) => ({
-            id: `opt_${Date.now()}_${index}`,
-            texto: texto,
-            votos: 0
-          }))
-        : [];
+      appState.projetos.forEach((proj, index) => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.style.marginBottom = '12px';
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="color:var(--text-color);">${proj.nome}</h4>
+            <span class="badge-status badge-${proj.status}">${proj.status.replace('_', ' ').toUpperCase()}</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;">${proj.descricao}</p>
+          ${appState.isAdmin ? `<button class="btn btn-danger btn-sm" onclick="removerProjeto(${index})" style="margin-top:10px;"><i class="ph ph-trash"></i> Excluir Projeto</button>` : ''}
+        `;
+        container.appendChild(div);
+      });
+    }
 
-      if (id) {
-        const idx = window.db.votacoes.findIndex(v => v.id == id);
-        if (idx !== -1) {
-          window.db.votacoes[idx].titulo = titulo;
-          window.db.votacoes[idx].descricao = descricao;
-          if (listaOpcoes.length > 0) {
-            window.db.votacoes[idx].opcoes = listaOpcoes;
-            window.db.votacoes[idx].votosRegistrados = {};
-          }
-        }
-      } else {
-        if (listaOpcoes.length === 0) {
-          return showToast('Informe ao menos duas opções separadas por vírgula.');
-        }
-        window.db.votacoes.push({
-          id: Date.now(),
-          titulo,
-          descricao,
-          opcoes: listaOpcoes,
-          votosRegistrados: {}
-        });
+    function adicionarProjeto() {
+      const nome = document.getElementById('admin-proj-nome').value.trim();
+      const descricao = document.getElementById('admin-proj-desc').value.trim();
+      const status = document.getElementById('admin-proj-status').value;
+
+      if (!nome) return showToast('Preencha o nome do projeto!');
+
+      const novos = [...appState.projetos, { nome, descricao, status }];
+      saveData('projetos', novos);
+
+      document.getElementById('admin-proj-nome').value = '';
+      document.getElementById('admin-proj-desc').value = '';
+      showToast('Projeto cadastrado!');
+    }
+
+    function removerProjeto(index) {
+      const atualizados = appState.projetos.filter((_, i) => i !== index);
+      saveData('projetos', atualizados);
+      showToast('Projeto excluído!');
+    }
+
+    // INTEGRANTES / MEMBROS
+    function renderMembros() {
+      const ul = document.getElementById('public-membros-list');
+      ul.innerHTML = '';
+
+      if (appState.membros.length === 0) {
+        ul.innerHTML = '<li style="color:var(--text-muted); text-align:center;">Nenhum integrante cadastrado.</li>';
+        return;
       }
 
-      window.saveDB();
-      limparFormVotacao();
-      showToast('Votação salva!');
-    }
-
-    function editarVotacaoItem(id) {
-      const item = window.db.votacoes.find(v => v.id === id);
-      if (!item) return;
-
-      document.getElementById('adm-votacao-id').value = item.id;
-      document.getElementById('adm-votacao-titulo').value = item.titulo;
-      document.getElementById('adm-votacao-desc').value = item.descricao;
-      document.getElementById('adm-votacao-opcoes').value = item.opcoes.map(o => o.texto).join(', ');
-      
-      document.getElementById('adm-votacao-form-title').innerText = 'Editar Votação';
-      document.getElementById('btn-cancelar-votacao').style.display = 'inline-block';
-    }
-
-    function delVotacaoItem(id) {
-      const item = window.db.votacoes.find(v => v.id === id);
-      if (item) {
-        moverParaLixeira('votacoes', item);
-        window.db.votacoes = window.db.votacoes.filter(v => v.id !== id);
-        window.saveDB();
-        showToast('Votação movida para a lixeira.');
-      }
-    }
-
-    function limparFormVotacao() {
-      document.getElementById('adm-votacao-id').value = '';
-      document.getElementById('adm-votacao-titulo').value = '';
-      document.getElementById('adm-votacao-desc').value = '';
-      document.getElementById('adm-votacao-opcoes').value = '';
-      document.getElementById('adm-votacao-form-title').innerText = 'Gestão de Votações';
-      document.getElementById('btn-cancelar-votacao').style.display = 'none';
-    }
-
-    window.restaurarLixeira = function(lixeiraId) {
-      const item = window.db.lixeira.find(l => l.id === lixeiraId);
-      if (!item) return;
-
-      if (item.tipoOrigem === 'mural') window.db.mural.push(item.dados);
-      else if (item.tipoOrigem === 'projetos') window.db.projetos.push(item.dados);
-      else if (item.tipoOrigem === 'financeiro') window.db.financeiro.push(item.dados);
-      else if (item.tipoOrigem === 'votacoes') window.db.votacoes.push(item.dados);
-
-      window.db.lixeira = window.db.lixeira.filter(l => l.id !== lixeiraId);
-      window.saveDB();
-      showToast('Item restaurado com sucesso!');
-    };
-
-    /* RENDERIZAÇÃO DO APP */
-    window.renderApp = function() {
-      // Integrantes com Indicador de Online Real (🟢/⚪)
-      setSafeHTML('public-membros-list', window.db.membros.map(m => {
-        const cleanName = m.nome.split(' (')[0].replace(/\./g, '_');
-        const isReallyOnline = window.db.onlineStatus && window.db.onlineStatus[cleanName] === true;
-
-        return `
-          <li style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border-color);">
-            <div class="avatar-circle">
-              ${m.avatar || obterIniciais(m.nome)}
-              <div class="${isReallyOnline ? 'online-indicator' : 'offline-indicator'}" title="${isReallyOnline ? 'Online agora' : 'Offline'}"></div>
-            </div>
+      appState.membros.forEach((m, index) => {
+        const li = document.createElement('li');
+        li.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:10px; border-bottom:1px solid var(--border-color);';
+        li.innerHTML = `
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="avatar-circle">${getInitials(m.nome)}</div>
             <div>
               <strong>${m.nome}</strong>
-              <p style="font-size:0.78rem; color:var(--verde); font-weight:600; margin:0;">${m.cargo}</p>
+              <div style="font-size:0.75rem; color:var(--text-muted);">${m.cargo} • ${m.turma}</div>
             </div>
-          </li>
+          </div>
+          ${appState.isAdmin ? `<button class="btn btn-danger btn-sm" onclick="removerMembro(${index})"><i class="ph ph-trash"></i></button>` : ''}
         `;
-      }).join('') || '<p style="color:var(--text-muted);">Nenhum integrante cadastrado.</p>');
+        ul.appendChild(li);
+      });
+    }
 
-      // Votações Públicas
-      setSafeHTML('public-votacao-list', window.db.votacoes.map(v => `
-        <div class="card">
-          <h4 style="color:var(--roxo); margin:0 0 8px 0;">${v.titulo}</h4>
-          <p style="font-size:0.85rem; color:var(--text-muted);">${v.descricao}</p>
-          <div style="display:flex; flex-direction:column; gap:6px;">
-            ${v.opcoes.map(opt => `
-              <button class="btn btn-warning" style="justify-content:space-between;">
-                <span>${opt.texto}</span>
-                <span>${opt.votos} voto(s)</span>
-              </button>
-            `).join('')}
+    function adicionarMembro() {
+      const nome = document.getElementById('admin-membro-nome').value.trim();
+      const cargo = document.getElementById('admin-membro-cargo').value.trim();
+      const turma = document.getElementById('admin-membro-turma').value.trim();
+
+      if (!nome || !cargo) return showToast('Informe o nome e o cargo do integrante!');
+
+      const novos = [...appState.membros, { nome, cargo, turma: turma || 'Geral' }];
+      saveData('membros', novos);
+
+      document.getElementById('admin-membro-nome').value = '';
+      document.getElementById('admin-membro-cargo').value = '';
+      document.getElementById('admin-membro-turma').value = '';
+      showToast('Integrante cadastrado!');
+    }
+
+    function removerMembro(index) {
+      const atualizados = appState.membros.filter((_, i) => i !== index);
+      saveData('membros', atualizados);
+      showToast('Integrante removido!');
+    }
+
+    // VOTAÇÕES
+    function renderVotacoes() {
+      const container = document.getElementById('public-votacao-list');
+      container.innerHTML = '';
+
+      if (appState.votacoes.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted); text-align:center;">Nenhuma votação ativa no momento.</p>';
+        return;
+      }
+
+      appState.votacoes.forEach((v, vIndex) => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        
+        let opcoesHtml = '';
+        const totalVotos = v.opcoes.reduce((sum, op) => sum + op.votos, 0);
+
+        v.opcoes.forEach((op, oIndex) => {
+          const porcentagem = totalVotos > 0 ? ((op.votos / totalVotos) * 100).toFixed(1) : 0;
+          opcoesHtml += `
+            <div style="margin-top:10px;">
+              <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;">
+                <span>${op.texto}</span>
+                <strong>${op.votos} voto(s) (${porcentagem}%)</strong>
+              </div>
+              <div style="background:rgba(0,0,0,0.1); height:8px; border-radius:4px; overflow:hidden;">
+                <div style="background:var(--verde); width:${porcentagem}%; height:100%;"></div>
+              </div>
+              <button class="btn btn-sm" style="margin-top:6px;" onclick="votar(${vIndex}, ${oIndex})"><i class="ph ph-check"></i> Votar</button>
+            </div>
+          `;
+        });
+
+        div.innerHTML = `
+          <h4>${v.titulo}</h4>
+          ${opcoesHtml}
+          ${appState.isAdmin ? `<button class="btn btn-danger btn-sm" onclick="removerVotacao(${vIndex})" style="margin-top:15px;"><i class="ph ph-trash"></i> Encerrar Votação</button>` : ''}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function adicionarVotacao() {
+      const titulo = document.getElementById('admin-votacao-titulo').value.trim();
+      const strOpcoes = document.getElementById('admin-votacao-opcoes').value.trim();
+
+      if (!titulo || !strOpcoes) return showToast('Preencha a pergunta e as opções!');
+
+      const arrOpcoes = strOpcoes.split(',').map(op => ({ texto: op.trim(), votos: 0 })).filter(op => op.texto);
+      
+      if (arrOpcoes.length < 2) return showToast('Insira pelo menos duas opções válidas!');
+
+      const novas = [...appState.votacoes, { titulo, opcoes: arrOpcoes }];
+      saveData('votacoes', novas);
+
+      document.getElementById('admin-votacao-titulo').value = '';
+      document.getElementById('admin-votacao-opcoes').value = '';
+      showToast('Votação criada!');
+    }
+
+    function votar(vIndex, oIndex) {
+      if (!appState.usuario) return showToast('Faça login ou cadastre-se para votar!');
+      
+      appState.votacoes[vIndex].opcoes[oIndex].votos += 1;
+      saveData('votacoes', appState.votacoes);
+          showToast('Voto computado com sucesso!');
+    }
+
+    function removerVotacao(index) {
+      const atualizadas = appState.votacoes.filter((_, i) => i !== index);
+      saveData('votacoes', atualizadas);
+      showToast('Votação removida!');
+    }
+
+    // CALENDÁRIO
+    function initCalendar() {
+      renderCalendar();
+    }
+
+    function changeMonth(delta) {
+      appState.currentDate.setMonth(appState.currentDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const container = document.getElementById('calendarDays');
+      const title = document.getElementById('calendarMonthYear');
+      container.innerHTML = '';
+
+      const year = appState.currentDate.getFullYear();
+      const month = appState.currentDate.getMonth();
+
+      const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+      title.innerHTML = `<i class="ph ph-calendar"></i> ${monthNames[month]} de ${year}`;
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const today = new Date();
+
+      for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-day-cell';
+        emptyCell.style.opacity = '0.3';
+        container.appendChild(emptyCell);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day-cell';
+
+        const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
+        if (isToday) cell.classList.add('today');
+
+        const strDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const evs = appState.eventos.filter(e => e.data === strDate);
+
+        let eventsHtml = '';
+        evs.forEach(ev => {
+          eventsHtml += `<div style="background:var(--verde); color:white; font-size:0.68rem; padding:2px 4px; border-radius:3px; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${ev.descricao || ''}">${ev.titulo}</div>`;
+        });
+
+        cell.innerHTML = `<strong>${day}</strong>${eventsHtml}`;
+        container.appendChild(cell);
+      }
+    }
+
+    function adicionarEvento() {
+      const titulo = document.getElementById('admin-evento-titulo').value.trim();
+      const data = document.getElementById('admin-evento-data').value;
+      const descricao = document.getElementById('admin-evento-desc').value.trim();
+
+      if (!titulo || !data) return showToast('Preencha o título e a data do evento!');
+
+      const novos = [...appState.eventos, { titulo, data, descricao }];
+      saveData('eventos', novos);
+
+      document.getElementById('admin-evento-titulo').value = '';
+      document.getElementById('admin-evento-data').value = '';
+      document.getElementById('admin-evento-desc').value = '';
+      showToast('Evento agendado com sucesso!');
+    }
+
+    // CHAT INTERNO
+    function switchChatRoom(room, btn) {
+      appState.currentChatRoom = room;
+      document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderChatMessages();
+    }
+
+    function renderChatMessages() {
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = '';
+
+      const msgs = appState.chat[appState.currentChatRoom] || [];
+
+      msgs.forEach((msg, idx) => {
+        const div = document.createElement('div');
+        const isMe = appState.usuario && msg.autor === appState.usuario.nome;
+        div.className = `chat-msg ${isMe ? 'me' : ''}`;
+        
+        div.innerHTML = `
+          <div class="meta">
+            <strong>${msg.autor} (${msg.turma || 'Alun@'})</strong>
+            <span>${msg.hora}</span>
           </div>
-        </div>
-      `).join('') || '<p style="color:var(--text-muted);">Nenhuma votação ativa.</p>');
+          <div>${msg.texto}</div>
+          <div class="actions">
+            <span></span>
+            ${(isMe || appState.isAdmin) ? `<button class="delete-msg-btn" onclick="deletarMensagemChat(${idx})">Excluir</button>` : ''}
+          </div>
+        `;
+        container.appendChild(div);
+      });
 
-      renderAdminLists();
-    };
+      container.scrollTop = container.scrollHeight;
+    }
 
-    function renderAdminLists() {
-      setSafeHTML('adm-votacoes-list', window.db.votacoes.map(v => `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color);">
+    function enviarMensagemChat() {
+      const input = document.getElementById('chatInput');
+      const texto = input.value.trim();
+
+      if (!texto) return;
+      if (!appState.usuario) return showToast('Configure seu perfil para enviar mensagens!');
+
+      const nova = {
+        autor: appState.usuario.nome,
+        turma: appState.usuario.turma,
+        texto,
+        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+      };
+
+      const room = appState.currentChatRoom;
+      const msgsAtualizadas = [...(appState.chat[room] || []), nova];
+      appState.chat[room] = msgsAtualizadas;
+      
+      localStorage.setItem(`gremio_chat_${room}`, JSON.stringify(msgsAtualizadas));
+      input.value = '';
+      renderChatMessages();
+    }
+
+    function handleChatTyping() {
+      const statusDiv = document.getElementById('typingStatus');
+      statusDiv.textContent = `${appState.usuario ? appState.usuario.nome : 'Alguém'} está digitando...`;
+      
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(() => {
+        statusDiv.textContent = '';
+      }, 1500);
+    }
+
+    function deletarMensagemChat(index) {
+      const room = appState.currentChatRoom;
+      appState.chat[room] = appState.chat[room].filter((_, i) => i !== index);
+      localStorage.setItem(`gremio_chat_${room}`, JSON.stringify(appState.chat[room]));
+      renderChatMessages();
+    }
+
+    // FINANCEIRO
+    function calcularSaldo() {
+      return appState.financeiro.reduce((acc, item) => {
+        return item.tipo === 'receita' ? acc + item.valor : acc - item.valor;
+      }, 0);
+    }
+
+    function renderFinanceiro() {
+      const saldo = calcularSaldo();
+      const saldoStr = `R$ ${saldo.toFixed(2).replace('.', ',')}`;
+      
+      document.getElementById('fin-saldo-destaque').textContent = saldoStr;
+
+      const ul = document.getElementById('public-financeiro-list');
+      ul.innerHTML = '';
+
+      if (appState.financeiro.length === 0) {
+        ul.innerHTML = '<li style="color:var(--text-muted); text-align:center;">Nenhum lançamento registrado.</li>';
+        return;
+      }
+
+      appState.financeiro.forEach((item, index) => {
+        const li = document.createElement('li');
+        const isReceita = item.tipo === 'receita';
+        li.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid var(--border-color);';
+        li.innerHTML = `
           <div>
-            <strong>${v.titulo}</strong>
-            <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">${v.descricao.substring(0, 45)}...</p>
+            <strong>${item.descricao}</strong>
+            <div style="font-size:0.75rem; color:var(--text-muted);">${item.data}</div>
           </div>
-          <div style="display:flex; gap:4px;">
-            <button class="btn btn-sm" onclick="editarVotacaoItem(${v.id})"><i class="ph ph-pencil"></i></button>
-            <button class="btn btn-danger btn-sm" onclick="delVotacaoItem(${v.id})"><i class="ph ph-trash"></i></button>
+          <div style="text-align:right;">
+            <span style="font-weight:bold; color:${isReceita ? 'var(--verde)' : 'var(--vermelho-light)'};">
+              ${isReceita ? '+' : '-'} R$ ${item.valor.toFixed(2).replace('.', ',')}
+            </span>
+            ${appState.isAdmin ? `<div><button class="btn btn-danger btn-sm" onclick="removerFinanceiro(${index})" style="margin-top:4px;"><i class="ph ph-trash"></i></button></div>` : ''}
           </div>
-        </div>
-      `).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Nenhuma votação.</p>');
+        `;
+        ul.appendChild(li);
+      });
+    }
+
+    function adicionarFinanceiro() {
+      const descricao = document.getElementById('admin-fin-desc').value.trim();
+      const valor = parseFloat(document.getElementById('admin-fin-valor').value);
+      const tipo = document.getElementById('admin-fin-tipo').value;
+
+      if (!descricao || isNaN(valor) || valor <= 0) return showToast('Insira uma descrição e um valor válido!');
+
+      const novo = {
+        descricao,
+        valor,
+        tipo,
+        data: new Date().toLocaleDateString('pt-BR')
+      };
+
+      const novos = [novo, ...appState.financeiro];
+      saveData('financeiro', novos);
+
+      document.getElementById('admin-fin-desc').value = '';
+      document.getElementById('admin-fin-valor').value = '';
+      showToast('Lançamento registrado!');
+      renderFinanceiroChart();
+    }
+
+    function removerFinanceiro(index) {
+      const atualizados = appState.financeiro.filter((_, i) => i !== index);
+      saveData('financeiro', atualizados);
+      showToast('Lançamento excluído!');
+      renderFinanceiroChart();
+    }
+
+    function renderFinanceiroChart() {
+      const ctx = document.getElementById('financeiroChart');
+      if (!ctx) return;
+
+      const totalReceitas = appState.financeiro.filter(i => i.tipo === 'receita').reduce((sum, i) => sum + i.valor, 0);
+      const totalDespesas = appState.financeiro.filter(i => i.tipo === 'despesa').reduce((sum, i) => sum + i.valor, 0);
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Entradas (Receitas)', 'Saídas (Despesas)'],
+          datasets: [{
+            data: [totalReceitas, totalDespesas],
+            backgroundColor: ['#0B8E2F', '#EF4444']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+    }
+
+    // ÁREA RESTRITA / ADMIN
+    function autenticarAdmin() {
+      const senha = document.getElementById('adminPasswordInput').value;
+      if (senha === ADMIN_PASSWORD_HASH) {
+        appState.isAdmin = true;
+        document.getElementById('admin-login-card').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        showToast('Acesso administrativo concedido!');
+        renderAllData();
+      } else {
+        showToast('Senha incorreta!');
+      }
+    }
+
+    function logoutAdmin() {
+      appState.isAdmin = false;
+      document.getElementById('admin-login-card').style.display = 'block';
+      document.getElementById('admin-panel').style.display = 'none';
+      document.getElementById('adminPasswordInput').value = '';
+      showToast('Saiu do modo administrativo.');
+      renderAllData();
+    }
+
+    function salvarIdentidadeVisual() {
+      const logoUrl = document.getElementById('admin-logo-url').value.trim();
+      const nomeEscola = document.getElementById('admin-nome-escola').value.trim();
+
+      if (logoUrl) {
+        document.getElementById('app-logo-header').src = logoUrl;
+      }
+      if (nomeEscola) {
+        document.querySelector('.brand-title p').textContent = nomeEscola;
+      }
+      showToast('Identidade visual atualizada!');
+    }
+
+    // FILTROS E PESQUISAS
+    function filterList(elementId, query) {
+      const filter = query.toLowerCase();
+      const ul = document.getElementById(elementId);
+      const li = ul.getElementsByTagName('li');
+
+      for (let i = 0; i < li.length; i++) {
+        const text = li[i].textContent || li[i].innerText;
+        li[i].style.display = text.toLowerCase().includes(filter) ? "" : "none";
+      }
+    }
+
+    function filterProjects(query) {
+      const filter = query.toLowerCase();
+      const container = document.getElementById('public-projetos-list');
+      const cards = container.getElementsByClassName('card');
+
+      for (let i = 0; i < cards.length; i++) {
+        const text = cards[i].textContent || cards[i].innerText;
+        cards[i].style.display = text.toLowerCase().includes(filter) ? "" : "none";
+      }
     }
   </script>
 </body>
