@@ -966,38 +966,46 @@
     let finChart = null;
 
     // --- INICIALIZAÇÃO DA APLICAÇÃO ---
-    window.onload = () => {
-      checkUserProfile();
-      renderAll();
-    };
-
     function checkUserProfile() {
-      if (!state.user) {
-        document.getElementById('welcome-screen').style.display = 'flex';
-      } else {
-        document.getElementById('welcome-screen').style.display = 'none';
-        document.getElementById('headerName').innerText = state.user.nome;
-        document.getElementById('headerRole').innerText = state.user.cargo;
-        document.getElementById('headerTurma').innerText = state.user.turma;
-        document.getElementById('headerAvatar').childNodes[0].nodeValue = state.user.nome.substring(0, 2).toUpperCase();
-      }
+  if (!state.user) {
+    document.getElementById('welcome-screen').style.display = 'flex';
+  } else {
+    // Oculta a tela inicial
+    document.getElementById('welcome-screen').style.display = 'none';
+    
+    // Atualiza as informações do cabeçalho
+    document.getElementById('headerName').innerText = state.user.nome;
+    document.getElementById('headerRole').innerText = state.user.cargo || 'Membro';
+    document.getElementById('headerTurma').innerText = state.user.turma;
+    
+    // Correção segura para atualizar o avatar sem quebrar o DOM
+    const iniciais = state.user.nome.trim().substring(0, 2).toUpperCase();
+    const avatarElem = document.getElementById('headerAvatar');
+    if (avatarElem) {
+      avatarElem.innerHTML = `${iniciais}<div class="online-indicator"></div>`;
     }
+  }
+}
 
-    function salvarPerfilInicial() {
-      const nome = document.getElementById('welcome-nome').value.trim();
-      const cargo = document.getElementById('welcome-cargo').value.trim() || 'Estudante';
-      const turma = document.getElementById('welcome-turma').value.trim();
+function salvarPerfilInicial() {
+  const nome = document.getElementById('welcome-nome').value.trim();
+  const cargo = document.getElementById('welcome-cargo').value.trim() || 'Estudante';
+  const turma = document.getElementById('welcome-turma').value.trim();
 
-      if (!nome || !turma) {
-        showToast("Preencha seu Nome e Turma para continuar!");
-        return;
-      }
+  if (!nome || !turma) {
+    showToast("Preencha seu Nome e Turma para continuar!");
+    return;
+  }
 
-      state.user = { nome, cargo, turma };
-      localStorage.setItem('gremio_user', JSON.stringify(state.user));
-      checkUserProfile();
-      showToast(`Bem-vindo(a), ${nome}!`);
+  state.user = { nome, cargo, turma };
+  localStorage.setItem('gremio_user', JSON.stringify(state.user));
+  
+  // Atualiza o perfil e fecha a tela
+  checkUserProfile();
+  showToast(`Bem-vindo(a), ${nome}!`);
     }
+    
+
 
     function logoutUser() {
       localStorage.removeItem('gremio_user');
