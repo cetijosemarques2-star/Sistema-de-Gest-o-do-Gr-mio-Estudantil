@@ -215,7 +215,6 @@
     .chat-main { flex: 1; display: flex; flex-direction: column; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; display: flex; flex-direction: column; }
     
-    /* CHAT AJUSTADO: ESQUERDA (VERDE - RECEBIDO), DIREITA (ROXO - ENVIADO) */
     .chat-msg { 
       margin-bottom: 12px; 
       padding: 10px 14px; 
@@ -433,8 +432,7 @@
           </div>
         </div>
       </section>
-
-      <section id="tab-admin" class="tab-content">
+            <section id="tab-admin" class="tab-content">
         <div id="admin-login-card" class="card" style="max-width: 400px; margin: 0 auto;">
           <h3><i class="ph ph-lock"></i> Acesso Administrativo</h3>
           <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Digite a senha de gestão para gerenciar o sistema.</p>
@@ -452,6 +450,27 @@
           </div>
 
           <div class="grid-2">
+            <div class="card">
+              <h3 id="adm-votacao-form-title"><i class="ph ph-check-square"></i> Gerenciar Votação / Enquete</h3>
+              <input type="hidden" id="adm-votacao-id">
+              <input type="text" id="adm-votacao-titulo" class="form-control" placeholder="Título da Votação">
+              <textarea id="adm-votacao-desc" class="form-control" rows="2" placeholder="Descrição/Detalhes da votação"></textarea>
+              
+              <label style="font-size:0.8rem; font-weight:bold; color:var(--roxo);">Opções de Voto:</label>
+              <input type="text" id="adm-votacao-op1" class="form-control" placeholder="Opção 1" style="margin-top:4px;">
+              <input type="text" id="adm-votacao-op2" class="form-control" placeholder="Opção 2">
+              <input type="text" id="adm-votacao-op3" class="form-control" placeholder="Opção 3 (Opcional)">
+              
+              <div style="display:flex; gap:8px;">
+                <button class="btn" onclick="saveVotacaoItem()"><i class="ph ph-floppy-disk"></i> Salvar Votação</button>
+                <button class="btn btn-warning btn-sm" onclick="cancelarEdicaoVotacao()" id="btn-cancelar-votacao" style="display:none;">Cancelar</button>
+              </div>
+
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              <h4>Votações Cadastradas</h4>
+              <div id="adm-votacoes-list" style="margin-top:10px;"></div>
+            </div>
+
             <div class="card">
               <h3><i class="ph ph-check-square-offset"></i> Presença em Reuniões</h3>
               <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Registre a frequência dos membros na última reunião.</p>
@@ -534,8 +553,7 @@
   </div>
 
   <div id="toast-container"></div>
-
-  <script type="module">
+    <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
@@ -693,7 +711,6 @@
       document.getElementById('admin-panel').style.display = 'none';
     }
 
-    /* SISTEMA DE DIGITANDO DO CHAT */
     function handleChatTyping() {
       if (!window.db.perfil) return;
       window.db.digitando[window.db.perfil.nome] = true;
@@ -706,7 +723,6 @@
       }, 2000);
     }
 
-    /* APAGAR MENSAGEM DO CHAT */
     window.deleteChatMessage = function(msgId) {
       if (!window.db.chat[currentRoom]) return;
       window.db.chat[currentRoom] = window.db.chat[currentRoom].filter(m => m.id !== msgId);
@@ -714,7 +730,6 @@
       showToast('Mensagem apagada.');
     };
 
-    /* OPERAÇÕES CRUD E LIXEIRA */
     function moverParaLixeira(tipo, item) {
       window.db.lixeira.push({
         id: Date.now(),
@@ -750,7 +765,7 @@
         moverParaLixeira('mural', item);
         window.db.mural = window.db.mural.filter(m => m.id !== id);
         window.saveDB();
-        showToast('Movidos para a lixeira.');
+        showToast('Movido para a lixeira.');
       }
     }
 
@@ -842,7 +857,6 @@
       }
     }
 
-    /* FUNÇÕES DA LIXEIRA */
     window.restaurarLixeira = function(lixeiraId) {
       const item = window.db.lixeira.find(l => l.id === lixeiraId);
       if (!item) return;
@@ -850,6 +864,7 @@
       if (item.tipoOrigem === 'mural') window.db.mural.push(item.dados);
       else if (item.tipoOrigem === 'projetos') window.db.projetos.push(item.dados);
       else if (item.tipoOrigem === 'financeiro') window.db.financeiro.push(item.dados);
+      else if (item.tipoOrigem === 'votacoes') window.db.votacoes.push(item.dados);
 
       window.db.lixeira = window.db.lixeira.filter(l => l.id !== lixeiraId);
       window.saveDB();
@@ -862,7 +877,6 @@
       showToast('Item excluído permanentemente.');
     };
 
-    /* PRESENÇA / CHAMADA */
     window.salvarChamada = function() {
       const inputs = document.querySelectorAll('.presenca-input');
       inputs.forEach(inp => {
@@ -905,6 +919,98 @@
       }
     };
 
+    /* GERENCIAMENTO DE VOTAÇÕES NA ÁREA RESTRITA */
+    window.saveVotacaoItem = function() {
+      const id = document.getElementById('adm-votacao-id').value;
+      const titulo = document.getElementById('adm-votacao-titulo').value.trim();
+      const descricao = document.getElementById('adm-votacao-desc').value.trim();
+      const op1Text = document.getElementById('adm-votacao-op1').value.trim();
+      const op2Text = document.getElementById('adm-votacao-op2').value.trim();
+      const op3Text = document.getElementById('adm-votacao-op3').value.trim();
+
+      if (!titulo || !descricao || !op1Text || !op2Text) {
+        return showToast('Preencha o título, descrição e pelo menos 2 opções!');
+      }
+
+      if (id) {
+        const idx = window.db.votacoes.findIndex(v => v.id == id);
+        if (idx !== -1) {
+          const vAtual = window.db.votacoes[idx];
+          
+          const novasOpcoes = [
+            { id: 'opt1', texto: op1Text, votos: vAtual.opcoes[0] ? vAtual.opcoes[0].votos : 0 },
+            { id: 'opt2', texto: op2Text, votos: vAtual.opcoes[1] ? vAtual.opcoes[1].votos : 0 }
+          ];
+
+          if (op3Text) {
+            novasOpcoes.push({ id: 'opt3', texto: op3Text, votos: vAtual.opcoes[2] ? vAtual.opcoes[2].votos : 0 });
+          }
+
+          window.db.votacoes[idx] = {
+            ...vAtual,
+            titulo,
+            descricao,
+            opcoes: novasOpcoes
+          };
+        }
+      } else {
+        const novasOpcoes = [
+          { id: 'opt1', texto: op1Text, votos: 0 },
+          { id: 'opt2', texto: op2Text, votos: 0 }
+        ];
+
+        if (op3Text) {
+          novasOpcoes.push({ id: 'opt3', texto: op3Text, votos: 0 });
+        }
+
+        window.db.votacoes.push({
+          id: Date.now(),
+          titulo,
+          descricao,
+          opcoes: novasOpcoes,
+          votosRegistrados: {}
+        });
+      }
+
+      window.saveDB();
+      cancelarEdicaoVotacao();
+      showToast('Votação salva com sucesso!');
+    };
+
+    window.editVotacaoItem = function(id) {
+      const v = window.db.votacoes.find(item => item.id === id);
+      if (!v) return;
+
+      document.getElementById('adm-votacao-id').value = v.id;
+      document.getElementById('adm-votacao-titulo').value = v.titulo;
+      document.getElementById('adm-votacao-desc').value = v.descricao;
+      document.getElementById('adm-votacao-op1').value = v.opcoes[0]?.texto || '';
+      document.getElementById('adm-votacao-op2').value = v.opcoes[1]?.texto || '';
+      document.getElementById('adm-votacao-op3').value = v.opcoes[2]?.texto || '';
+      
+      document.getElementById('btn-cancelar-votacao').style.display = 'inline-flex';
+    };
+
+    window.cancelarEdicaoVotacao = function() {
+      document.getElementById('adm-votacao-id').value = '';
+      document.getElementById('adm-votacao-titulo').value = '';
+      document.getElementById('adm-votacao-desc').value = '';
+      document.getElementById('adm-votacao-op1').value = '';
+      document.getElementById('adm-votacao-op2').value = '';
+      document.getElementById('adm-votacao-op3').value = '';
+      document.getElementById('btn-cancelar-votacao').style.display = 'none';
+    };
+
+    window.delVotacaoItem = function(id) {
+      const item = window.db.votacoes.find(v => v.id === id);
+      if (item) {
+        moverParaLixeira('votacoes', item);
+        window.db.votacoes = window.db.votacoes.filter(v => v.id !== id);
+        window.saveDB();
+        showToast('Votação movida para a lixeira.');
+      }
+    };
+
     function renderVotacoes() {
       const container = document.getElementById('public-votacao-list');
       if (!container) return;
@@ -919,7 +1025,7 @@
             
             <div style="display:flex; flex-direction:column; gap:8px;">
               ${v.opcoes.map(opt => `
-                <button class="btn ${meuVoto === opt.id ? '' : 'btn-warning'}"Onclick="votarEnquete(${v.id}, '${opt.id}')" 
+                <button class="btn ${meuVoto === opt.id ? '' : 'btn-warning'}" onclick="votarEnquete(${v.id}, '${opt.id}')" 
                         style="justify-content:space-between; text-align:left;">
                   <span>${opt.texto} ${meuVoto === opt.id ? '✓ (Seu Voto)' : ''}</span>
                   <span class="badge-status badge-planejamento">${opt.votos} voto(s)</span>
@@ -931,17 +1037,16 @@
       }).join('') || '<p style="color:var(--text-muted);">Nenhuma votação cadastrada.</p>';
     }
 
-    /* GERENCIAMENTO DE PERFIL/USUÁRIO */
     function checkUserProfile() {
-      if (!state.user) {
+      if (!window.db.perfil) {
         document.getElementById('welcome-screen').style.display = 'flex';
       } else {
         document.getElementById('welcome-screen').style.display = 'none';
-        document.getElementById('headerName').innerText = state.user.nome;
-        document.getElementById('headerRole').innerText = state.user.cargo || 'Membro';
-        document.getElementById('headerTurma').innerText = state.user.turma;
+        document.getElementById('headerName').innerText = window.db.perfil.nome;
+        document.getElementById('headerRole').innerText = window.db.perfil.cargo || 'Membro';
+        document.getElementById('headerTurma').innerText = window.db.perfil.turma;
         
-        const iniciais = state.user.nome.trim().substring(0, 2).toUpperCase();
+        const iniciais = window.db.perfil.nome.trim().substring(0, 2).toUpperCase();
         const avatarElem = document.getElementById('headerAvatar');
         if (avatarElem) {
           avatarElem.innerHTML = `${iniciais}<div class="online-indicator"></div>`;
@@ -959,14 +1064,11 @@
         return;
       }
 
-      state.user = { nome, cargo, turma };
-      localStorage.setItem('gremio_user', JSON.stringify(state.user));
+      window.db.perfil = { nome, cargo, turma };
+      localStorage.setItem('fala_estudante_perfil', JSON.stringify(window.db.perfil));
       checkUserProfile();
       showToast(`Bem-vindo(a), ${nome}!`);
-    }
-
-    /* INICIALIZAÇÃO */
-    document.addEventListener("DOMContentLoaded", () => {
+    }    document.addEventListener("DOMContentLoaded", () => {
       checkUserProfile();
 
       document.getElementById('btnSalvarPerfilInicial')?.addEventListener('click', salvarPerfilInicial);
@@ -975,22 +1077,22 @@
         e.preventDefault();
         const input = document.getElementById('chatInput');
         const text = input ? input.value.trim() : '';
-        if (!text || !state.user) return;
+        if (!text || !window.db.perfil) return;
 
         if (!window.db.chat[currentRoom]) window.db.chat[currentRoom] = [];
 
         window.db.chat[currentRoom].push({
           id: Date.now(),
-          sender: `${state.user.nome} (${state.user.turma})`,
-          role: state.user.cargo,
+          sender: `${window.db.perfil.nome} (${window.db.perfil.turma})`,
+          role: window.db.perfil.cargo,
           text: text,
           date: new Date().toLocaleDateString('pt-BR'),
           time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
           visto: true
         });
 
-        if (window.db.digitando[state.user.nome]) {
-          delete window.db.digitando[state.user.nome];
+        if (window.db.digitando[window.db.perfil.nome]) {
+          delete window.db.digitando[window.db.perfil.nome];
         }
 
         window.saveDB();
@@ -1007,7 +1109,6 @@
       document.getElementById('mainSidebar')?.classList.remove('open');
     };
 
-    /* CHAT ROOM */
     window.switchChatRoom = function(room, element) {
       currentRoom = room;
       document.querySelectorAll('.room-btn').forEach(btn => btn.classList.remove('active'));
@@ -1021,7 +1122,7 @@
       const msgs = window.db.chat[currentRoom] || [];
 
       container.innerHTML = msgs.map((m) => {
-        const isMe = state.user && m.sender.startsWith(state.user.nome);
+        const isMe = window.db.perfil && m.sender.startsWith(window.db.perfil.nome);
         return `
           <div class="chat-msg ${isMe ? 'me' : ''}">
             <div class="meta">
@@ -1039,12 +1140,10 @@
 
       container.scrollTop = container.scrollHeight;
 
-      // Status de digitando
-      const quemDigita = Object.keys(window.db.digitando || {}).filter(n => n !== state.user?.nome);
+      const quemDigita = Object.keys(window.db.digitando || {}).filter(n => n !== window.db.perfil?.nome);
       setSafeText('typingStatus', quemDigita.length > 0 ? `${quemDigita.join(', ')} está digitando...` : '');
     }
 
-    /* RENDER PRINCIPAL DO APP */
     window.renderApp = function() {
       setSafeText('kpi-membros', window.db.membros.length);
       setSafeText('kpi-projetos', window.db.projetos.filter(p => p.status !== 'concluido').length);
@@ -1077,7 +1176,6 @@
         </div>
       `).join('') || '<p style="color:var(--text-muted);">Nenhum projeto cadastrado.</p>');
 
-      // Integrantes com Indicador Online/Offline
       setSafeHTML('public-membros-list', window.db.membros.map(m => {
         const isOnline = m.online !== false;
         return `
@@ -1094,7 +1192,6 @@
         `;
       }).join('') || '<p style="color:var(--text-muted);">Nenhum integrante cadastrado.</p>');
 
-      // Financeiro e Porcentagens
       const totalReceita = window.db.financeiro.filter(f => f.tipo === 'receita').reduce((a,b) => a + b.valor, 0);
       const totalDespesa = window.db.financeiro.filter(f => f.tipo === 'despesa').reduce((a,b) => a + b.valor, 0);
       const saldo = totalReceita - totalDespesa;
@@ -1128,6 +1225,16 @@
     };
 
     function renderAdminLists() {
+      setSafeHTML('adm-votacoes-list', window.db.votacoes.map(v => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color);">
+          <span><strong>${v.titulo}</strong></span>
+          <div style="display:flex; gap:4px;">
+            <button class="btn btn-sm" onclick="editVotacaoItem(${v.id})"><i class="ph ph-pencil"></i> Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="delVotacaoItem(${v.id})"><i class="ph ph-trash"></i> Excluir</button>
+          </div>
+        </div>
+      `).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Nenhuma votação ativa.</p>');
+
       setSafeHTML('adm-mural-list', window.db.mural.map(m => `
         <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
           <span><strong>${m.titulo}</strong></span>
@@ -1164,7 +1271,6 @@
         </li>
       `).join(''));
 
-      // Render Lixeira
       setSafeHTML('adm-lixeira-list', window.db.lixeira.map(l => `
         <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color); font-size:0.85rem;">
           <div>
@@ -1178,7 +1284,6 @@
         </li>
       `).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Lixeira vazia.</p>');
 
-      // Render Chamada de Presença
       setSafeHTML('adm-chamada-list', window.db.membros.map(m => {
         const pVal = window.db.presencas[m.id] || 'presente';
         return `
