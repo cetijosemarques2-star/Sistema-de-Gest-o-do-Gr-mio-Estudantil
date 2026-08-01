@@ -215,6 +215,7 @@
     .chat-main { flex: 1; display: flex; flex-direction: column; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; display: flex; flex-direction: column; }
     
+    /* CHAT AJUSTADO: ESQUERDA (VERDE - RECEBIDO), DIREITA (ROXO - ENVIADO) */
     .chat-msg { 
       margin-bottom: 12px; 
       padding: 10px 14px; 
@@ -447,56 +448,70 @@
               <h2 style="color:var(--roxo);"><i class="ph ph-shield-check"></i> Painel de Gerenciamento</h2>
               <span style="font-size:0.9rem; font-weight:bold; color:var(--verde);">Caixa do Grêmio: <span id="admin-saldo-caixa">R$ 0,00</span></span>
             </div>
-            <button class="btn btn-warning btn-sm"             onclick="logoutAdmin()"><i class="ph ph-lock-key-open"></i> Sair do Modo Admin</button>
+            <button class="btn btn-danger btn-sm" onclick="logoutAdmin()"><i class="ph ph-lock-key-open"></i> Sair do Modo Admin</button>
           </div>
 
           <div class="card">
-            <h3><i class="ph ph-user-plus"></i> Gerenciar Integrantes</h3>
-            <form id="form-membro" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px;">
-              <input type="text" id="membro-nome" class="form-control" placeholder="Nome Completo" required>
-              <input type="text" id="membro-cargo" class="form-control" placeholder="Cargo (Ex: Diretor de Esportes)" required>
-              <input type="text" id="membro-turma" class="form-control" placeholder="Turma (Ex: 3º Ano B)" required>
-              <button type="submit" class="btn" style="height: 42px;"><i class="ph ph-plus-circle"></i> Adicionar</button>
-            </form>
-            <ul id="admin-membros-list" style="list-style:none;"></ul>
-          </div>
-
-          <div class="card">
-            <h3><i class="ph ph-folder-plus"></i> Gerenciar Projetos</h3>
-            <form id="form-projeto" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-              <input type="text" id="proj-titulo" class="form-control" placeholder="Título do Projeto" required>
-              <textarea id="proj-desc" class="form-control" placeholder="Descrição do Projeto" rows="2" required></textarea>
-              <div style="display: flex; gap: 10px;">
-                <select id="proj-status" class="form-control">
-                  <option value="planejamento">Em Planejamento</option>
-                  <option value="em_andamento">Em Andamento</option>
-                  <option value="concluido">Concluído</option>
-                </select>
-                <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Salvar</button>
-              </div>
-            </form>
-            <div id="admin-projetos-list"></div>
-          </div>
-
-          <div class="card">
-            <h3><i class="ph ph-broadcast"></i> Novo Aviso no Mural</h3>
-            <form id="form-mural" style="display: flex; flex-direction: column; gap: 10px;">
-              <input type="text" id="mural-titulo" class="form-control" placeholder="Título do Aviso" required>
-              <textarea id="mural-conteudo" class="form-control" placeholder="Conteúdo da publicação..." rows="3" required></textarea>
-              <button type="submit" class="btn" style="align-self: flex-start;"><i class="ph ph-paper-plane"></i> Publicar Aviso</button>
+            <h3><i class="ph ph-megaphone"></i> Novo Comunicado (Mural)</h3>
+            <form id="form-mural" onsubmit="adicionarMural(event)">
+              <input type="text" id="mural-titulo" class="form-control" placeholder="Título do Comunicado" required>
+              <textarea id="mural-conteudo" class="form-control" rows="3" placeholder="Descrição ou mensagem completa..." required></textarea>
+              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Publicar Aviso</button>
             </form>
           </div>
 
           <div class="card">
-            <h3><i class="ph ph-currency-dollar-simple"></i> Lançamento Financeiro</h3>
-            <form id="form-financeiro" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
-              <input type="text" id="fin-desc" class="form-control" placeholder="Descrição (Ex: Venda Rifa)" required>
-              <input type="number" step="0.01" id="fin-valor" class="form-control" placeholder="Valor R$ (Ex: 50.00)" required>
-              <select id="fin-tipo" class="form-control">
-                <option value="entrada">Entrada (+)</option>
-                <option value="saida">Saída (-)</option>
+            <h3><i class="ph ph-folder-plus"></i> Novo Projeto</h3>
+            <form id="form-projeto" onsubmit="adicionarProjeto(event)">
+              <input type="text" id="proj-nome" class="form-control" placeholder="Nome do Projeto" required>
+              <textarea id="proj-desc" class="form-control" rows="2" placeholder="Descrição do Projeto" required></textarea>
+              <select id="proj-status" class="form-control" required>
+                <option value="Planejamento">Planejamento</option>
+                <option value="Em Andamento">Em Andamento</option>
+                <option value="Concluído">Concluído</option>
               </select>
-              <button type="submit" class="btn" style="height: 42px;"><i class="ph ph-floppy-disk"></i> Registrar</button>
+              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Cadastrar Projeto</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-check-square-offset"></i> Nova Votação / Enquete</h3>
+            <form id="form-votacao" onsubmit="adicionarVotacao(event)">
+              <input type="text" id="votacao-titulo" class="form-control" placeholder="Título da Votação / Pergunta" required>
+              <input type="text" id="votacao-opcoes" class="form-control" placeholder="Opções (separadas por vírgula. Ex: Opção A, Opção B, Opção C)" required>
+              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Criar Votação</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-currency-dollar-simple"></i> Novo Lançamento Financeiro</h3>
+            <form id="form-financeiro" onsubmit="adicionarTransacao(event)">
+              <input type="text" id="fin-desc" class="form-control" placeholder="Descrição da Receita/Despesa" required>
+              <input type="number" step="0.01" id="fin-valor" class="form-control" placeholder="Valor (R$)" required>
+              <select id="fin-tipo" class="form-control" required>
+                <option value="entrada">Entrada (Receita)</option>
+                <option value="saida">Saída (Despesa)</option>
+              </select>
+              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Registrar Transação</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-user-plus"></i> Adicionar Integrante</h3>
+            <form id="form-membro" onsubmit="adicionarMembro(event)">
+              <input type="text" id="membro-nome" class="form-control" placeholder="Nome do Membro" required>
+              <input type="text" id="membro-cargo" class="form-control" placeholder="Cargo (Ex: Diretor de Esportes)" required>
+              <input type="text" id="membro-turma" class="form-control" placeholder="Turma" required>
+              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Cadastrar Integrante</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-calendar-plus"></i> Novo Evento no Calendário</h3>
+            <form id="form-evento" onsubmit="adicionarEvento(event)">
+              <input type="text" id="evento-titulo" class="form-control" placeholder="Nome do Evento" required>
+              <input type="date" id="evento-data" class="form-control" required>
+              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Agendar Evento</button>
             </form>
           </div>
 
@@ -508,92 +523,59 @@
   <div id="toast-container"></div>
 
   <script>
-    // ESTADO GLOBAL DA APLICAÇÃO
+    // --- ESTADO INICIAL DA APLICAÇÃO ---
     let currentUser = JSON.parse(localStorage.getItem('gremio_user')) || null;
     let isAdminLoggedIn = false;
-    let currentChatRoom = 'geral';
+    let currentRoom = 'geral';
     let currentDate = new Date();
-
-    // DADOS INICIAIS (LOCALSTORAGE OU FALLBACK)
-    let membros = JSON.parse(localStorage.getItem('gremio_membros')) || [
-      { id: 1, nome: "Ana Clara", cargo: "Presidente", turma: "3º Ano A" },
-      { id: 2, nome: "Lucas Mendes", cargo: "Vice-Presidente", turma: "3º Ano B" }
-    ];
-
-    let projetos = JSON.parse(localStorage.getItem('gremio_projetos')) || [
-      { id: 1, titulo: "Torneio Interclasses", desc: "Organização dos jogos de futebol e vôlei da escola.", status: "em_andamento" },
-      { id: 2, titulo: "Reforma da Biblioteca", desc: "Campanha de arrecadação de livros e pintura do espaço.", status: "planejamento" }
-    ];
-
-    let mural = JSON.parse(localStorage.getItem('gremio_mural')) || [
-      { id: 1, titulo: "Reunião Geral Marcada", conteudo: "Próxima sexta-feira teremos reunião aberta no auditório às 14h.", data: new Date().toLocaleDateString('pt-BR') }
-    ];
-
-    let financeiro = JSON.parse(localStorage.getItem('gremio_financeiro')) || [
-      { id: 1, desc: "Fundo Inicial Grêmio", valor: 350.00, tipo: "entrada" }
-    ];
-
-    let chatMessages = JSON.parse(localStorage.getItem('gremio_chat')) || [
-      { id: 1, room: "geral", sender: "Ana Clara", role: "Presidente", text: "Boas-vindas ao chat do Grêmio!", time: "10:00" }
-    ];
-
     let chartInstance = null;
 
-    // INICIALIZAÇÃO DA APLICAÇÃO
-    document.addEventListener('DOMContentLoaded', () => {
-      checkUserProfile();
-      renderDashboard();
-      renderMembros();
-      renderProjetos();
-      renderMural();
-      renderFinanceiro();
-      renderCalendar();
-      renderChat();
-    });
+    // Dados Iniciais / LocalStorage
+    let db = {
+      mural: JSON.parse(localStorage.getItem('gremio_mural')) || [
+        { id: 1, titulo: "Boas-vindas!", conteudo: "Sejam bem-vindos ao sistema oficial do Grêmio Estudantil!", data: new Date().toLocaleDateString() }
+      ],
+      projetos: JSON.parse(localStorage.getItem('gremio_projetos')) || [
+        { id: 1, nome: "Torneio Interclasses", desc: "Campeonato esportivo entre turmas do CETI.", status: "Em Andamento" },
+        { id: 2, nome: "Cine Grêmio", desc: "Exibição de filmes com debate quinzenal.", status: "Planejamento" }
+      ],
+      membros: JSON.parse(localStorage.getItem('gremio_membros')) || [
+        { id: 1, nome: "Ana Silva", cargo: "Presidente", turma: "3º Ano A" },
+        { id: 2, nome: "Lucas Mendes", cargo: "Vice-Presidente", turma: "3º Ano B" }
+      ],
+      votacoes: JSON.parse(localStorage.getItem('gremio_votacoes')) || [
+        { id: 1, titulo: "Tema da Festa Cultural", opcoes: [{ texto: "Anos 80", votos: 12 }, { texto: "Geek/Pop", votos: 25 }, { texto: "Folclore", votos: 8 }] }
+      ],
+      eventos: JSON.parse(localStorage.getItem('gremio_eventos')) || [
+        { id: 1, titulo: "Reunião Geral", data: new Date().toISOString().split('T')[0] }
+      ],
+      financeiro: JSON.parse(localStorage.getItem('gremio_financeiro')) || [
+        { id: 1, desc: "Fundo Inicial", valor: 500.00, tipo: "entrada" }
+      ],
+      chat: JSON.parse(localStorage.getItem('gremio_chat')) || [
+        { id: 1, room: "geral", user: "Ana Silva", msg: "Olá pessoal! Sejam bem-vindos ao chat.", time: "10:00" }
+      ]
+    };
 
-    // SISTEMA DE USUÁRIO / PERFIL
-    function checkUserProfile() {
-      if (!currentUser) {
-        document.getElementById('welcome-screen').style.display = 'flex';
-      } else {
-        document.getElementById('welcome-screen').style.display = 'none';
-        document.getElementById('headerName').innerText = currentUser.nome;
-        document.getElementById('headerRole').innerText = currentUser.cargo;
-        document.getElementById('headerTurma').innerText = currentUser.turma;
-        document.getElementById('headerAvatar').firstChild.textContent = currentUser.nome.substring(0, 2).toUpperCase();
-      }
+    // --- SALVAR NO LOCALSTORAGE ---
+    function saveData(key) {
+      localStorage.setItem(`gremio_${key}`, JSON.stringify(db[key]));
     }
 
-    document.getElementById('btnSalvarPerfilInicial').addEventListener('click', () => {
-      const nome = document.getElementById('welcome-nome').value.trim();
-      const cargo = document.getElementById('welcome-cargo').value.trim() || 'Estudante';
-      const turma = document.getElementById('welcome-turma').value.trim();
-
-      if (!nome || !turma) {
-        showToast("Preencha seu Nome e Turma!");
-        return;
-      }
-
-      currentUser = { nome, cargo, turma };
-      localStorage.setItem('gremio_user', JSON.stringify(currentUser));
-      checkUserProfile();
-      showToast(`Bem-vindo(a), ${nome}!`);
-    });
-
-    function logoutUser() {
-      localStorage.removeItem('gremio_user');
-      currentUser = null;
-      location.reload();
-    }
-
-    // INTERFACE & TAB SWITCHING
-    function switchTab(tabId, btn) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-
+    // --- NAVEGAÇÃO E TEMA ---
+    function switchTab(tabId, element) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      
       document.getElementById(`tab-${tabId}`).classList.add('active');
-      if (btn) btn.classList.add('active');
-      if (window.innerWidth <= 768) toggleSidebar();
+      if (element) element.classList.add('active');
+      
+      if (window.innerWidth <= 768) {
+        document.getElementById('mainSidebar').classList.remove('open');
+      }
+
+      if (tabId === 'calendario') renderCalendar();
+      if (tabId === 'financeiro') renderFinanceiroChart();
     }
 
     function toggleSidebar() {
@@ -604,336 +586,58 @@
       document.body.classList.toggle('dark-mode');
     }
 
-    function showToast(msg) {
+    function showToast(mensagem) {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = 'toast';
-      toast.innerText = msg;
+      toast.innerText = mensagem;
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
     }
 
-    // DASHBOARD & FINANCEIRO UTILS
-    function getSaldoTotal() {
-      return financeiro.reduce((acc, item) => item.tipo === 'entrada' ? acc + item.valor : acc - item.valor, 0);
-    }
-
-    function renderDashboard() {
-      document.getElementById('kpi-membros').innerText = membros.length;
-      document.getElementById('kpi-projetos').innerText = projetos.length;
-      document.getElementById('kpi-eventos').innerText = projetos.filter(p => p.status === 'em_andamento').length;
-
-      const saldoFormatted = `R$ ${getSaldoTotal().toFixed(2).replace('.', ',')}`;
-      document.getElementById('dash-saldo').innerText = saldoFormatted;
-      document.getElementById('fin-saldo-destaque').innerText = saldoFormatted;
-      document.getElementById('admin-saldo-caixa').innerText = saldoFormatted;
-
-      const ultimoAviso = mural[mural.length - 1];
-      const divAviso = document.getElementById('dash-ultimo-comunicado');
-      if (ultimoAviso) {
-        divAviso.innerHTML = `<strong>${ultimoAviso.titulo}</strong><p style="font-size:0.85rem; margin-top:5px;">${ultimoAviso.conteudo}</p><small style="color:var(--text-muted);">${ultimoAviso.data}</small>`;
+    // --- GERENCIAMENTO DE PERFIL/USUÁRIO ---
+    function initUser() {
+      if (!currentUser) {
+        document.getElementById('welcome-screen').style.display = 'flex';
       } else {
-        divAviso.innerHTML = `<p style="color:var(--text-muted);">Nenhum aviso no momento.</p>`;
+        document.getElementById('welcome-screen').style.display = 'none';
+        document.getElementById('headerName').innerText = currentUser.nome;
+        document.getElementById('headerRole').innerText = currentUser.cargo || 'Estudante';
+        document.getElementById('headerTurma').innerText = currentUser.turma;
+        document.getElementById('headerAvatar').childNodes[0].nodeValue = currentUser.nome.substring(0, 2).toUpperCase();
       }
     }
 
-    // MEMBROS
-    function renderMembros() {
-      const pList = document.getElementById('public-membros-list');
-      const aList = document.getElementById('admin-membros-list');
-      pList.innerHTML = ''; aList.innerHTML = '';
+    document.getElementById('btnSalvarPerfilInicial').addEventListener('click', () => {
+      const nome = document.getElementById('welcome-nome').value.trim();
+      const cargo = document.getElementById('welcome-cargo').value.trim();
+      const turma = document.getElementById('welcome-turma').value.trim();
 
-      membros.forEach(m => {
-        pList.innerHTML += `<li style="padding:10px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between;">
-          <div><strong>${m.nome}</strong> (${m.turma})</div><span class="badge-status badge-planejamento">${m.cargo}</span>
-        </li>`;
-
-        aList.innerHTML += `<li style="padding:8px 0; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color);">
-          <span><strong>${m.nome}</strong> - ${m.cargo} (${m.turma})</span>
-          <button class="btn btn-danger btn-sm" onclick="removerMembro(${m.id})"><i class="ph ph-trash"></i> Excluir</button>
-        </li>`;
-      });
-      renderDashboard();
-    }
-
-    document.getElementById('form-membro')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const novo = {
-        id: Date.now(),
-        nome: document.getElementById('membro-nome').value,
-        cargo: document.getElementById('membro-cargo').value,
-        turma: document.getElementById('membro-turma').value
-      };
-      membros.push(novo);
-      localStorage.setItem('gremio_membros', JSON.stringify(membros));
-      renderMembros();
-      e.target.reset();
-      showToast("Integrante cadastrado com sucesso!");
-    });
-
-    function removerMembro(id) {
-      membros = membros.filter(m => m.id !== id);
-      localStorage.setItem('gremio_membros', JSON.stringify(membros));
-      renderMembros();
-    }
-
-    // PROJETOS
-    function renderProjetos() {
-      const pList = document.getElementById('public-projetos-list');
-      const aList = document.getElementById('admin-projetos-list');
-      pList.innerHTML = ''; aList.innerHTML = '';
-
-      projetos.forEach(p => {
-        const badgeClass = `badge-${p.status}`;
-        const statusText = p.status.replace('_', ' ').toUpperCase();
-
-        pList.innerHTML += `<div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between;"><strong>${p.titulo}</strong><span class="badge-status ${badgeClass}">${statusText}</span></div>
-          <p style="font-size:0.85rem; margin-top:6px;">${p.desc}</p>
-        </div>`;
-
-        aList.innerHTML += `<div style="padding:10px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
-          <div><strong>${p.titulo}</strong> (${statusText})</div>
-          <button class="btn btn-danger btn-sm" onclick="removerProjeto(${p.id})"><i class="ph ph-trash"></i> Excluir</button>
-        </div>`;
-      });
-      renderDashboard();
-    }
-
-    document.getElementById('form-projeto')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const novo = {
-        id: Date.now(),
-        titulo: document.getElementById('proj-titulo').value,
-        desc: document.getElementById('proj-desc').value,
-        status: document.getElementById('proj-status').value
-      };
-      projetos.push(novo);
-      localStorage.setItem('gremio_projetos', JSON.stringify(projetos));
-      renderProjetos();
-      e.target.reset();
-      showToast("Projeto criado com sucesso!");
-    });
-
-    function removerProjeto(id) {
-      projetos = projetos.filter(p => p.id !== id);
-      localStorage.setItem('gremio_projetos', JSON.stringify(projetos));
-      renderProjetos();
-    }
-
-    // MURAL
-    function renderMural() {
-      const list = document.getElementById('public-mural-list');
-      list.innerHTML = '';
-      mural.forEach(m => {
-        list.innerHTML += `<li style="padding:12px 0; border-bottom:1px solid var(--border-color);">
-          <strong style="color:var(--roxo);">${m.titulo}</strong> <small>(${m.data})</small>
-          <p style="font-size:0.9rem; margin-top:4px;">${m.conteudo}</p>
-        </li>`;
-      });
-      renderDashboard();
-    }
-
-    document.getElementById('form-mural')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const novo = {
-        id: Date.now(),
-        titulo: document.getElementById('mural-titulo').value,
-        conteudo: document.getElementById('mural-conteudo').value,
-        data: new Date().toLocaleDateString('pt-BR')
-      };
-      mural.push(novo);
-      localStorage.setItem('gremio_mural', JSON.stringify(mural));
-      renderMural();
-      e.target.reset();
-      showToast("Aviso publicado no mural!");
-    });
-
-    // FINANCEIRO
-    function renderFinanceiro() {
-      const list = document.getElementById('public-financeiro-list');
-      list.innerHTML = '';
-
-      let entradas = 0;
-      let saidas = 0;
-
-      financeiro.forEach(f => {
-        if (f.tipo === 'entrada') entradas += f.valor;
-        else saidas += f.valor;
-
-        const sinal = f.tipo === 'entrada' ? '+' : '-';
-        const cor = f.tipo === 'entrada' ? 'var(--verde)' : 'var(--vermelho-light)';
-
-        list.innerHTML += `<li style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-color);">
-          <span>${f.desc}</span>
-          <strong style="color:${cor};">${sinal} R$ ${f.valor.toFixed(2)}</strong>
-        </li>`;
-      });
-
-      renderDashboard();
-      renderFinanceiroChart(entradas, saidas);
-    }
-
-    document.getElementById('form-financeiro')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const novo = {
-        id: Date.now(),
-        desc: document.getElementById('fin-desc').value,
-        valor: parseFloat(document.getElementById('fin-valor').value),
-        tipo: document.getElementById('fin-tipo').value
-      };
-      financeiro.push(novo);
-      localStorage.setItem('gremio_financeiro', JSON.stringify(financeiro));
-      renderFinanceiro();
-      e.target.reset();
-      showToast("Lançamento financeiro registrado!");
-    });
-
-    function renderFinanceiroChart(entradas, saidas) {
-      const ctx = document.getElementById('financeiroChart');
-      if (!ctx) return;
-
-      if (chartInstance) chartInstance.destroy();
-
-      chartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Entradas', 'Saídas'],
-          datasets: [{
-            data: [entradas, saidas],
-            backgroundColor: ['#0B8E2F', '#EF4444']
-          }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-    }
-
-    // CHAT INTERNO
-    function switchChatRoom(room, btn) {
-      currentChatRoom = room;
-      document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
-      if(btn) btn.classList.add('active');
-      renderChat();
-    }
-
-    function renderChat() {
-      const chatContainer = document.getElementById('chatMessages');
-      chatContainer.innerHTML = '';
-
-      const filtered = chatMessages.filter(m => m.room === currentChatRoom);
-      filtered.forEach(m => {
-        const isMe = currentUser && m.sender === currentUser.nome;
-        const msgClass = isMe ? 'chat-msg me' : 'chat-msg';
-
-        chatContainer.innerHTML += `
-          <div class="${msgClass}">
-            <div class="meta"><strong>${m.sender} (${m.role})</strong> <span>${m.time}</span></div>
-            <div>${m.text}</div>
-            ${isMe ? `<div class="actions"><button class="delete-msg-btn" onclick="deleteMessage(${m.id})">Apagar</button></div>` : ''}
-          </div>
-        `;
-      });
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    document.getElementById('chatForm')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!currentUser) { showToast("Faça seu perfil para conversar!"); return; }
-
-      const input = document.getElementById('chatInput');
-      if (!input.value.trim()) return;
-
-      const now = new Date();
-      const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-
-      const msg = {
-        id: Date.now(),
-        room: currentChatRoom,
-        sender: currentUser.nome,
-        role: currentUser.cargo,
-        text: input.value.trim(),
-        time: timeStr
-      };
-
-      chatMessages.push(msg);
-      localStorage.setItem('gremio_chat', JSON.stringify(chatMessages));
-      input.value = '';
-      renderChat();
-    });
-
-    function deleteMessage(id) {
-      chatMessages = chatMessages.filter(m => m.id !== id);
-      localStorage.setItem('gremio_chat', JSON.stringify(chatMessages));
-      renderChat();
-    }
-
-    function handleChatTyping() {
-      const status = document.getElementById('typingStatus');
-      status.innerText = "Você está digitando...";
-      clearTimeout(window.typingTimer);
-      window.typingTimer = setTimeout(() => { status.innerText = ""; }, 1500);
-    }
-
-    // CALENDÁRIO
-    function renderCalendar() {
-      const calendarDays = document.getElementById('calendarDays');
-      const monthYearTitle = document.getElementById('calendarMonthYear');
-      if (!calendarDays) return;
-
-      calendarDays.innerHTML = '';
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-
-      const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-      monthYearTitle.innerHTML = `<i class="ph ph-calendar"></i> ${monthNames[month]} ${year}`;
-
-      const firstDay = new Date(year, month, 1).getDay();
-      const totalDays = new Date(year, month + 1, 0).getDate();
-      const today = new Date();
-
-      for (let i = 0; i < firstDay; i++) {
-        calendarDays.innerHTML += `<div class="calendar-day-cell" style="opacity:0.3;"></div>`;
+      if (nome && turma) {
+        currentUser = { nome, cargo: cargo || 'Estudante', turma };
+        localStorage.setItem('gremio_user', JSON.stringify(currentUser));
+        initUser();
+      } else {
+        alert("Por favor, preencha seu nome e sua turma.");
       }
+    });
 
-      for (let day = 1; day <= totalDays; day++) {
-        const isToday = (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) ? 'today' : '';
-        calendarDays.innerHTML += `<div class="calendar-day-cell ${isToday}">${day}</div>`;
-      }
+    function logoutUser() {
+      localStorage.removeItem('gremio_user');
+      location.reload();
     }
 
-    document.getElementById('btnPrevMonth')?.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
-    document.getElementById('btnNextMonth')?.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
-    document.getElementById('btnToday')?.addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
-
-    // BUSCAS E FILTROS
-    function filterList(listId, query) {
-      const list = document.getElementById(listId);
-      const items = list.getElementsByTagName('li');
-      const q = query.toLowerCase();
-
-      for (let item of items) {
-        item.style.display = item.innerText.toLowerCase().includes(q) ? '' : 'none';
-      }
-    }
-
-    function filterProjects(query) {
-      const list = document.getElementById('public-projetos-list');
-      const items = list.children;
-      const q = query.toLowerCase();      for (let item of items) {
-        item.style.display = item.innerText.toLowerCase().includes(q) ? '' : 'none';
-      }
-    }
-
-    // AUTENTICAÇÃO ÁREA RESTRITA
+    // --- ÁREA RESTRITA (ADMIN) ---
     function autenticarAdmin() {
       const pass = document.getElementById('adminPasswordInput').value;
-      if (pass === 'gremio123') { // Senha padrão de gestão
+      if (pass === "gremio123") { // Senha Padrão
         isAdminLoggedIn = true;
         document.getElementById('admin-login-card').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
-        showToast("Acesso administrativo liberado!");
+        showToast("Acesso administrativo concedido!");
+        renderAll();
       } else {
-        showToast("Senha incorreta!");
+        alert("Senha incorreta!");
       }
     }
 
@@ -943,6 +647,368 @@
       document.getElementById('admin-panel').style.display = 'none';
       document.getElementById('adminPasswordInput').value = '';
     }
+
+    // --- RENDERS E RENDERIZAÇÃO DA INTERFACE ---
+    function renderAll() {
+      renderDashboard();
+      renderMural();
+      renderProjetos();
+      renderMembros();
+      renderVotacoes();
+      renderFinanceiro();
+      renderChat();
+    }
+
+    function renderDashboard() {
+      document.getElementById('kpi-membros').innerText = db.membros.length;
+      document.getElementById('kpi-projetos').innerText = db.projetos.filter(p => p.status === 'Em Andamento').length;
+      document.getElementById('kpi-eventos').innerText = db.eventos.length;
+      
+      const totalSaldo = db.financeiro.reduce((acc, item) => item.tipo === 'entrada' ? acc + item.valor : acc - item.valor, 0);
+      const saldoFormatado = totalSaldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      
+      document.getElementById('dash-saldo').innerText = saldoFormatado;
+      document.getElementById('admin-saldo-caixa').innerText = saldoFormatado;
+      document.getElementById('fin-saldo-destaque').innerText = saldoFormatado;
+
+      const ultimo = db.mural[db.mural.length - 1];
+      if (ultimo) {
+        document.getElementById('dash-ultimo-comunicado').innerHTML = `
+          <h4 style="color:var(--verde);">${ultimo.titulo}</h4>
+          <p style="font-size:0.85rem; margin-top:5px;">${ultimo.conteudo}</p>
+          <small style="color:var(--text-muted); display:block; margin-top:5px;">${ultimo.data}</small>
+        `;
+      }
+    }
+
+    function renderMural() {
+      const list = document.getElementById('public-mural-list');
+      list.innerHTML = db.mural.map(item => `
+        <li style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:12px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between;">
+            <strong style="color:var(--roxo);">${item.titulo}</strong>
+            <small style="color:var(--text-muted);">${item.data}</small>
+          </div>
+          <p style="font-size:0.9rem; margin-top:6px;">${item.conteudo}</p>
+          ${isAdminLoggedIn ? `<button class="btn btn-danger btn-sm" style="margin-top:8px;" onclick="deletarItem('mural', ${item.id})">Excluir</button>` : ''}
+        </li>
+      `).join('');
+    }
+
+    function renderProjetos() {
+      const container = document.getElementById('public-projetos-list');
+      container.innerHTML = db.projetos.map(p => `
+        <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:12px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>${p.nome}</strong>
+            <span class="badge-status badge-${p.status.toLowerCase().replace(' ', '_')}">${p.status}</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin:6px 0;">${p.desc}</p>
+          ${isAdminLoggedIn ? `<button class="btn btn-danger btn-sm" onclick="deletarItem('projetos', ${p.id})">Excluir</button>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderMembros() {
+      const list = document.getElementById('public-membros-list');
+      list.innerHTML = db.membros.map(m => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid var(--border-color);">
+          <div>
+            <strong>${m.nome}</strong> - <span style="color:var(--verde);">${m.cargo}</span>
+            <div style="font-size:0.75rem; color:var(--text-muted);">${m.turma}</div>
+          </div>
+          ${isAdminLoggedIn ? `<button class="btn btn-danger btn-sm" onclick="deletarItem('membros', ${m.id})">Remover</button>` : ''}
+        </li>
+      `).join('');
+    }
+
+    function renderVotacoes() {
+      const container = document.getElementById('public-votacao-list');
+      container.innerHTML = db.votacoes.map(v => {
+        const totalVotos = v.opcoes.reduce((acc, op) => acc + op.votos, 0) || 1;
+        return `
+          <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:15px; margin-bottom:15px;">
+            <h4 style="color:var(--roxo); margin-bottom:10px;">${v.titulo}</h4>
+            ${v.opcoes.map((op, idx) => {
+              const pct = Math.round((op.votos / totalVotos) * 100);
+              return `
+                <div style="margin-bottom:8px;">
+                  <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:2px;">
+                    <span>${op.texto}</span>
+                    <span>${op.votos} votos (${pct}%)</span>
+                  </div>
+                  <div style="background:rgba(0,0,0,0.1); height:10px; border-radius:5px; overflow:hidden; cursor:pointer;" onclick="votar(${v.id}, ${idx})">
+                    <div style="background:var(--verde); width:${pct}%; height:100%;"></div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+            ${isAdminLoggedIn ? `<button class="btn btn-danger btn-sm" style="margin-top:8px;" onclick="deletarItem('votacoes', ${v.id})">Excluir Votação</button>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderFinanceiro() {
+      const list = document.getElementById('public-financeiro-list');
+      list.innerHTML = db.financeiro.map(f => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color);">
+          <span>${f.desc}</span>
+          <strong style="color:${f.tipo === 'entrada' ? 'var(--verde)' : 'var(--vermelho-light)'}">
+            ${f.tipo === 'entrada' ? '+' : '-'} R$ ${f.valor.toFixed(2)}
+          </strong>
+        </li>
+      `).join('');
+    }
+
+    // --- SISTEMA DE VOTAÇÃO ---
+    function votar(votacaoId, opcaoIndex) {
+      const v = db.votacoes.find(item => item.id === votacaoId);
+      if (v) {
+        v.opcoes[opcaoIndex].votos += 1;
+        saveData('votacoes');
+        renderVotacoes();
+        showToast("Voto computado com sucesso!");
+      }
+    }
+
+    // --- ACOES DO ADMIN (INSERÇÃO E EXCLUSÃO) ---
+    function adicionarMural(e) {
+      e.preventDefault();
+      db.mural.push({
+        id: Date.now(),
+        titulo: document.getElementById('mural-titulo').value,
+        conteudo: document.getElementById('mural-conteudo').value,
+        data: new Date().toLocaleDateString()
+      });
+      saveData('mural');
+      renderAll();
+      e.target.reset();
+      showToast("Aviso publicado!");
+    }
+
+    function adicionarProjeto(e) {
+      e.preventDefault();
+      db.projetos.push({
+        id: Date.now(),
+        nome: document.getElementById('proj-nome').value,
+        desc: document.getElementById('proj-desc').value,
+        status: document.getElementById('proj-status').value
+      });
+      saveData('projetos');
+      renderAll();
+      e.target.reset();
+      showToast("Projeto adicionado!");
+    }
+
+    function adicionarVotacao(e) {
+      e.preventDefault();
+      const opcoesArray = document.getElementById('votacao-opcoes').value.split(',').map(o => ({ texto: o.trim(), votos: 0 }));
+      db.votacoes.push({
+        id: Date.now(),
+        titulo: document.getElementById('votacao-titulo').value,
+        opcoes: opcoesArray
+      });
+      saveData('votacoes');
+      renderAll();
+      e.target.reset();
+      showToast("Votação criada!");
+    }
+
+    function adicionarTransacao(e) {
+      e.preventDefault();
+      db.financeiro.push({
+        id: Date.now(),
+        desc: document.getElementById('fin-desc').value,
+        valor: parseFloat(document.getElementById('fin-valor').value),
+        tipo: document.getElementById('fin-tipo').value
+      });
+      saveData('financeiro');
+      renderAll();
+      e.target.reset();
+      showToast("Lançamento efetuado!");
+    }
+
+    function adicionarMembro(e) {
+      e.preventDefault();
+      db.membros.push({
+        id: Date.now(),
+        nome: document.getElementById('membro-nome').value,
+        cargo: document.getElementById('membro-cargo').value,
+        turma: document.getElementById('membro-turma').value
+      });
+      saveData('membros');
+      renderAll();
+      e.target.reset();
+      showToast("Membro cadastrado!");
+    }
+
+    function adicionarEvento(e) {
+      e.preventDefault();
+      db.eventos.push({
+        id: Date.now(),
+        titulo: document.getElementById('evento-titulo').value,
+        data: document.getElementById('evento-data').value
+      });
+      saveData('eventos');
+      renderAll();
+      renderCalendar();
+      e.target.reset();
+      showToast("Evento agendado!");
+    }
+
+    function deletarItem(categoria, id) {
+      db[categoria] = db[categoria].filter(item => item.id !== id);
+      saveData(categoria);
+      renderAll();
+      showToast("Item removido!");
+    }
+
+    // --- FILTROS DE PESQUISA ---
+    function filterList(listId, query) {
+      const q = query.toLowerCase();
+      document.querySelectorAll(`#${listId} li`).forEach(li => {
+        li.style.display = li.innerText.toLowerCase().includes(q) ? '' : 'none';
+      });
+    }
+
+    function filterProjects(query) {
+      const q = query.toLowerCase();
+      document.querySelectorAll('#public-projetos-list > div').forEach(card => {
+        card.style.display = card.innerText.toLowerCase().includes(q) ? '' : 'none';
+      });
+    }
+
+    // --- CHAT INTERNO ---
+    function switchChatRoom(room, btn) {
+      currentRoom = room;
+      document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderChat();
+    }
+
+    function renderChat() {
+      const container = document.getElementById('chatMessages');
+      const roomMsgs = db.chat.filter(m => m.room === currentRoom);
+      
+      container.innerHTML = roomMsgs.map(m => {
+        const isMe = currentUser && m.user === currentUser.nome;
+        return `
+          <div class="chat-msg ${isMe ? 'me' : ''}">
+            <div class="meta">
+              <strong>${m.user}</strong>
+              <span>${m.time}</span>
+            </div>
+            <div>${m.msg}</div>
+            ${isAdminLoggedIn ? `<div class="actions"><button class="delete-msg-btn" onclick="deletarChatMsg(${m.id})">Excluir</button></div>` : ''}
+          </div>
+        `;
+      }).join('');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    document.getElementById('chatForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!currentUser) { alert("Configure seu perfil para usar o chat."); return; }
+      
+      const input = document.getElementById('chatInput');
+      const now = new Date();
+      
+      db.chat.push({
+        id: Date.now(),
+        room: currentRoom,
+        user: currentUser.nome,
+        msg: input.value,
+        time: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+      });
+      
+      saveData('chat');
+      input.value = '';
+      renderChat();
+    });
+
+    function handleChatTyping() {
+      const status = document.getElementById('typingStatus');
+      status.innerText = `${currentUser ? currentUser.nome : 'Alguém'} está digitando...`;
+      clearTimeout(window.typingTimer);
+      window.typingTimer = setTimeout(() => { status.innerText = ''; }, 1500);
+    }
+
+    function deletarChatMsg(id) {
+      db.chat = db.chat.filter(m => m.id !== id);
+      saveData('chat');
+      renderChat();
+    }
+
+    // --- CALENDÁRIO ---
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+      
+      document.getElementById('calendarMonthYear').innerHTML = `<i class="ph ph-calendar"></i> ${monthNames[month]} ${year}`;
+      
+      const firstDay = new Date(year, month, 1).getDay();
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const grid = document.getElementById('calendarDays');
+      grid.innerHTML = '';
+
+      for (let i = 0; i < firstDay; i++) {
+        grid.appendChild(document.createElement('div'));
+      }
+
+      const today = new Date();
+      for (let day = 1; day <= totalDays; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day-cell';
+        
+        const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        
+        if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day) {
+          cell.classList.add('today');
+        }
+
+        const eventsOnDay = db.eventos.filter(e => e.data === dateStr);
+        let eventsHtml = eventsOnDay.map(e => `<div style="background:var(--verde); color:white; font-size:0.65rem; padding:2px; border-radius:3px; margin-top:2px;">${e.titulo}</div>`).join('');
+
+        cell.innerHTML = `<div>${day}</div>${eventsHtml}`;
+        grid.appendChild(cell);
+      }
+    }
+
+    document.getElementById('btnPrevMonth').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
+    document.getElementById('btnNextMonth').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
+    document.getElementById('btnToday').addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
+
+    // --- GRÁFICO FINANCEIRO (CHART.JS) ---
+    function renderFinanceiroChart() {
+      const ctx = document.getElementById('financeiroChart').getContext('2d');
+      const entradas = db.financeiro.filter(f => f.tipo === 'entrada').reduce((a, b) => a + b.valor, 0);
+      const saidas = db.financeiro.filter(f => f.tipo === 'saida').reduce((a, b) => a + b.valor, 0);
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Entradas (R$)', 'Saídas (R$)'],
+          datasets: [{
+            data: [entradas, saidas],
+            backgroundColor: ['#0B8E2F', '#EF4444']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+    }
+
+    // --- INICIALIZAÇÃO GERAL ---
+    window.onload = () => {
+      initUser();
+      renderAll();
+    };
   </script>
 </body>
 </html>
