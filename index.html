@@ -192,6 +192,17 @@
       right: 0;
     }
 
+    .offline-indicator {
+      width: 12px;
+      height: 12px;
+      background: #94A3B8;
+      border-radius: 50%;
+      border: 2px solid var(--card-bg);
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
     .calendar-day-header { text-align: center; font-size: 0.75rem; font-weight: bold; color: var(--text-muted); }
     .calendar-day-cell { min-height: 70px; background: rgba(0,0,0,0.02); border-radius: 6px; padding: 6px; font-size: 0.8rem; border: 1px solid var(--border-color); }
@@ -241,9 +252,6 @@
     #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
     .toast { padding: 12px 20px; background: var(--amarelo); color: #1E293B; font-weight: 600; border-radius: 8px; margin-top: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
-    .item-list { list-style: none; }
-    .item-list li { background: rgba(0,0,0,0.02); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-
     @media (max-width: 768px) {
       .menu-toggle { display: block; }
       sidebar { position: absolute; left: -250px; top: 0; height: 100%; box-shadow: 4px 0 10px rgba(0,0,0,0.2); }
@@ -254,8 +262,6 @@
   </style>
 </head>
 <body>
-
-  <div id="toast-container"></div>
 
   <header>
     <div class="brand-logo">
@@ -288,7 +294,7 @@
       <input type="text" id="welcome-cargo" class="form-control" placeholder="Seu Cargo (Ex: Presidente, Diretor, Estudante)">
       <input type="text" id="welcome-turma" class="form-control" placeholder="Sua Turma (Ex: 3º Ano A, 1º Ano B)" required>
       
-      <button class="btn" id="btnSalvarPerfilInicial" onclick="salvarPerfilInicial()" style="width:100%; justify-content:center; margin-top:10px;">
+      <button class="btn" id="btnSalvarPerfilInicial" style="width:100%; justify-content:center; margin-top:10px;">
         <i class="ph ph-check-circle"></i> Acessar Painel
       </button>
     </div>
@@ -342,7 +348,7 @@
         <div class="card">
           <h3><i class="ph ph-megaphone"></i> Mural de Avisos</h3>
           <input type="text" id="search-mural" class="form-control" placeholder="🔍 Pesquisar avisos..." onkeyup="filterList('public-mural-list', this.value)">
-          <ul id="public-mural-list" class="item-list"></ul>
+          <ul id="public-mural-list" style="list-style:none;"></ul>
         </div>
       </section>
 
@@ -358,7 +364,7 @@
         <div class="card">
           <h3><i class="ph ph-users"></i> Integrantes da Gestão</h3>
           <input type="text" id="search-membros" class="form-control" placeholder="🔍 Pesquisar integrantes..." onkeyup="filterList('public-membros-list', this.value)">
-          <ul id="public-membros-list" class="item-list"></ul>
+          <ul id="public-membros-list" style="list-style:none;"></ul>
         </div>
       </section>
 
@@ -375,9 +381,9 @@
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3 id="calendarMonthYear"><i class="ph ph-calendar"></i> Calendário</h3>
             <div>
-              <button class="btn btn-sm" id="btnPrevMonth" onclick="navigateMonth(-1)"><i class="ph ph-caret-left"></i></button>
-              <button class="btn btn-sm" id="btnToday" onclick="resetCalendarToToday()">Hoje</button>
-              <button class="btn btn-sm" id="btnNextMonth" onclick="navigateMonth(1)"><i class="ph ph-caret-right"></i></button>
+              <button class="btn btn-sm" id="btnPrevMonth"><i class="ph ph-caret-left"></i></button>
+              <button class="btn btn-sm" id="btnToday">Hoje</button>
+              <button class="btn btn-sm" id="btnNextMonth"><i class="ph ph-caret-right"></i></button>
             </div>
           </div>
           <div class="calendar-grid">
@@ -399,7 +405,7 @@
             <div class="chat-main">
               <div class="chat-messages" id="chatMessages"></div>
               <div class="typing-status" id="typingStatus"></div>
-              <form id="chatForm" onsubmit="sendChatMessage(event)" style="display:flex; gap:8px;">
+              <form id="chatForm" style="display:flex; gap:8px;">
                 <input type="text" id="chatInput" class="form-control" style="margin-bottom:0;" placeholder="Digite sua mensagem ao vivo..." oninput="handleChatTyping()" required>
                 <button type="submit" class="btn"><i class="ph ph-paper-plane-right"></i> Enviar</button>
               </form>
@@ -422,7 +428,7 @@
           </div>
           <div class="card">
             <h3><i class="ph ph-receipt"></i> Lançamentos</h3>
-            <ul id="public-financeiro-list" class="item-list"></ul>
+            <ul id="public-financeiro-list" style="list-style:none;"></ul>
           </div>
         </div>
       </section>
@@ -441,139 +447,153 @@
               <h2 style="color:var(--roxo);"><i class="ph ph-shield-check"></i> Painel de Gerenciamento</h2>
               <span style="font-size:0.9rem; font-weight:bold; color:var(--verde);">Caixa do Grêmio: <span id="admin-saldo-caixa">R$ 0,00</span></span>
             </div>
-            <button class="btn btn-warning btn-sm" onclick="logoutAdmin()"><i class="ph ph-lock"></i> Sair do Modo Admin</button>
+            <button class="btn btn-warning btn-sm"             onclick="logoutAdmin()"><i class="ph ph-lock-key-open"></i> Sair do Modo Admin</button>
           </div>
 
-          <div class="grid-2">
-            <div class="card">
-              <h3><i class="ph ph-megaphone"></i> Adicionar Aviso (Mural)</h3>
-              <input type="text" id="admin-mural-titulo" class="form-control" placeholder="Título do Comunicado">
-              <textarea id="admin-mural-texto" class="form-control" rows="3" placeholder="Mensagem detalhada..."></textarea>
-              <button class="btn" onclick="addMuralItem()"><i class="ph ph-plus"></i> Publicar Comunicado</button>
-            </div>
-
-            <div class="card">
-              <h3><i class="ph ph-folder-plus"></i> Cadastrar Projeto</h3>
-              <input type="text" id="admin-proj-nome" class="form-control" placeholder="Nome do Projeto">
-              <textarea id="admin-proj-desc" class="form-control" rows="2" placeholder="Descrição"></textarea>
-              <select id="admin-proj-status" class="form-control">
-                <option value="planejamento">Planejamento</option>
-                <option value="em_andamento">Em Andamento</option>
-                <option value="concluido">Concluído</option>
-              </select>
-              <button class="btn" onclick="addProjetoItem()"><i class="ph ph-plus"></i> Salvar Projeto</button>
-            </div>
-
-            <div class="card">
-              <h3><i class="ph ph-user-plus"></i> Cadastrar Integrante</h3>
-              <input type="text" id="admin-membro-nome" class="form-control" placeholder="Nome">
-              <input type="text" id="admin-membro-cargo" class="form-control" placeholder="Cargo">
-              <input type="text" id="admin-membro-turma" class="form-control" placeholder="Turma">
-              <button class="btn" onclick="addMembroItem()"><i class="ph ph-plus"></i> Cadastrar Integrante</button>
-            </div>
-
-            <div class="card">
-              <h3><i class="ph ph-currency-dollar"></i> Novo Lançamento Financeiro</h3>
-              <input type="text" id="admin-fin-desc" class="form-control" placeholder="Descrição (Ex: Venda de Rifas, Compra de Bolas)">
-              <input type="number" step="0.01" id="admin-fin-valor" class="form-control" placeholder="Valor (R$)">
-              <select id="admin-fin-tipo" class="form-control">
-                <option value="receita">Receita (+ Entrou)</option>
-                <option value="despesa">Despesa (- Saiu)</option>
-              </select>
-              <button class="btn" onclick="addFinanceiroItem()"><i class="ph ph-plus"></i> Lançar no Caixa</button>
-            </div>
+          <div class="card">
+            <h3><i class="ph ph-user-plus"></i> Gerenciar Integrantes</h3>
+            <form id="form-membro" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px;">
+              <input type="text" id="membro-nome" class="form-control" placeholder="Nome Completo" required>
+              <input type="text" id="membro-cargo" class="form-control" placeholder="Cargo (Ex: Diretor de Esportes)" required>
+              <input type="text" id="membro-turma" class="form-control" placeholder="Turma (Ex: 3º Ano B)" required>
+              <button type="submit" class="btn" style="height: 42px;"><i class="ph ph-plus-circle"></i> Adicionar</button>
+            </form>
+            <ul id="admin-membros-list" style="list-style:none;"></ul>
           </div>
+
+          <div class="card">
+            <h3><i class="ph ph-folder-plus"></i> Gerenciar Projetos</h3>
+            <form id="form-projeto" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+              <input type="text" id="proj-titulo" class="form-control" placeholder="Título do Projeto" required>
+              <textarea id="proj-desc" class="form-control" placeholder="Descrição do Projeto" rows="2" required></textarea>
+              <div style="display: flex; gap: 10px;">
+                <select id="proj-status" class="form-control">
+                  <option value="planejamento">Em Planejamento</option>
+                  <option value="em_andamento">Em Andamento</option>
+                  <option value="concluido">Concluído</option>
+                </select>
+                <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Salvar</button>
+              </div>
+            </form>
+            <div id="admin-projetos-list"></div>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-broadcast"></i> Novo Aviso no Mural</h3>
+            <form id="form-mural" style="display: flex; flex-direction: column; gap: 10px;">
+              <input type="text" id="mural-titulo" class="form-control" placeholder="Título do Aviso" required>
+              <textarea id="mural-conteudo" class="form-control" placeholder="Conteúdo da publicação..." rows="3" required></textarea>
+              <button type="submit" class="btn" style="align-self: flex-start;"><i class="ph ph-paper-plane"></i> Publicar Aviso</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3><i class="ph ph-currency-dollar-simple"></i> Lançamento Financeiro</h3>
+            <form id="form-financeiro" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+              <input type="text" id="fin-desc" class="form-control" placeholder="Descrição (Ex: Venda Rifa)" required>
+              <input type="number" step="0.01" id="fin-valor" class="form-control" placeholder="Valor R$ (Ex: 50.00)" required>
+              <select id="fin-tipo" class="form-control">
+                <option value="entrada">Entrada (+)</option>
+                <option value="saida">Saída (-)</option>
+              </select>
+              <button type="submit" class="btn" style="height: 42px;"><i class="ph ph-floppy-disk"></i> Registrar</button>
+            </form>
+          </div>
+
         </div>
       </section>
     </main>
   </div>
 
+  <div id="toast-container"></div>
+
   <script>
-    // --- ESTADO INICIAL E ARMAZENAMENTO ---
-    let state = {
-      user: JSON.parse(localStorage.getItem('gremio_user')) || null,
-      isAdmin: false,
-      currentRoom: 'geral',
-      currentDate: new Date(),
-      mural: JSON.parse(localStorage.getItem('gremio_mural')) || [
-        { id: 1, titulo: "Boas-vindas!", texto: "Sejam bem-vindos ao novo portal da gestão do Grêmio Estudantil!", data: new Date().toLocaleDateString() }
-      ],
-      projetos: JSON.parse(localStorage.getItem('gremio_projetos')) || [
-        { id: 1, nome: "Torneio Interclasses", desc: "Organização do campeonato esportivo.", status: "em_andamento" }
-      ],
-      membros: JSON.parse(localStorage.getItem('gremio_membros')) || [
-        { id: 1, nome: "Ana Silva", cargo: "Presidente", turma: "3º Ano A" }
-      ],
-      chat: JSON.parse(localStorage.getItem('gremio_chat')) || { geral: [], eventos: [], financeiro: [] },
-      financeiro: JSON.parse(localStorage.getItem('gremio_financeiro')) || [
-        { id: 1, desc: "Recorrente da Cantina", valor: 150.00, tipo: "receita" },
-        { id: 2, desc: "Bolas de Futebol", valor: 80.00, tipo: "despesa" }
-      ],
-      votacoes: JSON.parse(localStorage.getItem('gremio_votacoes')) || [
-        { id: 1, titulo: "Tema da Festa Cultural", opcoes: [{ texto: "Anos 80", votos: 4 }, { texto: "Cinema", votos: 9 }] }
-      ]
-    };
+    // ESTADO GLOBAL DA APLICAÇÃO
+    let currentUser = JSON.parse(localStorage.getItem('gremio_user')) || null;
+    let isAdminLoggedIn = false;
+    let currentChatRoom = 'geral';
+    let currentDate = new Date();
 
-    let finChart = null;
+    // DADOS INICIAIS (LOCALSTORAGE OU FALLBACK)
+    let membros = JSON.parse(localStorage.getItem('gremio_membros')) || [
+      { id: 1, nome: "Ana Clara", cargo: "Presidente", turma: "3º Ano A" },
+      { id: 2, nome: "Lucas Mendes", cargo: "Vice-Presidente", turma: "3º Ano B" }
+    ];
 
-    // --- INICIALIZAÇÃO DA APLICAÇÃO ---
-    window.onload = () => {
+    let projetos = JSON.parse(localStorage.getItem('gremio_projetos')) || [
+      { id: 1, titulo: "Torneio Interclasses", desc: "Organização dos jogos de futebol e vôlei da escola.", status: "em_andamento" },
+      { id: 2, titulo: "Reforma da Biblioteca", desc: "Campanha de arrecadação de livros e pintura do espaço.", status: "planejamento" }
+    ];
+
+    let mural = JSON.parse(localStorage.getItem('gremio_mural')) || [
+      { id: 1, titulo: "Reunião Geral Marcada", conteudo: "Próxima sexta-feira teremos reunião aberta no auditório às 14h.", data: new Date().toLocaleDateString('pt-BR') }
+    ];
+
+    let financeiro = JSON.parse(localStorage.getItem('gremio_financeiro')) || [
+      { id: 1, desc: "Fundo Inicial Grêmio", valor: 350.00, tipo: "entrada" }
+    ];
+
+    let chatMessages = JSON.parse(localStorage.getItem('gremio_chat')) || [
+      { id: 1, room: "geral", sender: "Ana Clara", role: "Presidente", text: "Boas-vindas ao chat do Grêmio!", time: "10:00" }
+    ];
+
+    let chartInstance = null;
+
+    // INICIALIZAÇÃO DA APLICAÇÃO
+    document.addEventListener('DOMContentLoaded', () => {
       checkUserProfile();
-      renderAll();
-    };
+      renderDashboard();
+      renderMembros();
+      renderProjetos();
+      renderMural();
+      renderFinanceiro();
+      renderCalendar();
+      renderChat();
+    });
 
+    // SISTEMA DE USUÁRIO / PERFIL
     function checkUserProfile() {
-      if (!state.user) {
+      if (!currentUser) {
         document.getElementById('welcome-screen').style.display = 'flex';
       } else {
         document.getElementById('welcome-screen').style.display = 'none';
-        document.getElementById('headerName').innerText = state.user.nome;
-        document.getElementById('headerRole').innerText = state.user.cargo || 'Membro';
-        document.getElementById('headerTurma').innerText = state.user.turma;
-        
-        const iniciais = state.user.nome.trim().substring(0, 2).toUpperCase();
-        const avatarElem = document.getElementById('headerAvatar');
-        if (avatarElem) {
-          avatarElem.innerHTML = `${iniciais}<div class="online-indicator"></div>`;
-        }
+        document.getElementById('headerName').innerText = currentUser.nome;
+        document.getElementById('headerRole').innerText = currentUser.cargo;
+        document.getElementById('headerTurma').innerText = currentUser.turma;
+        document.getElementById('headerAvatar').firstChild.textContent = currentUser.nome.substring(0, 2).toUpperCase();
       }
     }
 
-    function salvarPerfilInicial() {
+    document.getElementById('btnSalvarPerfilInicial').addEventListener('click', () => {
       const nome = document.getElementById('welcome-nome').value.trim();
       const cargo = document.getElementById('welcome-cargo').value.trim() || 'Estudante';
       const turma = document.getElementById('welcome-turma').value.trim();
 
       if (!nome || !turma) {
-        showToast("Preencha seu Nome e Turma para continuar!");
+        showToast("Preencha seu Nome e Turma!");
         return;
       }
 
-      state.user = { nome, cargo, turma };
-      localStorage.setItem('gremio_user', JSON.stringify(state.user));
+      currentUser = { nome, cargo, turma };
+      localStorage.setItem('gremio_user', JSON.stringify(currentUser));
       checkUserProfile();
       showToast(`Bem-vindo(a), ${nome}!`);
-    }
+    });
 
     function logoutUser() {
       localStorage.removeItem('gremio_user');
-      state.user = null;
-      checkUserProfile();
+      currentUser = null;
+      location.reload();
     }
 
-    function saveState(key) {
-      localStorage.setItem(`gremio_${key}`, JSON.stringify(state[key]));
-      renderAll();
-    }
+    // INTERFACE & TAB SWITCHING
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
 
-    // --- UTILS ---
-    function showToast(msg) {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = 'toast';
-      toast.innerText = msg;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      if (btn) btn.classList.add('active');
+      if (window.innerWidth <= 768) toggleSidebar();
     }
 
     function toggleSidebar() {
@@ -584,340 +604,344 @@
       document.body.classList.toggle('dark-mode');
     }
 
-    function switchTab(tabId, btn) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      
-      document.getElementById(`tab-${tabId}`).classList.add('active');
-      if (btn) btn.classList.add('active');
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerText = msg;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
     }
 
-    // --- RENDERIZAÇÃO GERAL ---
-    function renderAll() {
-      renderDashboard();
-      renderMural();
-      renderProjetos();
-      renderMembros();
-      renderVotacao();
-      renderCalendar();
-      renderChat();
-      renderFinanceiro();
+    // DASHBOARD & FINANCEIRO UTILS
+    function getSaldoTotal() {
+      return financeiro.reduce((acc, item) => item.tipo === 'entrada' ? acc + item.valor : acc - item.valor, 0);
     }
 
-    // --- DASHBOARD ---
     function renderDashboard() {
-      document.getElementById('kpi-membros').innerText = state.membros.length;
-      document.getElementById('kpi-projetos').innerText = state.projetos.filter(p => p.status !== 'concluido').length;
-      document.getElementById('kpi-eventos').innerText = "2"; 
-      
-      const saldo = calculateSaldo();
-      const saldoFormatted = `R$ ${saldo.toFixed(2)}`;
+      document.getElementById('kpi-membros').innerText = membros.length;
+      document.getElementById('kpi-projetos').innerText = projetos.length;
+      document.getElementById('kpi-eventos').innerText = projetos.filter(p => p.status === 'em_andamento').length;
+
+      const saldoFormatted = `R$ ${getSaldoTotal().toFixed(2).replace('.', ',')}`;
       document.getElementById('dash-saldo').innerText = saldoFormatted;
+      document.getElementById('fin-saldo-destaque').innerText = saldoFormatted;
       document.getElementById('admin-saldo-caixa').innerText = saldoFormatted;
 
-      const ultimoMural = state.mural[state.mural.length - 1];
-      const comunicadoBox = document.getElementById('dash-ultimo-comunicado');
-      if (ultimoMural) {
-        comunicadoBox.innerHTML = `<strong>${ultimoMural.titulo}</strong><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">${ultimoMural.texto}</p>`;
+      const ultimoAviso = mural[mural.length - 1];
+      const divAviso = document.getElementById('dash-ultimo-comunicado');
+      if (ultimoAviso) {
+        divAviso.innerHTML = `<strong>${ultimoAviso.titulo}</strong><p style="font-size:0.85rem; margin-top:5px;">${ultimoAviso.conteudo}</p><small style="color:var(--text-muted);">${ultimoAviso.data}</small>`;
       } else {
-        comunicadoBox.innerHTML = `<p style="color:var(--text-muted);">Nenhum comunicado cadastrado.</p>`;
+        divAviso.innerHTML = `<p style="color:var(--text-muted);">Nenhum aviso no momento.</p>`;
       }
     }
 
-    function calculateSaldo() {
-      return state.financeiro.reduce((acc, f) => f.tipo === 'receita' ? acc + parseFloat(f.valor) : acc - parseFloat(f.valor), 0);
+    // MEMBROS
+    function renderMembros() {
+      const pList = document.getElementById('public-membros-list');
+      const aList = document.getElementById('admin-membros-list');
+      pList.innerHTML = ''; aList.innerHTML = '';
+
+      membros.forEach(m => {
+        pList.innerHTML += `<li style="padding:10px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between;">
+          <div><strong>${m.nome}</strong> (${m.turma})</div><span class="badge-status badge-planejamento">${m.cargo}</span>
+        </li>`;
+
+        aList.innerHTML += `<li style="padding:8px 0; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color);">
+          <span><strong>${m.nome}</strong> - ${m.cargo} (${m.turma})</span>
+          <button class="btn btn-danger btn-sm" onclick="removerMembro(${m.id})"><i class="ph ph-trash"></i> Excluir</button>
+        </li>`;
+      });
+      renderDashboard();
     }
 
-    // --- MURAL ---
+    document.getElementById('form-membro')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const novo = {
+        id: Date.now(),
+        nome: document.getElementById('membro-nome').value,
+        cargo: document.getElementById('membro-cargo').value,
+        turma: document.getElementById('membro-turma').value
+      };
+      membros.push(novo);
+      localStorage.setItem('gremio_membros', JSON.stringify(membros));
+      renderMembros();
+      e.target.reset();
+      showToast("Integrante cadastrado com sucesso!");
+    });
+
+    function removerMembro(id) {
+      membros = membros.filter(m => m.id !== id);
+      localStorage.setItem('gremio_membros', JSON.stringify(membros));
+      renderMembros();
+    }
+
+    // PROJETOS
+    function renderProjetos() {
+      const pList = document.getElementById('public-projetos-list');
+      const aList = document.getElementById('admin-projetos-list');
+      pList.innerHTML = ''; aList.innerHTML = '';
+
+      projetos.forEach(p => {
+        const badgeClass = `badge-${p.status}`;
+        const statusText = p.status.replace('_', ' ').toUpperCase();
+
+        pList.innerHTML += `<div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between;"><strong>${p.titulo}</strong><span class="badge-status ${badgeClass}">${statusText}</span></div>
+          <p style="font-size:0.85rem; margin-top:6px;">${p.desc}</p>
+        </div>`;
+
+        aList.innerHTML += `<div style="padding:10px; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+          <div><strong>${p.titulo}</strong> (${statusText})</div>
+          <button class="btn btn-danger btn-sm" onclick="removerProjeto(${p.id})"><i class="ph ph-trash"></i> Excluir</button>
+        </div>`;
+      });
+      renderDashboard();
+    }
+
+    document.getElementById('form-projeto')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const novo = {
+        id: Date.now(),
+        titulo: document.getElementById('proj-titulo').value,
+        desc: document.getElementById('proj-desc').value,
+        status: document.getElementById('proj-status').value
+      };
+      projetos.push(novo);
+      localStorage.setItem('gremio_projetos', JSON.stringify(projetos));
+      renderProjetos();
+      e.target.reset();
+      showToast("Projeto criado com sucesso!");
+    });
+
+    function removerProjeto(id) {
+      projetos = projetos.filter(p => p.id !== id);
+      localStorage.setItem('gremio_projetos', JSON.stringify(projetos));
+      renderProjetos();
+    }
+
+    // MURAL
     function renderMural() {
       const list = document.getElementById('public-mural-list');
-      list.innerHTML = state.mural.map(m => `
-        <li>
-          <div>
-            <strong>${m.titulo}</strong>
-            <p style="font-size:0.85rem; color:var(--text-muted);">${m.texto}</p>
-          </div>
-          <small style="color:var(--text-muted);">${m.data}</small>
-        </li>
-      `).join('');
+      list.innerHTML = '';
+      mural.forEach(m => {
+        list.innerHTML += `<li style="padding:12px 0; border-bottom:1px solid var(--border-color);">
+          <strong style="color:var(--roxo);">${m.titulo}</strong> <small>(${m.data})</small>
+          <p style="font-size:0.9rem; margin-top:4px;">${m.conteudo}</p>
+        </li>`;
+      });
+      renderDashboard();
     }
 
-    function addMuralItem() {
-      const titulo = document.getElementById('admin-mural-titulo').value.trim();
-      const texto = document.getElementById('admin-mural-texto').value.trim();
-      if (!titulo || !texto) return showToast("Preencha todos os campos do comunicado!");
+    document.getElementById('form-mural')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const novo = {
+        id: Date.now(),
+        titulo: document.getElementById('mural-titulo').value,
+        conteudo: document.getElementById('mural-conteudo').value,
+        data: new Date().toLocaleDateString('pt-BR')
+      };
+      mural.push(novo);
+      localStorage.setItem('gremio_mural', JSON.stringify(mural));
+      renderMural();
+      e.target.reset();
+      showToast("Aviso publicado no mural!");
+    });
 
-      state.mural.push({ id: Date.now(), titulo, texto, data: new Date().toLocaleDateString() });
-      saveState('mural');
-      document.getElementById('admin-mural-titulo').value = '';
-      document.getElementById('admin-mural-texto').value = '';
-      showToast("Comunicado publicado!");
+    // FINANCEIRO
+    function renderFinanceiro() {
+      const list = document.getElementById('public-financeiro-list');
+      list.innerHTML = '';
+
+      let entradas = 0;
+      let saidas = 0;
+
+      financeiro.forEach(f => {
+        if (f.tipo === 'entrada') entradas += f.valor;
+        else saidas += f.valor;
+
+        const sinal = f.tipo === 'entrada' ? '+' : '-';
+        const cor = f.tipo === 'entrada' ? 'var(--verde)' : 'var(--vermelho-light)';
+
+        list.innerHTML += `<li style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-color);">
+          <span>${f.desc}</span>
+          <strong style="color:${cor};">${sinal} R$ ${f.valor.toFixed(2)}</strong>
+        </li>`;
+      });
+
+      renderDashboard();
+      renderFinanceiroChart(entradas, saidas);
     }
 
-    // --- PROJETOS ---
-    function renderProjetos() {
-      const list = document.getElementById('public-projetos-list');
-      list.innerHTML = state.projetos.map(p => `
-        <div style="background:rgba(0,0,0,0.02); border:1px solid var(--border-color); padding:12px; border-radius:8px; margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <strong>${p.nome}</strong>
-            <span class="badge-status badge-${p.status}">${p.status.replace('_', ' ').toUpperCase()}</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-top:6px;">${p.desc}</p>
-        </div>
-      `).join('');
-    }
+    document.getElementById('form-financeiro')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const novo = {
+        id: Date.now(),
+        desc: document.getElementById('fin-desc').value,
+        valor: parseFloat(document.getElementById('fin-valor').value),
+        tipo: document.getElementById('fin-tipo').value
+      };
+      financeiro.push(novo);
+      localStorage.setItem('gremio_financeiro', JSON.stringify(financeiro));
+      renderFinanceiro();
+      e.target.reset();
+      showToast("Lançamento financeiro registrado!");
+    });
 
-    function addProjetoItem() {
-      const nome = document.getElementById('admin-proj-nome').value.trim();
-      const desc = document.getElementById('admin-proj-desc').value.trim();
-      const status = document.getElementById('admin-proj-status').value;
-      if (!nome) return showToast("Informe o nome do projeto!");
+    function renderFinanceiroChart(entradas, saidas) {
+      const ctx = document.getElementById('financeiroChart');
+      if (!ctx) return;
 
-      state.projetos.push({ id: Date.now(), nome, desc, status });
-      saveState('projetos');
-      document.getElementById('admin-proj-nome').value = '';
-      document.getElementById('admin-proj-desc').value = '';
-      showToast("Projeto adicionado com sucesso!");
-    }
+      if (chartInstance) chartInstance.destroy();
 
-    function filterProjects(val) {
-      const cards = document.getElementById('public-projetos-list').children;
-      Array.from(cards).forEach(card => {
-        card.style.display = card.innerText.toLowerCase().includes(val.toLowerCase()) ? 'block' : 'none';
+      chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Entradas', 'Saídas'],
+          datasets: [{
+            data: [entradas, saidas],
+            backgroundColor: ['#0B8E2F', '#EF4444']
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
       });
     }
 
-    // --- MEMBROS ---
-    function renderMembros() {
-      const list = document.getElementById('public-membros-list');
-      list.innerHTML = state.membros.map(m => `
-        <li>
-          <div>
-            <strong>${m.nome}</strong>
-            <p style="font-size:0.8rem; color:var(--text-muted);">${m.cargo} - ${m.turma}</p>
-          </div>
-        </li>
-      `).join('');
-    }
-
-    function addMembroItem() {
-      const nome = document.getElementById('admin-membro-nome').value.trim();
-      const cargo = document.getElementById('admin-membro-cargo').value.trim();
-      const turma = document.getElementById('admin-membro-turma').value.trim();
-      if (!nome || !cargo) return showToast("Preencha Nome e Cargo!");
-
-      state.membros.push({ id: Date.now(), nome, cargo, turma });
-      saveState('membros');
-      document.getElementById('admin-membro-nome').value = '';
-      document.getElementById('admin-membro-cargo').value = '';
-      document.getElementById('admin-membro-turma').value = '';
-      showToast("Integrante adicionado!");
-    }
-
-    function filterList(listId, val) {
-      const items = document.getElementById(listId).children;
-      Array.from(items).forEach(item => {
-        item.style.display = item.innerText.toLowerCase().includes(val.toLowerCase()) ? 'flex' : 'none';
-      });
-    }
-
-    // --- VOTAÇÃO ---
-    function renderVotacao() {
-      const container = document.getElementById('public-votacao-list');
-      container.innerHTML = state.votacoes.map((v, vIndex) => `
-        <div style="background:rgba(0,0,0,0.02); border:1px solid var(--border-color); padding:15px; border-radius:8px; margin-bottom:12px;">
-          <h4 style="color:var(--roxo); margin-bottom:10px;">${v.titulo}</h4>
-          ${v.opcoes.map((o, oIndex) => `
-            <div style="margin-bottom:8px;">
-              <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:3px;">
-                <span>${o.texto}</span>
-                <strong>${o.votos} votos</strong>
-              </div>
-              <button class="btn btn-sm" onclick="votar(${vIndex}, ${oIndex})" style="width:100%; justify-content:center;">Votar</button>
-            </div>
-          `).join('')}
-        </div>
-      `).join('');
-    }
-
-    function votar(vIndex, oIndex) {
-      state.votacoes[vIndex].opcoes[oIndex].votos++;
-      saveState('votacoes');
-      showToast("Voto registrado!");
-    }
-
-    // --- CALENDÁRIO ---
-    function renderCalendar() {
-      const grid = document.getElementById('calendarDays');
-      grid.innerHTML = '';
-      
-      const year = state.currentDate.getFullYear();
-      const month = state.currentDate.getMonth();
-      
-      const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-      document.getElementById('calendarMonthYear').innerHTML = `<i class="ph ph-calendar"></i> ${monthNames[month]} ${year}`;
-
-      const firstDay = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const today = new Date();
-
-      for (let i = 0; i < firstDay; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = 'calendar-day-cell';
-        emptyCell.style.opacity = '0.3';
-        grid.appendChild(emptyCell);
-      }
-
-      for (let day = 1; day <= daysInMonth; day++) {
-        const cell = document.createElement('div');
-        cell.className = 'calendar-day-cell';
-        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-          cell.classList.add('today');
-        }
-        cell.innerHTML = `<span>${day}</span>`;
-        grid.appendChild(cell);
-      }
-    }
-
-    function navigateMonth(direction) {
-      state.currentDate.setMonth(state.currentDate.getMonth() + direction);
-      renderCalendar();
-    }
-
-    function resetCalendarToToday() {
-      state.currentDate = new Date();
-      renderCalendar();
-    }
-
-    // --- CHAT INTERNO ---
+    // CHAT INTERNO
     function switchChatRoom(room, btn) {
-      state.currentRoom = room;
-      document.querySelectorAll('.chat-rooms .room-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
+      currentChatRoom = room;
+      document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
+      if(btn) btn.classList.add('active');
       renderChat();
     }
 
     function renderChat() {
-      const container = document.getElementById('chatMessages');
-      const roomMsgs = state.chat[state.currentRoom] || [];
-      const user = state.user ? state.user.nome : 'Anônimo';
+      const chatContainer = document.getElementById('chatMessages');
+      chatContainer.innerHTML = '';
 
-      container.innerHTML = roomMsgs.map(m => `
-        <div class="chat-msg ${m.autor === user ? 'me' : ''}">
-          <div class="meta">
-            <strong>${m.autor}</strong>
-            <small>${m.hora}</small>
+      const filtered = chatMessages.filter(m => m.room === currentChatRoom);
+      filtered.forEach(m => {
+        const isMe = currentUser && m.sender === currentUser.nome;
+        const msgClass = isMe ? 'chat-msg me' : 'chat-msg';
+
+        chatContainer.innerHTML += `
+          <div class="${msgClass}">
+            <div class="meta"><strong>${m.sender} (${m.role})</strong> <span>${m.time}</span></div>
+            <div>${m.text}</div>
+            ${isMe ? `<div class="actions"><button class="delete-msg-btn" onclick="deleteMessage(${m.id})">Apagar</button></div>` : ''}
           </div>
-          <div>${m.texto}</div>
-        </div>
-      `).join('');
-
-      container.scrollTop = container.scrollHeight;
+        `;
+      });
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
-    function sendChatMessage(e) {
+    document.getElementById('chatForm')?.addEventListener('submit', (e) => {
       e.preventDefault();
+      if (!currentUser) { showToast("Faça seu perfil para conversar!"); return; }
+
       const input = document.getElementById('chatInput');
-      const texto = input.value.trim();
-      if (!texto) return;
+      if (!input.value.trim()) return;
 
-      const autor = state.user ? state.user.nome : 'Estudante';
-      const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const now = new Date();
+      const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-      if (!state.chat[state.currentRoom]) state.chat[state.currentRoom] = [];
-      state.chat[state.currentRoom].push({ autor, texto, hora });
-      
-      saveState('chat');
+      const msg = {
+        id: Date.now(),
+        room: currentChatRoom,
+        sender: currentUser.nome,
+        role: currentUser.cargo,
+        text: input.value.trim(),
+        time: timeStr
+      };
+
+      chatMessages.push(msg);
+      localStorage.setItem('gremio_chat', JSON.stringify(chatMessages));
       input.value = '';
+      renderChat();
+    });
+
+    function deleteMessage(id) {
+      chatMessages = chatMessages.filter(m => m.id !== id);
+      localStorage.setItem('gremio_chat', JSON.stringify(chatMessages));
       renderChat();
     }
 
     function handleChatTyping() {
-      // Simulação de digitação
+      const status = document.getElementById('typingStatus');
+      status.innerText = "Você está digitando...";
+      clearTimeout(window.typingTimer);
+      window.typingTimer = setTimeout(() => { status.innerText = ""; }, 1500);
     }
 
-    // --- FINANCEIRO ---
-    function renderFinanceiro() {
-      const saldo = calculateSaldo();
-      document.getElementById('fin-saldo-destaque').innerText = `R$ ${saldo.toFixed(2)}`;
+    // CALENDÁRIO
+    function renderCalendar() {
+      const calendarDays = document.getElementById('calendarDays');
+      const monthYearTitle = document.getElementById('calendarMonthYear');
+      if (!calendarDays) return;
 
-      const list = document.getElementById('public-financeiro-list');
-      list.innerHTML = state.financeiro.map(f => `
-        <li>
-          <div>
-            <strong>${f.desc}</strong>
-            <p style="font-size:0.8rem; color:${f.tipo === 'receita' ? 'var(--verde)' : 'var(--vermelho-light)'};">
-              ${f.tipo === 'receita' ? '+ Receita' : '- Despesa'}
-            </p>
-          </div>
-          <strong>R$ ${parseFloat(f.valor).toFixed(2)}</strong>
-        </li>
-      `).join('');
+      calendarDays.innerHTML = '';
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
 
-      renderFinanceiroChart();
+      const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+      monthYearTitle.innerHTML = `<i class="ph ph-calendar"></i> ${monthNames[month]} ${year}`;
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const today = new Date();
+
+      for (let i = 0; i < firstDay; i++) {
+        calendarDays.innerHTML += `<div class="calendar-day-cell" style="opacity:0.3;"></div>`;
+      }
+
+      for (let day = 1; day <= totalDays; day++) {
+        const isToday = (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) ? 'today' : '';
+        calendarDays.innerHTML += `<div class="calendar-day-cell ${isToday}">${day}</div>`;
+      }
     }
 
-    function addFinanceiroItem() {
-      const desc = document.getElementById('admin-fin-desc').value.trim();
-      const valor = parseFloat(document.getElementById('admin-fin-valor').value);
-      const tipo = document.getElementById('admin-fin-tipo').value;
+    document.getElementById('btnPrevMonth')?.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
+    document.getElementById('btnNextMonth')?.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
+    document.getElementById('btnToday')?.addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
 
-      if (!desc || isNaN(valor) || valor <= 0) return showToast("Informe uma descrição e valor válidos!");
+    // BUSCAS E FILTROS
+    function filterList(listId, query) {
+      const list = document.getElementById(listId);
+      const items = list.getElementsByTagName('li');
+      const q = query.toLowerCase();
 
-      state.financeiro.push({ id: Date.now(), desc, valor, tipo });
-      saveState('financeiro');
-      document.getElementById('admin-fin-desc').value = '';
-      document.getElementById('admin-fin-valor').value = '';
-      showToast("Lançamento efetuado!");
+      for (let item of items) {
+        item.style.display = item.innerText.toLowerCase().includes(q) ? '' : 'none';
+      }
     }
 
-    function renderFinanceiroChart() {
-      const ctx = document.getElementById('financeiroChart').getContext('2d');
-      const receitas = state.financeiro.filter(f => f.tipo === 'receita').reduce((acc, f) => acc + parseFloat(f.valor), 0);
-      const despesas = state.financeiro.filter(f => f.tipo === 'despesa').reduce((acc, f) => acc + parseFloat(f.valor), 0);
-
-      if (finChart) finChart.destroy();
-
-      finChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Receitas', 'Despesas'],
-          datasets: [{
-            data: [receitas, despesas],
-            backgroundColor: ['#0B8E2F', '#EF4444'],
-            borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'bottom' }
-          }
-        }
-      });
+    function filterProjects(query) {
+      const list = document.getElementById('public-projetos-list');
+      const items = list.children;
+      const q = query.toLowerCase();      for (let item of items) {
+        item.style.display = item.innerText.toLowerCase().includes(q) ? '' : 'none';
+      }
     }
 
-    // --- AUTENTICAÇÃO ADMIN ---
+    // AUTENTICAÇÃO ÁREA RESTRITA
     function autenticarAdmin() {
       const pass = document.getElementById('adminPasswordInput').value;
-      if (pass === 'gremio2026' || pass === 'admin') {
-        state.isAdmin = true;
+      if (pass === 'gremio123') { // Senha padrão de gestão
+        isAdminLoggedIn = true;
         document.getElementById('admin-login-card').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
-        showToast("Acesso administrativo concedido!");
+        showToast("Acesso administrativo liberado!");
       } else {
         showToast("Senha incorreta!");
       }
     }
 
     function logoutAdmin() {
-      state.isAdmin = false;
+      isAdminLoggedIn = false;
       document.getElementById('admin-login-card').style.display = 'block';
       document.getElementById('admin-panel').style.display = 'none';
       document.getElementById('adminPasswordInput').value = '';
-      showToast("Modo admin encerrado.");
     }
   </script>
 </body>
