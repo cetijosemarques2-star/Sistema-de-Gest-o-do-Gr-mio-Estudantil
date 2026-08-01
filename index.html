@@ -448,73 +448,86 @@
               <h2 style="color:var(--roxo);"><i class="ph ph-shield-check"></i> Painel de Gerenciamento</h2>
               <span style="font-size:0.9rem; font-weight:bold; color:var(--verde);">Caixa do Grêmio: <span id="admin-saldo-caixa">R$ 0,00</span></span>
             </div>
-            <button class="btn btn-danger btn-sm" onclick="logoutAdmin()"><i class="ph ph-lock-key-open"></i> Sair do Modo Admin</button>
+            <button class="btn btn-warning btn-sm" onclick="deslogarAdmin()"><i class="ph ph-sign-out"></i> Sair do Admin</button>
           </div>
 
-          <div class="card">
-            <h3><i class="ph ph-megaphone"></i> Novo Comunicado (Mural)</h3>
-            <form id="form-mural" onsubmit="adicionarMural(event)">
-              <input type="text" id="mural-titulo" class="form-control" placeholder="Título do Comunicado" required>
-              <textarea id="mural-conteudo" class="form-control" rows="3" placeholder="Descrição ou mensagem completa..." required></textarea>
-              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Publicar Aviso</button>
-            </form>
-          </div>
+          <div class="grid-2">
+            <div class="card">
+              <h3><i class="ph ph-check-square-offset"></i> Presença em Reuniões</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Registre a frequência dos membros na última reunião.</p>
+              
+              <div id="adm-chamada-list" style="max-height:200px; overflow-y:auto; margin-bottom:12px;"></div>
+              
+              <div style="display:flex; gap:8px;">
+                <button class="btn" onclick="salvarChamada()"><i class="ph ph-floppy-disk"></i> Salvar Frequência</button>
+                <button class="btn btn-danger" onclick="limparChamada()"><i class="ph ph-trash"></i> Reiniciar Frequência</button>
+              </div>
 
-          <div class="card">
-            <h3><i class="ph ph-folder-plus"></i> Novo Projeto</h3>
-            <form id="form-projeto" onsubmit="adicionarProjeto(event)">
-              <input type="text" id="proj-nome" class="form-control" placeholder="Nome do Projeto" required>
-              <textarea id="proj-desc" class="form-control" rows="2" placeholder="Descrição do Projeto" required></textarea>
-              <select id="proj-status" class="form-control" required>
-                <option value="Planejamento">Planejamento</option>
-                <option value="Em Andamento">Em Andamento</option>
-                <option value="Concluído">Concluído</option>
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              
+              <h4>Assiduidade Geral</h4>
+              <div style="height: 180px; margin-top:10px;"><canvas id="presencaChart"></canvas></div>
+            </div>
+
+            <div class="card">
+              <h3 id="adm-mural-form-title"><i class="ph ph-megaphone"></i> Novo Aviso no Mural</h3>
+              <input type="hidden" id="adm-mural-id">
+              <input type="text" id="adm-mural-titulo" class="form-control" placeholder="Título do aviso">
+              <textarea id="adm-mural-texto" class="form-control" rows="3" placeholder="Descrição do comunicado"></textarea>
+              <button class="btn" onclick="saveMuralItem()"><i class="ph ph-floppy-disk"></i> Salvar Aviso</button>
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              <h4>Avisos Publicados</h4>
+              <ul id="adm-mural-list" style="list-style:none; margin-top:10px;"></ul>
+            </div>
+
+            <div class="card">
+              <h3 id="adm-proj-form-title"><i class="ph ph-folder-plus"></i> Novo Projeto</h3>
+              <input type="hidden" id="adm-proj-id">
+              <input type="text" id="adm-proj-nome" class="form-control" placeholder="Nome do Projeto">
+              <textarea id="adm-proj-desc" class="form-control" rows="2" placeholder="Descrição detalhada"></textarea>
+              <select id="adm-proj-status" class="form-control">
+                <option value="planejamento">Em Planejamento</option>
+                <option value="em_andamento">Em Andamento</option>
+                <option value="concluido">Concluído</option>
               </select>
-              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Cadastrar Projeto</button>
-            </form>
-          </div>
+              <button class="btn" onclick="saveProjetoItem()"><i class="ph ph-floppy-disk"></i> Salvar Projeto</button>
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              <h4>Projetos Cadastrados</h4>
+              <div id="adm-projetos-list" style="margin-top:10px;"></div>
+            </div>
 
-          <div class="card">
-            <h3><i class="ph ph-check-square-offset"></i> Nova Votação / Enquete</h3>
-            <form id="form-votacao" onsubmit="adicionarVotacao(event)">
-              <input type="text" id="votacao-titulo" class="form-control" placeholder="Título da Votação / Pergunta" required>
-              <input type="text" id="votacao-opcoes" class="form-control" placeholder="Opções (separadas por vírgula. Ex: Opção A, Opção B, Opção C)" required>
-              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Criar Votação</button>
-            </form>
-          </div>
+            <div class="card">
+              <h3><i class="ph ph-user-plus"></i> Novo Integrante</h3>
+              <input type="hidden" id="adm-membro-id">
+              <input type="text" id="adm-membro-nome" class="form-control" placeholder="Nome completo">
+              <input type="text" id="adm-membro-cargo" class="form-control" placeholder="Cargo (Ex: Presidente, Diretor)">
+              <button class="btn" onclick="saveMembroItem()"><i class="ph ph-floppy-disk"></i> Salvar Integrante</button>
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              <h4>Integrantes Cadastrados</h4>
+              <ul id="adm-membros-list" style="list-style:none; margin-top:10px;"></ul>
+            </div>
 
-          <div class="card">
-            <h3><i class="ph ph-currency-dollar-simple"></i> Novo Lançamento Financeiro</h3>
-            <form id="form-financeiro" onsubmit="adicionarTransacao(event)">
-              <input type="text" id="fin-desc" class="form-control" placeholder="Descrição da Receita/Despesa" required>
-              <input type="number" step="0.01" id="fin-valor" class="form-control" placeholder="Valor (R$)" required>
-              <select id="fin-tipo" class="form-control" required>
-                <option value="entrada">Entrada (Receita)</option>
-                <option value="saida">Saída (Despesa)</option>
+            <div class="card">
+              <h3><i class="ph ph-currency-dollar-simple"></i> Novo Lançamento Financeiro</h3>
+              <input type="hidden" id="adm-fin-id">
+              <input type="text" id="adm-fin-desc" class="form-control" placeholder="Descrição do gasto/receita">
+              <input type="number" id="adm-fin-valor" class="form-control" placeholder="Valor (R$)" step="0.01">
+              <select id="adm-fin-tipo" class="form-control">
+                <option value="receita">Entrada (Receita)</option>
+                <option value="despesa">Saída (Despesa)</option>
               </select>
-              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Registrar Transação</button>
-            </form>
-          </div>
+              <button class="btn" onclick="saveFinanceiroItem()"><i class="ph ph-floppy-disk"></i> Salvar Lançamento</button>
+              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
+              <h4>Histórico de Lançamentos</h4>
+              <ul id="adm-financeiro-list" style="list-style:none; margin-top:10px;"></ul>
+            </div>
 
-          <div class="card">
-            <h3><i class="ph ph-user-plus"></i> Adicionar Integrante</h3>
-            <form id="form-membro" onsubmit="adicionarMembro(event)">
-              <input type="text" id="membro-nome" class="form-control" placeholder="Nome do Membro" required>
-              <input type="text" id="membro-cargo" class="form-control" placeholder="Cargo (Ex: Diretor de Esportes)" required>
-              <input type="text" id="membro-turma" class="form-control" placeholder="Turma" required>
-              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Cadastrar Integrante</button>
-            </form>
+            <div class="card" style="border-top-color: var(--vermelho-light);">
+              <h3><i class="ph ph-trash"></i> Lixeira da Gestão</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Itens excluídos podem ser restaurados ou apagados permanentemente.</p>
+              <ul id="adm-lixeira-list" style="list-style:none;"></ul>
+            </div>
           </div>
-
-          <div class="card">
-            <h3><i class="ph ph-calendar-plus"></i> Novo Evento no Calendário</h3>
-            <form id="form-evento" onsubmit="adicionarEvento(event)">
-              <input type="text" id="evento-titulo" class="form-control" placeholder="Nome do Evento" required>
-              <input type="date" id="evento-data" class="form-control" required>
-              <button type="submit" class="btn"><i class="ph ph-plus-circle"></i> Agendar Evento</button>
-            </form>
-          </div>
-
         </div>
       </section>
     </main>
@@ -522,493 +535,773 @@
 
   <div id="toast-container"></div>
 
-  <script>
-    // --- ESTADO INICIAL DA APLICAÇÃO ---
-    let currentUser = JSON.parse(localStorage.getItem('gremio_user')) || null;
-    let isAdminLoggedIn = false;
-    let currentRoom = 'geral';
-    let currentDate = new Date();
-    let chartInstance = null;
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // Dados Iniciais / LocalStorage
-    let db = {
-      mural: JSON.parse(localStorage.getItem('gremio_mural')) || [
-        { id: 1, titulo: "Boas-vindas!", conteudo: "Sejam bem-vindos ao sistema oficial do Grêmio Estudantil!", data: new Date().toLocaleDateString() }
-      ],
-      projetos: JSON.parse(localStorage.getItem('gremio_projetos')) || [
-        { id: 1, nome: "Torneio Interclasses", desc: "Campeonato esportivo entre turmas do CETI.", status: "Em Andamento" },
-        { id: 2, nome: "Cine Grêmio", desc: "Exibição de filmes com debate quinzenal.", status: "Planejamento" }
-      ],
-      membros: JSON.parse(localStorage.getItem('gremio_membros')) || [
-        { id: 1, nome: "Ana Silva", cargo: "Presidente", turma: "3º Ano A" },
-        { id: 2, nome: "Lucas Mendes", cargo: "Vice-Presidente", turma: "3º Ano B" }
-      ],
-      votacoes: JSON.parse(localStorage.getItem('gremio_votacoes')) || [
-        { id: 1, titulo: "Tema da Festa Cultural", opcoes: [{ texto: "Anos 80", votos: 12 }, { texto: "Geek/Pop", votos: 25 }, { texto: "Folclore", votos: 8 }] }
-      ],
-      eventos: JSON.parse(localStorage.getItem('gremio_eventos')) || [
-        { id: 1, titulo: "Reunião Geral", data: new Date().toISOString().split('T')[0] }
-      ],
-      financeiro: JSON.parse(localStorage.getItem('gremio_financeiro')) || [
-        { id: 1, desc: "Fundo Inicial", valor: 500.00, tipo: "entrada" }
-      ],
-      chat: JSON.parse(localStorage.getItem('gremio_chat')) || [
-        { id: 1, room: "geral", user: "Ana Silva", msg: "Olá pessoal! Sejam bem-vindos ao chat.", time: "10:00" }
-      ]
+    const firebaseConfig = {
+      apiKey: "AIzaSyC2rnMOi-YMH9LthRFf9KCICFtKpGvDm78",
+      authDomain: "fala--estudante.firebaseapp.com",
+      databaseURL: "https://fala--estudante-default-rtdb.firebaseio.com",
+      projectId: "fala--estudante",
+      storageBucket: "fala--estudante.firebasestorage.app",
+      messagingSenderId: "424257046289",
+      appId: "1:424257046289:web:b56419eae80e7773c06eb0"
     };
 
-    // --- SALVAR NO LOCALSTORAGE ---
-    function saveData(key) {
-      localStorage.setItem(`gremio_${key}`, JSON.stringify(db[key]));
-    }
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
 
-    // --- NAVEGAÇÃO E TEMA ---
-    function switchTab(tabId, element) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-      
-      document.getElementById(`tab-${tabId}`).classList.add('active');
-      if (element) element.classList.add('active');
-      
-      if (window.innerWidth <= 768) {
-        document.getElementById('mainSidebar').classList.remove('open');
+    window.db = {
+      perfil: JSON.parse(localStorage.getItem('fala_estudante_perfil')) || null,
+      mural: [], projetos: [], eventos: [], membros: [], financeiro: [],
+      votacoes: [
+        {
+          id: 1,
+          titulo: "Escolha do Tema da Gincana Cultural",
+          descricao: "Vote na proposta temática para a competição entre as turmas deste ano.",
+          opcoes: [
+            { id: 'opt1', texto: "Cultura Pop e Anos 80/90", votos: 0 },
+            { id: 'opt2', texto: "Sustentabilidade & Futuro", votos: 0 },
+            { id: 'opt3', texto: "Folclore e Literatura Brasileira", votos: 0 }
+          ],
+          votosRegistrados: {}
+        }
+      ],
+      chat: { geral: [], eventos: [], financeiro: [] },
+      lixeira: [],
+      presencas: {},
+      digitando: {}
+    };
+
+    window.saveDB = function() {
+      set(ref(database, "dados"), {
+        mural: window.db.mural || [],
+        projetos: window.db.projetos || [],
+        eventos: window.db.eventos || [],
+        membros: window.db.membros || [],
+        financeiro: window.db.financeiro || [],
+        votacoes: window.db.votacoes || [],
+        chat: window.db.chat || { geral: [], eventos: [], financeiro: [] },
+        lixeira: window.db.lixeira || [],
+        presencas: window.db.presencas || {},
+        digitando: window.db.digitando || {}
+      });
+    };
+
+    onValue(ref(database, "dados"), (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        window.db.mural = data.mural || [];
+        window.db.projetos = data.projetos || [];
+        window.db.eventos = data.eventos || [];
+        window.db.membros = data.membros || [];
+        window.db.financeiro = data.financeiro || [];
+        window.db.votacoes = data.votacoes || window.db.votacoes;
+        window.db.chat = data.chat || { geral: [], eventos: [], financeiro: [] };
+        window.db.lixeira = data.lixeira || [];
+        window.db.presencas = data.presencas || {};
+        window.db.digitando = data.digitando || {};
       }
+      if (window.renderApp) window.renderApp();
+    });
+  </script>
 
-      if (tabId === 'calendario') renderCalendar();
-      if (tabId === 'financeiro') renderFinanceiroChart();
+  <script>
+    const SENHA_ADMIN = "gremio26";
+    let isAdminAuth = false;
+    let currentRoom = 'geral';
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    let chartInstance = null;
+    let chartPresencaInstance = null;
+    let typingTimeout = null;
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
     }
 
     function toggleSidebar() {
       document.getElementById('mainSidebar').classList.toggle('open');
     }
 
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark-mode');
-    }
-
-    function showToast(mensagem) {
+    function showToast(msg) {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = 'toast';
-      toast.innerText = mensagem;
+      toast.innerText = msg;
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
     }
 
-    // --- GERENCIAMENTO DE PERFIL/USUÁRIO ---
-    function initUser() {
-      if (!currentUser) {
-        document.getElementById('welcome-screen').style.display = 'flex';
-      } else {
-        document.getElementById('welcome-screen').style.display = 'none';
-        document.getElementById('headerName').innerText = currentUser.nome;
-        document.getElementById('headerRole').innerText = currentUser.cargo || 'Estudante';
-        document.getElementById('headerTurma').innerText = currentUser.turma;
-        document.getElementById('headerAvatar').childNodes[0].nodeValue = currentUser.nome.substring(0, 2).toUpperCase();
-      }
+    function setSafeText(id, val) { const el = document.getElementById(id); if (el) el.innerText = val; }
+    function setSafeHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+
+    function obterIniciais(nome) {
+      if (!nome) return "GE";
+      const partes = nome.trim().split(" ");
+      return partes.length === 1 ? partes[0].substring(0, 2).toUpperCase() : (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
     }
 
-    document.getElementById('btnSalvarPerfilInicial').addEventListener('click', () => {
-      const nome = document.getElementById('welcome-nome').value.trim();
-      const cargo = document.getElementById('welcome-cargo').value.trim();
-      const turma = document.getElementById('welcome-turma').value.trim();
-
-      if (nome && turma) {
-        currentUser = { nome, cargo: cargo || 'Estudante', turma };
-        localStorage.setItem('gremio_user', JSON.stringify(currentUser));
-        initUser();
-      } else {
-        alert("Por favor, preencha seu nome e sua turma.");
-      }
-    });
-
-    function logoutUser() {
-      localStorage.removeItem('gremio_user');
-      location.reload();
-    }
-
-    // --- ÁREA RESTRITA (ADMIN) ---
-    function autenticarAdmin() {
-      const pass = document.getElementById('adminPasswordInput').value;
-      if (pass === "gremio123") { // Senha Padrão
-        isAdminLoggedIn = true;
-        document.getElementById('admin-login-card').style.display = 'none';
-        document.getElementById('admin-panel').style.display = 'block';
-        showToast("Acesso administrativo concedido!");
-        renderAll();
-      } else {
-        alert("Senha incorreta!");
-      }
-    }
-
-    function logoutAdmin() {
-      isAdminLoggedIn = false;
-      document.getElementById('admin-login-card').style.display = 'block';
-      document.getElementById('admin-panel').style.display = 'none';
-      document.getElementById('adminPasswordInput').value = '';
-    }
-
-    // --- RENDERS E RENDERIZAÇÃO DA INTERFACE ---
-    function renderAll() {
-      renderDashboard();
-      renderMural();
-      renderProjetos();
-      renderMembros();
-      renderVotacoes();
-      renderFinanceiro();
-      renderChat();
-    }
-
-    function renderDashboard() {
-      document.getElementById('kpi-membros').innerText = db.membros.length;
-      document.getElementById('kpi-projetos').innerText = db.projetos.filter(p => p.status === 'Em Andamento').length;
-      document.getElementById('kpi-eventos').innerText = db.eventos.length;
-      
-      const totalSaldo = db.financeiro.reduce((acc, item) => item.tipo === 'entrada' ? acc + item.valor : acc - item.valor, 0);
-      const saldoFormatado = totalSaldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      
-      document.getElementById('dash-saldo').innerText = saldoFormatado;
-      document.getElementById('admin-saldo-caixa').innerText = saldoFormatado;
-      document.getElementById('fin-saldo-destaque').innerText = saldoFormatado;
-
-      const ultimo = db.mural[db.mural.length - 1];
-      if (ultimo) {
-        document.getElementById('dash-ultimo-comunicado').innerHTML = `
-          <h4 style="color:var(--verde);">${ultimo.titulo}</h4>
-          <p style="font-size:0.85rem; margin-top:5px;">${ultimo.conteudo}</p>
-          <small style="color:var(--text-muted); display:block; margin-top:5px;">${ultimo.data}</small>
-        `;
-      }
-    }
-
-    function renderMural() {
-      const list = document.getElementById('public-mural-list');
-      list.innerHTML = db.mural.map(item => `
-        <li style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:12px; margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between;">
-            <strong style="color:var(--roxo);">${item.titulo}</strong>
-            <small style="color:var(--text-muted);">${item.data}</small>
-          </div>
-          <p style="font-size:0.9rem; margin-top:6px;">${item.conteudo}</p>
-          ${isAdminLoggedIn ? `<button class="btn btn-danger btn-sm" style="margin-top:8px;" onclick="deletarItem('mural', ${item.id})">Excluir</button>` : ''}
-        </li>
-      `).join('');
-    }
-
-    function renderProjetos() {
-      const container = document.getElementById('public-projetos-list');
-      container.innerHTML = db.projetos.map(p => `
-        <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:12px; margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <strong>${p.nome}</strong>
-            <span class="badge-status badge-${p.status.toLowerCase().replace(' ', '_')}">${p.status}</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin:6px 0;">${p.desc}</p>
-          ${isAdminLoggedIn ? `<button class="btn btn-danger btn-sm" onclick="deletarItem('projetos', ${p.id})">Excluir</button>` : ''}
-        </div>
-      `).join('');
-    }
-
-    function renderMembros() {
-      const list = document.getElementById('public-membros-list');
-      list.innerHTML = db.membros.map(m => `
-        <li style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid var(--border-color);">
-          <div>
-            <strong>${m.nome}</strong> - <span style="color:var(--verde);">${m.cargo}</span>
-            <div style="font-size:0.75rem; color:var(--text-muted);">${m.turma}</div>
-          </div>
-          ${isAdminLoggedIn ? `<button class="btn btn-danger btn-sm" onclick="deletarItem('membros', ${m.id})">Remover</button>` : ''}
-        </li>
-      `).join('');
-    }
-
-    function renderVotacoes() {
-      const container = document.getElementById('public-votacao-list');
-      container.innerHTML = db.votacoes.map(v => {
-        const totalVotos = v.opcoes.reduce((acc, op) => acc + op.votos, 0) || 1;
-        return `
-          <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:15px; margin-bottom:15px;">
-            <h4 style="color:var(--roxo); margin-bottom:10px;">${v.titulo}</h4>
-            ${v.opcoes.map((op, idx) => {
-              const pct = Math.round((op.votos / totalVotos) * 100);
-              return `
-                <div style="margin-bottom:8px;">
-                  <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:2px;">
-                    <span>${op.texto}</span>
-                    <span>${op.votos} votos (${pct}%)</span>
-                  </div>
-                  <div style="background:rgba(0,0,0,0.1); height:10px; border-radius:5px; overflow:hidden; cursor:pointer;" onclick="votar(${v.id}, ${idx})">
-                    <div style="background:var(--verde); width:${pct}%; height:100%;"></div>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-            ${isAdminLoggedIn ? `<button class="btn btn-danger btn-sm" style="margin-top:8px;" onclick="deletarItem('votacoes', ${v.id})">Excluir Votação</button>` : ''}
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderFinanceiro() {
-      const list = document.getElementById('public-financeiro-list');
-      list.innerHTML = db.financeiro.map(f => `
-        <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color);">
-          <span>${f.desc}</span>
-          <strong style="color:${f.tipo === 'entrada' ? 'var(--verde)' : 'var(--vermelho-light)'}">
-            ${f.tipo === 'entrada' ? '+' : '-'} R$ ${f.valor.toFixed(2)}
-          </strong>
-        </li>
-      `).join('');
-    }
-
-    // --- SISTEMA DE VOTAÇÃO ---
-    function votar(votacaoId, opcaoIndex) {
-      const v = db.votacoes.find(item => item.id === votacaoId);
-      if (v) {
-        v.opcoes[opcaoIndex].votos += 1;
-        saveData('votacoes');
-        renderVotacoes();
-        showToast("Voto computado com sucesso!");
-      }
-    }
-
-    // --- ACOES DO ADMIN (INSERÇÃO E EXCLUSÃO) ---
-    function adicionarMural(e) {
-      e.preventDefault();
-      db.mural.push({
-        id: Date.now(),
-        titulo: document.getElementById('mural-titulo').value,
-        conteudo: document.getElementById('mural-conteudo').value,
-        data: new Date().toLocaleDateString()
-      });
-      saveData('mural');
-      renderAll();
-      e.target.reset();
-      showToast("Aviso publicado!");
-    }
-
-    function adicionarProjeto(e) {
-      e.preventDefault();
-      db.projetos.push({
-        id: Date.now(),
-        nome: document.getElementById('proj-nome').value,
-        desc: document.getElementById('proj-desc').value,
-        status: document.getElementById('proj-status').value
-      });
-      saveData('projetos');
-      renderAll();
-      e.target.reset();
-      showToast("Projeto adicionado!");
-    }
-
-    function adicionarVotacao(e) {
-      e.preventDefault();
-      const opcoesArray = document.getElementById('votacao-opcoes').value.split(',').map(o => ({ texto: o.trim(), votos: 0 }));
-      db.votacoes.push({
-        id: Date.now(),
-        titulo: document.getElementById('votacao-titulo').value,
-        opcoes: opcoesArray
-      });
-      saveData('votacoes');
-      renderAll();
-      e.target.reset();
-      showToast("Votação criada!");
-    }
-
-    function adicionarTransacao(e) {
-      e.preventDefault();
-      db.financeiro.push({
-        id: Date.now(),
-        desc: document.getElementById('fin-desc').value,
-        valor: parseFloat(document.getElementById('fin-valor').value),
-        tipo: document.getElementById('fin-tipo').value
-      });
-      saveData('financeiro');
-      renderAll();
-      e.target.reset();
-      showToast("Lançamento efetuado!");
-    }
-
-    function adicionarMembro(e) {
-      e.preventDefault();
-      db.membros.push({
-        id: Date.now(),
-        nome: document.getElementById('membro-nome').value,
-        cargo: document.getElementById('membro-cargo').value,
-        turma: document.getElementById('membro-turma').value
-      });
-      saveData('membros');
-      renderAll();
-      e.target.reset();
-      showToast("Membro cadastrado!");
-    }
-
-    function adicionarEvento(e) {
-      e.preventDefault();
-      db.eventos.push({
-        id: Date.now(),
-        titulo: document.getElementById('evento-titulo').value,
-        data: document.getElementById('evento-data').value
-      });
-      saveData('eventos');
-      renderAll();
-      renderCalendar();
-      e.target.reset();
-      showToast("Evento agendado!");
-    }
-
-    function deletarItem(categoria, id) {
-      db[categoria] = db[categoria].filter(item => item.id !== id);
-      saveData(categoria);
-      renderAll();
-      showToast("Item removido!");
-    }
-
-    // --- FILTROS DE PESQUISA ---
     function filterList(listId, query) {
-      const q = query.toLowerCase();
-      document.querySelectorAll(`#${listId} li`).forEach(li => {
-        li.style.display = li.innerText.toLowerCase().includes(q) ? '' : 'none';
+      const items = document.querySelectorAll(`#${listId} li`);
+      items.forEach(item => {
+        item.style.display = item.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
       });
     }
 
     function filterProjects(query) {
-      const q = query.toLowerCase();
-      document.querySelectorAll('#public-projetos-list > div').forEach(card => {
-        card.style.display = card.innerText.toLowerCase().includes(q) ? '' : 'none';
+      const items = document.querySelectorAll('#public-projetos-list > div');
+      items.forEach(item => {
+        item.style.display = item.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
       });
     }
 
-    // --- CHAT INTERNO ---
-    function switchChatRoom(room, btn) {
-      currentRoom = room;
-      document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderChat();
+    function logoutUser() {
+      localStorage.removeItem('fala_estudante_perfil');
+      window.db.perfil = null;
+
+      const inNome = document.getElementById('welcome-nome');
+      const inCargo = document.getElementById('welcome-cargo');
+      const inTurma = document.getElementById('welcome-turma');
+      
+      if (inNome) inNome.value = '';
+      if (inCargo) inCargo.value = '';
+      if (inTurma) inTurma.value = '';
+
+      document.getElementById('welcome-screen').style.display = 'flex';
+      showToast('Você saiu da sua conta.');
     }
 
-    function renderChat() {
-      const container = document.getElementById('chatMessages');
-      const roomMsgs = db.chat.filter(m => m.room === currentRoom);
+    function autenticarAdmin() {
+      const input = document.getElementById('adminPasswordInput');
+      if (input && input.value === SENHA_ADMIN) {
+        isAdminAuth = true;
+        document.getElementById('admin-login-card').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        input.value = '';
+        showToast('Acesso concedido!');
+        renderAdminLists();
+      } else {
+        showToast('Senha incorreta!');
+      }
+    }
+
+    function deslogarAdmin() {
+      isAdminAuth = false;
+      document.getElementById('admin-login-card').style.display = 'block';
+      document.getElementById('admin-panel').style.display = 'none';
+    }
+
+    /* SISTEMA DE DIGITANDO DO CHAT */
+    function handleChatTyping() {
+      if (!window.db.perfil) return;
+      window.db.digitando[window.db.perfil.nome] = true;
+      window.saveDB();
+
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        delete window.db.digitando[window.db.perfil.nome];
+        window.saveDB();
+      }, 2000);
+    }
+
+    /* APAGAR MENSAGEM DO CHAT */
+    window.deleteChatMessage = function(msgId) {
+      if (!window.db.chat[currentRoom]) return;
+      window.db.chat[currentRoom] = window.db.chat[currentRoom].filter(m => m.id !== msgId);
+      window.saveDB();
+      showToast('Mensagem apagada.');
+    };
+
+    /* OPERAÇÕES CRUD E LIXEIRA */
+    function moverParaLixeira(tipo, item) {
+      window.db.lixeira.push({
+        id: Date.now(),
+        tipoOrigem: tipo,
+        dados: item,
+        dataExclusao: new Date().toLocaleDateString('pt-BR')
+      });
+    }
+
+    function saveMuralItem() {
+      const id = document.getElementById('adm-mural-id').value;
+      const tit = document.getElementById('adm-mural-titulo').value.trim();
+      const txt = document.getElementById('adm-mural-texto').value.trim();
+      if (!tit || !txt) return showToast('Preencha os campos.');
+
+      if (id) {
+        const idx = window.db.mural.findIndex(m => m.id == id);
+        if (idx !== -1) window.db.mural[idx] = { ...window.db.mural[idx], titulo: tit, texto: txt };
+      } else {
+        window.db.mural.push({ id: Date.now(), titulo: tit, texto: txt, data: new Date().toLocaleDateString('pt-BR') });
+      }
       
-      container.innerHTML = roomMsgs.map(m => {
-        const isMe = currentUser && m.user === currentUser.nome;
+      window.saveDB();
+      document.getElementById('adm-mural-id').value = '';
+      document.getElementById('adm-mural-titulo').value = '';
+      document.getElementById('adm-mural-texto').value = '';
+      showToast('Aviso salvo!');
+    }
+
+    function delMuralItem(id) {
+      const item = window.db.mural.find(m => m.id === id);
+      if (item) {
+        moverParaLixeira('mural', item);
+        window.db.mural = window.db.mural.filter(m => m.id !== id);
+        window.saveDB();
+        showToast('Movidos para a lixeira.');
+      }
+    }
+
+    function saveProjetoItem() {
+      const id = document.getElementById('adm-proj-id').value;
+      const nome = document.getElementById('adm-proj-nome').value.trim();
+      const desc = document.getElementById('adm-proj-desc').value.trim();
+      const status = document.getElementById('adm-proj-status').value;
+      if (!nome || !desc) return showToast('Preencha os campos.');
+
+      if (id) {
+        const idx = window.db.projetos.findIndex(p => p.id == id);
+        if (idx !== -1) window.db.projetos[idx] = { ...window.db.projetos[idx], nome, desc, status };
+      } else {
+        window.db.projetos.push({ id: Date.now(), nome, desc, status });
+      }
+
+      window.saveDB();
+      document.getElementById('adm-proj-id').value = '';
+      document.getElementById('adm-proj-nome').value = '';
+      document.getElementById('adm-proj-desc').value = '';
+      showToast('Projeto salvo!');
+    }
+
+    function delProjetoItem(id) {
+      const item = window.db.projetos.find(p => p.id === id);
+      if (item) {
+        moverParaLixeira('projetos', item);
+        window.db.projetos = window.db.projetos.filter(p => p.id !== id);
+        window.saveDB();
+        showToast('Projeto movido para a lixeira.');
+      }
+    }
+
+    function saveMembroItem() {
+      const id = document.getElementById('adm-membro-id').value;
+      const nome = document.getElementById('adm-membro-nome').value.trim();
+      const cargo = document.getElementById('adm-membro-cargo').value.trim();
+      if (!nome || !cargo) return showToast('Preencha os dados.');
+
+      if (id) {
+        const idx = window.db.membros.findIndex(m => m.id == id);
+        if (idx !== -1) window.db.membros[idx] = { ...window.db.membros[idx], nome, cargo, avatar: obterIniciais(nome) };
+      } else {
+        window.db.membros.push({ id: Date.now(), nome, cargo, avatar: obterIniciais(nome), online: true });
+      }
+
+      window.saveDB();
+      document.getElementById('adm-membro-id').value = '';
+      document.getElementById('adm-membro-nome').value = '';
+      document.getElementById('adm-membro-cargo').value = '';
+      showToast('Integrante salvo!');
+    }
+
+    function delMembroItem(id) {
+      window.db.membros = window.db.membros.filter(m => m.id !== id);
+      window.saveDB();
+      showToast('Integrante removido.');
+    }
+
+    function saveFinanceiroItem() {
+      const id = document.getElementById('adm-fin-id').value;
+      const desc = document.getElementById('adm-fin-desc').value.trim();
+      const valor = parseFloat(document.getElementById('adm-fin-valor').value);
+      const tipo = document.getElementById('adm-fin-tipo').value;
+      if (!desc || isNaN(valor) || valor <= 0) return showToast('Preencha os valores.');
+
+      if (id) {
+        const idx = window.db.financeiro.findIndex(f => f.id == id);
+        if (idx !== -1) window.db.financeiro[idx] = { ...window.db.financeiro[idx], desc, valor, tipo };
+      } else {
+        window.db.financeiro.push({ id: Date.now(), desc, valor, tipo, data: new Date().toLocaleDateString('pt-BR') });
+      }
+
+      window.saveDB();
+      document.getElementById('adm-fin-id').value = '';
+      document.getElementById('adm-fin-desc').value = '';
+      document.getElementById('adm-fin-valor').value = '';
+      showToast('Lançamento salvo!');
+    }
+
+    function delFinanceiroItem(id) {
+      const item = window.db.financeiro.find(f => f.id === id);
+      if (item) {
+        moverParaLixeira('financeiro', item);
+        window.db.financeiro = window.db.financeiro.filter(f => f.id !== id);
+        window.saveDB();
+        showToast('Lançamento movido para a lixeira.');
+      }
+    }
+
+    /* FUNÇÕES DA LIXEIRA */
+    window.restaurarLixeira = function(lixeiraId) {
+      const item = window.db.lixeira.find(l => l.id === lixeiraId);
+      if (!item) return;
+
+      if (item.tipoOrigem === 'mural') window.db.mural.push(item.dados);
+      else if (item.tipoOrigem === 'projetos') window.db.projetos.push(item.dados);
+      else if (item.tipoOrigem === 'financeiro') window.db.financeiro.push(item.dados);
+
+      window.db.lixeira = window.db.lixeira.filter(l => l.id !== lixeiraId);
+      window.saveDB();
+      showToast('Item restaurado com sucesso!');
+    };
+
+    window.excluirPermanenteLixeira = function(lixeiraId) {
+      window.db.lixeira = window.db.lixeira.filter(l => l.id !== lixeiraId);
+      window.saveDB();
+      showToast('Item excluído permanentemente.');
+    };
+
+    /* PRESENÇA / CHAMADA */
+    window.salvarChamada = function() {
+      const inputs = document.querySelectorAll('.presenca-input');
+      inputs.forEach(inp => {
+        const membroId = inp.dataset.id;
+        window.db.presencas[membroId] = inp.value;
+      });
+      window.saveDB();
+      showToast('Frequência salva!');
+    };
+
+    window.limparChamada = function() {
+      if (confirm("Tem certeza de que deseja apagar os dados de frequência da chamada atual?")) {
+        window.db.presencas = {};
+        window.saveDB();
+        showToast('Frequência reiniciada!');
+      }
+    };
+
+    /* VOTAÇÕES DA GESTÃO */
+    window.votarEnquete = function(votacaoId, opcaoId) {
+      if (!window.db.perfil) return showToast('Faça login primeiro.');
+
+      const votacao = window.db.votacoes.find(v => v.id === votacaoId);
+      if (!votacao) return;
+
+      if (!votacao.votosRegistrados) votacao.votosRegistrados = {};
+
+      const votoAnterior = votacao.votosRegistrados[window.db.perfil.nome];
+      if (votoAnterior) {
+        const opAnt = votacao.opcoes.find(o => o.id === votoAnterior);
+        if (opAnt && opAnt.votos > 0) opAnt.votos--;
+      }
+
+      const opNova = votacao.opcoes.find(o => o.id === opcaoId);
+      if (opNova) {
+        opNova.votos++;
+        votacao.votosRegistrados[window.db.perfil.nome] = opcaoId;
+        window.saveDB();
+        showToast('Seu voto foi registrado com sucesso!');
+      }
+    };
+
+    function renderVotacoes() {
+      const container = document.getElementById('public-votacao-list');
+      if (!container) return;
+
+      container.innerHTML = window.db.votacoes.map(v => {
+        const meuVoto = v.votosRegistrados ? v.votosRegistrados[window.db.perfil?.nome] : null;
+
+        return `
+          <div style="border:1px solid var(--border-color); border-radius:10px; padding:16px; margin-bottom:15px; background:var(--card-bg);">
+            <h4 style="color:var(--roxo); margin-bottom:6px;">${v.titulo}</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">${v.descricao}</p>
+            
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              ${v.opcoes.map(opt => `
+                <button class="btn ${meuVoto === opt.id ? '' : 'btn-warning'}"Onclick="votarEnquete(${v.id}, '${opt.id}')" 
+                        style="justify-content:space-between; text-align:left;">
+                  <span>${opt.texto} ${meuVoto === opt.id ? '✓ (Seu Voto)' : ''}</span>
+                  <span class="badge-status badge-planejamento">${opt.votos} voto(s)</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('') || '<p style="color:var(--text-muted);">Nenhuma votação cadastrada.</p>';
+    }
+
+    /* GERENCIAMENTO DE PERFIL/USUÁRIO */
+    function checkUserProfile() {
+      if (!state.user) {
+        document.getElementById('welcome-screen').style.display = 'flex';
+      } else {
+        document.getElementById('welcome-screen').style.display = 'none';
+        document.getElementById('headerName').innerText = state.user.nome;
+        document.getElementById('headerRole').innerText = state.user.cargo || 'Membro';
+        document.getElementById('headerTurma').innerText = state.user.turma;
+        
+        const iniciais = state.user.nome.trim().substring(0, 2).toUpperCase();
+        const avatarElem = document.getElementById('headerAvatar');
+        if (avatarElem) {
+          avatarElem.innerHTML = `${iniciais}<div class="online-indicator"></div>`;
+        }
+      }
+    }
+
+    function salvarPerfilInicial() {
+      const nome = document.getElementById('welcome-nome').value.trim();
+      const cargo = document.getElementById('welcome-cargo').value.trim() || 'Estudante';
+      const turma = document.getElementById('welcome-turma').value.trim();
+
+      if (!nome || !turma) {
+        showToast("Preencha seu Nome e Turma para continuar!");
+        return;
+      }
+
+      state.user = { nome, cargo, turma };
+      localStorage.setItem('gremio_user', JSON.stringify(state.user));
+      checkUserProfile();
+      showToast(`Bem-vindo(a), ${nome}!`);
+    }
+
+    /* INICIALIZAÇÃO */
+    document.addEventListener("DOMContentLoaded", () => {
+      checkUserProfile();
+
+      document.getElementById('btnSalvarPerfilInicial')?.addEventListener('click', salvarPerfilInicial);
+
+      document.getElementById('chatForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = document.getElementById('chatInput');
+        const text = input ? input.value.trim() : '';
+        if (!text || !state.user) return;
+
+        if (!window.db.chat[currentRoom]) window.db.chat[currentRoom] = [];
+
+        window.db.chat[currentRoom].push({
+          id: Date.now(),
+          sender: `${state.user.nome} (${state.user.turma})`,
+          role: state.user.cargo,
+          text: text,
+          date: new Date().toLocaleDateString('pt-BR'),
+          time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+          visto: true
+        });
+
+        if (window.db.digitando[state.user.nome]) {
+          delete window.db.digitando[state.user.nome];
+        }
+
+        window.saveDB();
+        input.value = '';
+      });
+    });
+
+    window.switchTab = function(tabName, btn) {
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      
+      document.getElementById(`tab-${tabName}`)?.classList.add('active');
+      if (btn) btn.classList.add('active');
+      document.getElementById('mainSidebar')?.classList.remove('open');
+    };
+
+    /* CHAT ROOM */
+    window.switchChatRoom = function(room, element) {
+      currentRoom = room;
+      document.querySelectorAll('.room-btn').forEach(btn => btn.classList.remove('active'));
+      if (element) element.classList.add('active');
+      renderChatMessages();
+    };
+
+    function renderChatMessages() {
+      const container = document.getElementById('chatMessages');
+      if (!container) return;
+      const msgs = window.db.chat[currentRoom] || [];
+
+      container.innerHTML = msgs.map((m) => {
+        const isMe = state.user && m.sender.startsWith(state.user.nome);
         return `
           <div class="chat-msg ${isMe ? 'me' : ''}">
             <div class="meta">
-              <strong>${m.user}</strong>
+              <span><strong>${isMe ? 'Você' : m.sender}</strong> (${m.role})</span>
               <span>${m.time}</span>
             </div>
-            <div>${m.msg}</div>
-            ${isAdminLoggedIn ? `<div class="actions"><button class="delete-msg-btn" onclick="deletarChatMsg(${m.id})">Excluir</button></div>` : ''}
+            <div>${m.text}</div>
+            <div class="actions">
+              <span style="opacity:0.8;" title="Mensagem Visualizada"><i class="ph ph-check-double"></i> Visto</span>
+              ${isMe || isAdminAuth ? `<button class="delete-msg-btn" onclick="deleteChatMessage(${m.id})" title="Apagar Mensagem"><i class="ph ph-trash"></i> Apagar</button>` : ''}
+            </div>
           </div>
         `;
-      }).join('');
+      }).join('') || '<p style="text-align:center; color:var(--text-muted); margin-top:20px;">Sem mensagens nesta sala.</p>';
+
       container.scrollTop = container.scrollHeight;
+
+      // Status de digitando
+      const quemDigita = Object.keys(window.db.digitando || {}).filter(n => n !== state.user?.nome);
+      setSafeText('typingStatus', quemDigita.length > 0 ? `${quemDigita.join(', ')} está digitando...` : '');
     }
 
-    document.getElementById('chatForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!currentUser) { alert("Configure seu perfil para usar o chat."); return; }
-      
-      const input = document.getElementById('chatInput');
-      const now = new Date();
-      
-      db.chat.push({
-        id: Date.now(),
-        room: currentRoom,
-        user: currentUser.nome,
-        msg: input.value,
-        time: `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
-      });
-      
-      saveData('chat');
-      input.value = '';
-      renderChat();
-    });
+    /* RENDER PRINCIPAL DO APP */
+    window.renderApp = function() {
+      setSafeText('kpi-membros', window.db.membros.length);
+      setSafeText('kpi-projetos', window.db.projetos.filter(p => p.status !== 'concluido').length);
+      setSafeText('kpi-eventos', window.db.eventos.length);
 
-    function handleChatTyping() {
-      const status = document.getElementById('typingStatus');
-      status.innerText = `${currentUser ? currentUser.nome : 'Alguém'} está digitando...`;
-      clearTimeout(window.typingTimer);
-      window.typingTimer = setTimeout(() => { status.innerText = ''; }, 1500);
+      const muralOrdenado = [...window.db.mural].sort((a,b) => b.id - a.id);
+      const ultAviso = muralOrdenado[0];
+
+      setSafeHTML('dash-ultimo-comunicado', ultAviso ? `
+        <h4 style="color:var(--roxo);">${ultAviso.titulo}</h4>
+        <p style="font-size:0.85rem;">${ultAviso.texto}</p>
+      ` : '<p style="color:var(--text-muted);">Nenhum aviso no mural.</p>');
+
+      setSafeHTML('public-mural-list', muralOrdenado.map(m => `
+        <li style="padding:10px 0; border-bottom:1px solid var(--border-color);">
+          <strong style="color:var(--roxo);">${m.titulo}</strong>
+          <p style="font-size:0.85rem;">${m.texto}</p>
+          <span style="font-size:0.75rem; color:var(--text-muted);">${m.data || ''}</span>
+        </li>
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum aviso no mural.</p>');
+
+      const statusLabels = { planejamento: "Em Planejamento", em_andamento: "Em Andamento", concluido: "Concluído" };
+      setSafeHTML('public-projetos-list', window.db.projetos.map(p => `
+        <div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; margin-bottom:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <strong style="color:var(--roxo); font-size:1rem;">${p.nome}</strong>
+            <span class="badge-status badge-${p.status}">${statusLabels[p.status] || p.status}</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-color);">${p.desc}</p>
+        </div>
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum projeto cadastrado.</p>');
+
+      // Integrantes com Indicador Online/Offline
+      setSafeHTML('public-membros-list', window.db.membros.map(m => {
+        const isOnline = m.online !== false;
+        return `
+          <li style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border-color);">
+            <div class="avatar-circle">
+              ${m.avatar || obterIniciais(m.nome)}
+              <div class="${isOnline ? 'online-indicator' : 'offline-indicator'}" title="${isOnline ? 'Online' : 'Offline'}"></div>
+            </div>
+            <div>
+              <strong>${m.nome}</strong>
+              <p style="font-size:0.78rem; color:var(--verde); font-weight:600;">${m.cargo}</p>
+            </div>
+          </li>
+        `;
+      }).join('') || '<p style="color:var(--text-muted);">Nenhum integrante cadastrado.</p>');
+
+      // Financeiro e Porcentagens
+      const totalReceita = window.db.financeiro.filter(f => f.tipo === 'receita').reduce((a,b) => a + b.valor, 0);
+      const totalDespesa = window.db.financeiro.filter(f => f.tipo === 'despesa').reduce((a,b) => a + b.valor, 0);
+      const saldo = totalReceita - totalDespesa;
+      const totalMovimentado = totalReceita + totalDespesa;
+      
+      const pctReceita = totalMovimentado > 0 ? ((totalReceita / totalMovimentado) * 100).toFixed(1) : 0;
+      const pctDespesa = totalMovimentado > 0 ? ((totalDespesa / totalMovimentado) * 100).toFixed(1) : 0;
+
+      const saldoFormatado = saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      setSafeText('dash-saldo', saldoFormatado);
+      setSafeText('fin-saldo-destaque', saldoFormatado);
+      setSafeText('admin-saldo-caixa', saldoFormatado);
+      
+      setSafeText('fin-percentual-resumo', `Entradas: ${pctReceita}% | Saídas: ${pctDespesa}%`);
+
+      setSafeHTML('public-financeiro-list', window.db.financeiro.map(f => `
+        <li style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-color);">
+          <div><strong>${f.desc}</strong><p style="font-size:0.75rem; color:var(--text-muted);">${f.data}</p></div>
+          <span style="font-weight:bold; color:${f.tipo === 'receita' ? 'var(--verde)' : 'var(--vermelho-light)'};">
+            ${f.tipo === 'receita' ? '+' : '-'} ${f.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          </span>
+        </li>
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum lançamento.</p>');
+
+      renderVotacoes();
+      renderCalendar();
+      renderChatMessages();
+      renderFinanceChart(totalReceita, totalDespesa, pctReceita, pctDespesa);
+
+      if (isAdminAuth) renderAdminLists();
+    };
+
+    function renderAdminLists() {
+      setSafeHTML('adm-mural-list', window.db.mural.map(m => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
+          <span><strong>${m.titulo}</strong></span>
+          <div>
+            <button class="btn btn-danger btn-sm" onclick="delMuralItem(${m.id})"><i class="ph ph-trash"></i> Excluir</button>
+          </div>
+        </li>
+      `).join(''));
+
+      setSafeHTML('adm-projetos-list', window.db.projetos.map(p => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
+          <span><strong>${p.nome}</strong></span>
+          <div>
+            <button class="btn btn-danger btn-sm" onclick="delProjetoItem(${p.id})"><i class="ph ph-trash"></i> Excluir</button>
+          </div>
+        </div>
+      `).join(''));
+
+      setSafeHTML('adm-membros-list', window.db.membros.map(m => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
+          <span>${m.nome} (${m.cargo})</span>
+          <div>
+            <button class="btn btn-danger btn-sm" onclick="delMembroItem(${m.id})"><i class="ph ph-trash"></i> Remover</button>
+          </div>
+        </li>
+      `).join(''));
+
+      setSafeHTML('adm-financeiro-list', window.db.financeiro.map(f => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
+          <span>${f.desc} - R$ ${f.valor.toFixed(2)}</span>
+          <div>
+            <button class="btn btn-danger btn-sm" onclick="delFinanceiroItem(${f.id})"><i class="ph ph-trash"></i> Excluir</button>
+          </div>
+        </li>
+      `).join(''));
+
+      // Render Lixeira
+      setSafeHTML('adm-lixeira-list', window.db.lixeira.map(l => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color); font-size:0.85rem;">
+          <div>
+            <strong style="text-transform:capitalize; color:var(--roxo);">[${l.tipoOrigem}]</strong> 
+            ${l.dados.titulo || l.dados.nome || l.dados.desc}
+          </div>
+          <div style="display:flex; gap:4px;">
+            <button class="btn btn-sm" onclick="restaurarLixeira(${l.id})" title="Restaurar"><i class="ph ph-arrow-u-up-left"></i></button>
+            <button class="btn btn-danger btn-sm" onclick="excluirPermanenteLixeira(${l.id})" title="Apagar Definitivamente"><i class="ph ph-x"></i></button>
+          </div>
+        </li>
+      `).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Lixeira vazia.</p>');
+
+      // Render Chamada de Presença
+      setSafeHTML('adm-chamada-list', window.db.membros.map(m => {
+        const pVal = window.db.presencas[m.id] || 'presente';
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
+            <span style="font-size:0.85rem;"><strong>${m.nome}</strong></span>
+            <select class="form-control presenca-input" data-id="${m.id}" style="width:120px; margin-bottom:0; padding:4px;">
+              <option value="presente" ${pVal === 'presente' ? 'selected' : ''}>Presente</option>
+              <option value="ausente" ${pVal === 'ausente' ? 'selected' : ''}>Ausente</option>
+            </select>
+          </div>
+        `;
+      }).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Nenhum membro cadastrado.</p>');
+
+      renderPresencaChart();
     }
 
-    function deletarChatMsg(id) {
-      db.chat = db.chat.filter(m => m.id !== id);
-      saveData('chat');
-      renderChat();
-    }
-
-    // --- CALENDÁRIO ---
     function renderCalendar() {
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
       const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-      
-      document.getElementById('calendarMonthYear').innerHTML = `<i class="ph ph-calendar"></i> ${monthNames[month]} ${year}`;
-      
-      const firstDay = new Date(year, month, 1).getDay();
-      const totalDays = new Date(year, month + 1, 0).getDate();
+      setSafeText('calendarMonthYear', `${monthNames[currentMonth]} ${currentYear}`);
+
       const grid = document.getElementById('calendarDays');
+      if (!grid) return;
+
+      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
       grid.innerHTML = '';
 
       for (let i = 0; i < firstDay; i++) {
-        grid.appendChild(document.createElement('div'));
+        const emptyCell = document.createElement('div');
+        emptyCell.style.opacity = '0.2';
+        grid.appendChild(emptyCell);
       }
 
       const today = new Date();
-      for (let day = 1; day <= totalDays; day++) {
+      for (let day = 1; day <= daysInMonth; day++) {
         const cell = document.createElement('div');
         cell.className = 'calendar-day-cell';
-        
-        const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-        
-        if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day) {
+        if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
           cell.classList.add('today');
         }
+        cell.innerHTML = `<strong>${day}</strong>`;
 
-        const eventsOnDay = db.eventos.filter(e => e.data === dateStr);
-        let eventsHtml = eventsOnDay.map(e => `<div style="background:var(--verde); color:white; font-size:0.65rem; padding:2px; border-radius:3px; margin-top:2px;">${e.titulo}</div>`).join('');
+        const formattedDay = String(day).padStart(2, '0');
+        const formattedMonth = String(currentMonth + 1).padStart(2, '0');
+        const dateStr = `${currentYear}-${formattedMonth}-${formattedDay}`;
 
-        cell.innerHTML = `<div>${day}</div>${eventsHtml}`;
+        window.db.eventos.filter(e => e.data === dateStr).forEach(ev => {
+          const tag = document.createElement('span');
+          tag.style.backgroundColor = ev.cor || "#0B8E2F";
+          tag.style.color = "#ffffff";
+          tag.style.fontSize = "0.7rem";
+          tag.style.borderRadius = "4px";
+          tag.style.padding = "2px 4px";
+          tag.style.display = "block";
+          tag.style.marginTop = "2px";
+          tag.innerText = ev.nome;
+          cell.appendChild(tag);
+        });
+
         grid.appendChild(cell);
       }
     }
 
-    document.getElementById('btnPrevMonth').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
-    document.getElementById('btnNextMonth').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
-    document.getElementById('btnToday').addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
-
-    // --- GRÁFICO FINANCEIRO (CHART.JS) ---
-    function renderFinanceiroChart() {
-      const ctx = document.getElementById('financeiroChart').getContext('2d');
-      const entradas = db.financeiro.filter(f => f.tipo === 'entrada').reduce((a, b) => a + b.valor, 0);
-      const saidas = db.financeiro.filter(f => f.tipo === 'saida').reduce((a, b) => a + b.valor, 0);
-
+    function renderFinanceChart(receitas, despesas, pctR, pctD) {
+      const ctx = document.getElementById('financeiroChart');
+      if (!ctx) return;
       if (chartInstance) chartInstance.destroy();
 
       chartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['Entradas (R$)', 'Saídas (R$)'],
+          labels: [`Entradas (${pctR}%)`, `Saídas (${pctD}%)`],
+          datasets: [{ data: [receitas, despesas], backgroundColor: ['#0B8E2F', '#EF4444'] }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    function renderPresencaChart() {
+      const ctx = document.getElementById('presencaChart');
+      if (!ctx) return;
+      if (chartPresencaInstance) chartPresencaInstance.destroy();
+
+      const vals = Object.values(window.db.presencas || {});
+      const presentes = vals.filter(v => v === 'presente').length;
+      const ausentes = vals.filter(v => v === 'ausente').length;
+
+      chartPresencaInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Presentes', 'Ausentes'],
           datasets: [{
-            data: [entradas, saidas],
+            label: 'Integrantes',
+            data: [presentes, ausentes],
             backgroundColor: ['#0B8E2F', '#EF4444']
           }]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
         }
       });
     }
 
-    // --- INICIALIZAÇÃO GERAL ---
-    window.onload = () => {
-      initUser();
-      renderAll();
-    };
+    document.getElementById('btnPrevMonth')?.addEventListener('click', () => {
+      currentMonth--;
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+      renderCalendar();
+    });
+
+    document.getElementById('btnNextMonth')?.addEventListener('click', () => {
+      currentMonth++;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      renderCalendar();
+    });
+
+    document.getElementById('btnToday')?.addEventListener('click', () => {
+      const now = new Date();
+      currentMonth = now.getMonth();
+      currentYear = now.getFullYear();
+      renderCalendar();
+    });
   </script>
 </body>
 </html>
