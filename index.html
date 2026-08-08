@@ -179,6 +179,14 @@
       font-weight: bold;
       font-size: 0.9rem;
       position: relative;
+      overflow: visible;
+    }
+
+    .avatar-circle img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
     }
 
     .online-indicator {
@@ -190,6 +198,7 @@
       position: absolute;
       bottom: 0;
       right: 0;
+      z-index: 2;
     }
 
     .offline-indicator {
@@ -201,6 +210,7 @@
       position: absolute;
       bottom: 0;
       right: 0;
+      z-index: 2;
     }
 
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
@@ -215,17 +225,19 @@
     .chat-main { flex: 1; display: flex; flex-direction: column; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; display: flex; flex-direction: column; }
     
+    /* CHAT DEGRADÊ: RECEBIDO (VERDE DEGRADÊ), ENVIADO (ROXO) */
     .chat-msg { 
       margin-bottom: 12px; 
       padding: 10px 14px; 
       border-radius: 12px; 
       max-width: 75%; 
       position: relative;
-      background: var(--verde-claro); 
-      color: #06230B;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%); 
+      color: #FFFFFF;
       margin-right: auto;
       margin-left: 0;
       border-bottom-left-radius: 2px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
     .chat-msg.me { 
       margin-left: auto; 
@@ -235,9 +247,9 @@
       border-bottom-left-radius: 12px;
       border-bottom-right-radius: 2px;
     }
-    .chat-msg .meta { font-size: 0.72rem; display: flex; justify-content: space-between; gap: 12px; margin-bottom: 4px; opacity: 0.85; }
+    .chat-msg .meta { font-size: 0.72rem; display: flex; justify-content: space-between; gap: 12px; margin-bottom: 4px; opacity: 0.9; }
     .chat-msg .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 0.75rem; }
-    .delete-msg-btn { background: none; border: none; color: #EF4444; cursor: pointer; font-size: 0.8rem; padding: 0 4px; }
+    .delete-msg-btn { background: none; border: none; color: #FCA5A5; cursor: pointer; font-size: 0.8rem; padding: 0 4px; }
     .chat-msg.me .delete-msg-btn { color: #FCA5A5; }
 
     .typing-status { font-size: 0.75rem; font-style: italic; color: var(--text-muted); height: 18px; margin-bottom: 4px; }
@@ -294,13 +306,15 @@
       <input type="text" id="welcome-cargo" class="form-control" placeholder="Seu Cargo (Ex: Presidente, Diretor, Estudante)">
       <input type="text" id="welcome-turma" class="form-control" placeholder="Sua Turma (Ex: 3º Ano A, 1º Ano B)" required>
       
+      <label style="font-size:0.8rem; display:block; text-align:left; margin-bottom:4px; color:var(--text-muted);">Foto de Perfil (Opcional):</label>
+      <input type="file" id="welcome-foto" class="form-control" accept="image/*">
+      
       <button class="btn" id="btnSalvarPerfilInicial" style="width:100%; justify-content:center; margin-top:10px;">
         <i class="ph ph-check-circle"></i> Acessar Painel
       </button>
     </div>
   </div>
-
-  <div class="app-container">
+    <div class="app-container">
     <sidebar id="mainSidebar">
       <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="ph ph-house"></i> Dashboard</button>
       <button class="nav-btn" onclick="switchTab('mural', this)"><i class="ph ph-megaphone"></i> Mural</button>
@@ -432,7 +446,8 @@
           </div>
         </div>
       </section>
-            <section id="tab-admin" class="tab-content">
+
+      <section id="tab-admin" class="tab-content">
         <div id="admin-login-card" class="card" style="max-width: 400px; margin: 0 auto;">
           <h3><i class="ph ph-lock"></i> Acesso Administrativo</h3>
           <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">Digite a senha de gestão para gerenciar o sistema.</p>
@@ -450,27 +465,6 @@
           </div>
 
           <div class="grid-2">
-            <div class="card">
-              <h3 id="adm-votacao-form-title"><i class="ph ph-check-square"></i> Gerenciar Votação / Enquete</h3>
-              <input type="hidden" id="adm-votacao-id">
-              <input type="text" id="adm-votacao-titulo" class="form-control" placeholder="Título da Votação">
-              <textarea id="adm-votacao-desc" class="form-control" rows="2" placeholder="Descrição/Detalhes da votação"></textarea>
-              
-              <label style="font-size:0.8rem; font-weight:bold; color:var(--roxo);">Opções de Voto:</label>
-              <input type="text" id="adm-votacao-op1" class="form-control" placeholder="Opção 1" style="margin-top:4px;">
-              <input type="text" id="adm-votacao-op2" class="form-control" placeholder="Opção 2">
-              <input type="text" id="adm-votacao-op3" class="form-control" placeholder="Opção 3 (Opcional)">
-              
-              <div style="display:flex; gap:8px;">
-                <button class="btn" onclick="saveVotacaoItem()"><i class="ph ph-floppy-disk"></i> Salvar Votação</button>
-                <button class="btn btn-warning btn-sm" onclick="cancelarEdicaoVotacao()" id="btn-cancelar-votacao" style="display:none;">Cancelar</button>
-              </div>
-
-              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-              <h4>Votações Cadastradas</h4>
-              <div id="adm-votacoes-list" style="margin-top:10px;"></div>
-            </div>
-
             <div class="card">
               <h3><i class="ph ph-check-square-offset"></i> Presença em Reuniões</h3>
               <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Registre a frequência dos membros na última reunião.</p>
@@ -520,6 +514,8 @@
               <input type="hidden" id="adm-membro-id">
               <input type="text" id="adm-membro-nome" class="form-control" placeholder="Nome completo">
               <input type="text" id="adm-membro-cargo" class="form-control" placeholder="Cargo (Ex: Presidente, Diretor)">
+              <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Foto (Opcional):</label>
+              <input type="file" id="adm-membro-foto" class="form-control" accept="image/*">
               <button class="btn" onclick="saveMembroItem()"><i class="ph ph-floppy-disk"></i> Salvar Integrante</button>
               <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
               <h4>Integrantes Cadastrados</h4>
@@ -553,860 +549,621 @@
   </div>
 
   <div id="toast-container"></div>
-    <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyC2rnMOi-YMH9LthRFf9KCICFtKpGvDm78",
-      authDomain: "fala--estudante.firebaseapp.com",
-      databaseURL: "https://fala--estudante-default-rtdb.firebaseio.com",
-      projectId: "fala--estudante",
-      storageBucket: "fala--estudante.firebasestorage.app",
-      messagingSenderId: "424257046289",
-      appId: "1:424257046289:web:b56419eae80e7773c06eb0"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-
-    window.db = {
-      perfil: JSON.parse(localStorage.getItem('fala_estudante_perfil')) || null,
-      mural: [], projetos: [], eventos: [], membros: [], financeiro: [],
-      votacoes: [
-        {
-          id: 1,
-          titulo: "Escolha do Tema da Gincana Cultural",
-          descricao: "Vote na proposta temática para a competição entre as turmas deste ano.",
-          opcoes: [
-            { id: 'opt1', texto: "Cultura Pop e Anos 80/90", votos: 0 },
-            { id: 'opt2', texto: "Sustentabilidade & Futuro", votos: 0 },
-            { id: 'opt3', texto: "Folclore e Literatura Brasileira", votos: 0 }
-          ],
-          votosRegistrados: {}
-        }
-      ],
-      chat: { geral: [], eventos: [], financeiro: [] },
-      lixeira: [],
-      presencas: {},
-      digitando: {}
-    };
-
-    window.saveDB = function() {
-      set(ref(database, "dados"), {
-        mural: window.db.mural || [],
-        projetos: window.db.projetos || [],
-        eventos: window.db.eventos || [],
-        membros: window.db.membros || [],
-        financeiro: window.db.financeiro || [],
-        votacoes: window.db.votacoes || [],
-        chat: window.db.chat || { geral: [], eventos: [], financeiro: [] },
-        lixeira: window.db.lixeira || [],
-        presencas: window.db.presencas || {},
-        digitando: window.db.digitando || {}
-      });
-    };
-
-    onValue(ref(database, "dados"), (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        window.db.mural = data.mural || [];
-        window.db.projetos = data.projetos || [];
-        window.db.eventos = data.eventos || [];
-        window.db.membros = data.membros || [];
-        window.db.financeiro = data.financeiro || [];
-        window.db.votacoes = data.votacoes || window.db.votacoes;
-        window.db.chat = data.chat || { geral: [], eventos: [], financeiro: [] };
-        window.db.lixeira = data.lixeira || [];
-        window.db.presencas = data.presencas || {};
-        window.db.digitando = data.digitando || {};
-      }
-      if (window.renderApp) window.renderApp();
-    });
-  </script>
-
   <script>
-    const SENHA_ADMIN = "gremio26";
-    let isAdminAuth = false;
-    let currentRoom = 'geral';
-    let currentMonth = new Date().getMonth();
-    let currentYear = new Date().getFullYear();
-    let chartInstance = null;
-    let chartPresencaInstance = null;
-    let typingTimeout = null;
+  // 1. INICIALIZAÇÃO E ARMAZENAMENTO LOCAL (DB)
+  const DB_KEY = 'fala_estudante_db_v2';
 
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark-mode');
-    }
-
-    function toggleSidebar() {
-      document.getElementById('mainSidebar').classList.toggle('open');
-    }
-
-    function showToast(msg) {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = 'toast';
-      toast.innerText = msg;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
-
-    function setSafeText(id, val) { const el = document.getElementById(id); if (el) el.innerText = val; }
-    function setSafeHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
-
-    function obterIniciais(nome) {
-      if (!nome) return "GE";
-      const partes = nome.trim().split(" ");
-      return partes.length === 1 ? partes[0].substring(0, 2).toUpperCase() : (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
-    }
-
-    function filterList(listId, query) {
-      const items = document.querySelectorAll(`#${listId} li`);
-      items.forEach(item => {
-        item.style.display = item.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
-      });
-    }
-
-    function filterProjects(query) {
-      const items = document.querySelectorAll('#public-projetos-list > div');
-      items.forEach(item => {
-        item.style.display = item.innerText.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
-      });
-    }
-
-    function logoutUser() {
-      localStorage.removeItem('fala_estudante_perfil');
-      window.db.perfil = null;
-
-      const inNome = document.getElementById('welcome-nome');
-      const inCargo = document.getElementById('welcome-cargo');
-      const inTurma = document.getElementById('welcome-turma');
-      
-      if (inNome) inNome.value = '';
-      if (inCargo) inCargo.value = '';
-      if (inTurma) inTurma.value = '';
-
-      document.getElementById('welcome-screen').style.display = 'flex';
-      showToast('Você saiu da sua conta.');
-    }
-
-    function autenticarAdmin() {
-      const input = document.getElementById('adminPasswordInput');
-      if (input && input.value === SENHA_ADMIN) {
-        isAdminAuth = true;
-        document.getElementById('admin-login-card').style.display = 'none';
-        document.getElementById('admin-panel').style.display = 'block';
-        input.value = '';
-        showToast('Acesso concedido!');
-        renderAdminLists();
-      } else {
-        showToast('Senha incorreta!');
+  const defaultDB = {
+    perfil: null,
+    mural: [
+      { id: 1, titulo: 'Boas-vindas à Gestão!', texto: 'Sejam bem-vindos ao painel oficial do Grêmio Estudantil CETI José Marques.' }
+    ],
+    projetos: [
+      { id: 1, nome: 'Interclasse de Futsal', desc: 'Organização do torneio esportivo de integração.', status: 'em_andamento' },
+      { id: 2, nome: 'Rádio Escolar', desc: 'Projeto de transmissão de avisos e música nos intervalos.', status: 'planejamento' }
+    ],
+    membros: [
+      { id: 101, nome: 'Ana Silva (3º Ano A)', cargo: 'Presidente', foto: null, avatar: 'AS', lastSeen: Date.now() },
+      { id: 102, nome: 'Carlos Eduardo (2º Ano B)', cargo: 'Vice-Presidente', foto: null, avatar: 'CE', lastSeen: Date.now() - 300000 }
+    ],
+    votacoes: [
+      {
+        id: 1,
+        titulo: 'Escolha do Tema da Festa Cultural',
+        descricao: 'Qual tema você prefere para a feira de cultura deste semestre?',
+        opcoes: [
+          { id: 'opt1', texto: 'Anos 2000', votos: 12 },
+          { id: 'opt2', texto: 'Mundo Geek & Tecnologia', votos: 25 },
+          { id: 'opt3', texto: 'Diversidade Regional', votos: 8 }
+        ],
+        votosRegistrados: {}
       }
+    ],
+    chat: {
+      geral: [
+        { id: 1, user: 'Ana Silva', text: 'Pessoal, a reunião de hoje será às 14h!', time: '10:30', foto: null }
+      ],
+      eventos: [],
+      financeiro: []
+    },
+    financeiro: [
+      { id: 1, desc: 'Venda de Rifas - Arraiá', valor: 350.00, tipo: 'receita' },
+      { id: 2, desc: 'Material de Pintura para Placas', valor: 45.50, tipo: 'despesa' }
+    ],
+    chamada: {},
+    lixeira: []
+  };
+
+  function loadDB() {
+    const data = localStorage.getItem(DB_KEY);
+    if (!data) return defaultDB;
+    try {
+      const parsed = JSON.parse(data);
+      return { ...defaultDB, ...parsed };
+    } catch(e) {
+      return defaultDB;
+    }
+  }
+
+  window.db = loadDB();
+
+  window.saveDB = function() {
+    localStorage.setItem(DB_KEY, JSON.stringify(window.db));
+    refreshAllUI();
+  };
+
+  // 2. FUNÇÕES AUXILIARES DE UI
+  function setSafeText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.innerText = text;
+  }
+
+  function setSafeHTML(id, html) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  }
+
+  function showToast(msg) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerText = msg;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  function obterIniciais(nome) {
+    if (!nome) return 'GE';
+    const partes = nome.trim().split(' ');
+    if (partes.length >= 2) return (partes[0][0] + partes[1][0]).toUpperCase();
+    return partes[0].substring(0, 2).toUpperCase();
+  }
+
+  function toggleSidebar() {
+    document.getElementById('mainSidebar')?.classList.toggle('open');
+  }
+
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+  }
+
+  function switchTab(tabId, btnEl) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+    const target = document.getElementById(`tab-${tabId}`);
+    if (target) target.classList.add('active');
+    if (btnEl) btnEl.classList.add('active');
+
+    if (window.innerWidth <= 768) {
+      document.getElementById('mainSidebar')?.classList.remove('open');
     }
 
-    function deslogarAdmin() {
-      isAdminAuth = false;
-      document.getElementById('admin-login-card').style.display = 'block';
-      document.getElementById('admin-panel').style.display = 'none';
+    refreshAllUI();
+  }
+
+  // 3. FOTO DE PERFIL E REGISTRO INICIAL
+  document.getElementById('btnSalvarPerfilInicial')?.addEventListener('click', () => {
+    const nome = document.getElementById('welcome-nome')?.value.trim();
+    const cargo = document.getElementById('welcome-cargo')?.value.trim() || 'Estudante';
+    const turma = document.getElementById('welcome-turma')?.value.trim() || 'Não informada';
+    const fotoInput = document.getElementById('welcome-foto');
+
+    if (!nome) {
+      showToast('Por favor, informe seu nome!');
+      return;
     }
 
-    function handleChatTyping() {
-      if (!window.db.perfil) return;
-      window.db.digitando[window.db.perfil.nome] = true;
+    const processarPerfil = (fotoBase64 = null) => {
+      window.db.perfil = { nome, cargo, turma, foto: fotoBase64, lastSeen: Date.now() };
+      localStorage.setItem('fala_estudante_perfil', JSON.stringify(window.db.perfil));
+
+      const idx = window.db.membros.findIndex(m => m.nome.toLowerCase().includes(nome.toLowerCase()));
+      if (idx !== -1) {
+        window.db.membros[idx].foto = fotoBase64;
+        window.db.membros[idx].lastSeen = Date.now();
+      } else {
+        window.db.membros.push({ 
+          id: Date.now(), 
+          nome: `${nome} (${turma})`, 
+          cargo, 
+          foto: fotoBase64,
+          avatar: obterIniciais(nome),
+          lastSeen: Date.now()
+        });
+      }
+      
       window.saveDB();
-
-      clearTimeout(typingTimeout);
-      typingTimeout = setTimeout(() => {
-        delete window.db.digitando[window.db.perfil.nome];
-        window.saveDB();
-      }, 2000);
-    }
-
-    window.deleteChatMessage = function(msgId) {
-      if (!window.db.chat[currentRoom]) return;
-      window.db.chat[currentRoom] = window.db.chat[currentRoom].filter(m => m.id !== msgId);
-      window.saveDB();
-      showToast('Mensagem apagada.');
+      document.getElementById('welcome-screen').style.display = 'none';
+      updateProfileUI();
+      showToast(`Bem-vindo(a), ${nome}!`);
     };
 
-    function moverParaLixeira(tipo, item) {
-      window.db.lixeira.push({
-        id: Date.now(),
-        tipoOrigem: tipo,
-        dados: item,
-        dataExclusao: new Date().toLocaleDateString('pt-BR')
-      });
+    if (fotoInput && fotoInput.files && fotoInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        processarPerfil(e.target.result);
+      };
+      reader.readAsDataURL(fotoInput.files[0]);
+    } else {
+      processarPerfil(null);
     }
+  });
 
-    function saveMuralItem() {
-      const id = document.getElementById('adm-mural-id').value;
-      const tit = document.getElementById('adm-mural-titulo').value.trim();
-      const txt = document.getElementById('adm-mural-texto').value.trim();
-      if (!tit || !txt) return showToast('Preencha os campos.');
+  function logoutUser() {
+    if (confirm('Deseja realmente sair da sua conta?')) {
+      window.db.perfil = null;
+      localStorage.removeItem('fala_estudante_perfil');
+      location.reload();
+    }
+  }
 
-      if (id) {
-        const idx = window.db.mural.findIndex(m => m.id == id);
-        if (idx !== -1) window.db.mural[idx] = { ...window.db.mural[idx], titulo: tit, texto: txt };
-      } else {
-        window.db.mural.push({ id: Date.now(), titulo: tit, texto: txt, data: new Date().toLocaleDateString('pt-BR') });
-      }
+  function updateProfileUI() {
+    if (window.db.perfil) {
+      setSafeText('headerName', window.db.perfil.nome.split(' ')[0]);
+      setSafeText('headerRole', window.db.perfil.cargo);
+      setSafeText('headerTurma', window.db.perfil.turma || '');
       
+      const avatarEl = document.getElementById('headerAvatar');
+      if (avatarEl) {
+        if (window.db.perfil.foto) {
+          avatarEl.innerHTML = `<img src="${window.db.perfil.foto}" alt="Avatar"><div class="online-indicator"></div>`;
+        } else {
+          avatarEl.innerHTML = `${obterIniciais(window.db.perfil.nome)}<div class="online-indicator"></div>`;
+        }
+      }
+
+      // Heartbeat status online (última ação)
+      window.db.perfil.lastSeen = Date.now();
+      const mIdx = window.db.membros.findIndex(m => m.nome.includes(window.db.perfil.nome));
+      if (mIdx !== -1) {
+        window.db.membros[mIdx].lastSeen = Date.now();
+      }
+    } else {
+      const modal = document.getElementById('welcome-screen');
+      if (modal) modal.style.display = 'flex';
+    }
+  }
+
+  // Heartbeat a cada 30 segundos para manter status online
+  setInterval(() => {
+    if (window.db.perfil) {
+      window.db.perfil.lastSeen = Date.now();
+      const mIdx = window.db.membros.findIndex(m => m.nome.includes(window.db.perfil.nome));
+      if (mIdx !== -1) {
+        window.db.membros[mIdx].lastSeen = Date.now();
+      }
+      renderMembros();
+    }
+  }, 30000);
+      // 4. ATUALIZAÇÃO E RENDERIZAÇÃO GERAL DA INTERFACE
+  function refreshAllUI() {
+    renderKPIs();
+    renderMural();
+    renderProjetos();
+    renderMembros();
+    renderVotacoes();
+    renderCalendario();
+    renderChatMessages();
+    renderFinanceiro();
+    renderAdminPanel();
+  }
+
+  function renderKPIs() {
+    setSafeText('kpi-membros', window.db.membros.length);
+    setSafeText('kpi-projetos', window.db.projetos.filter(p => p.status !== 'concluido').length);
+    setSafeText('kpi-eventos', window.db.mural.length);
+
+    const saldo = window.db.financeiro.reduce((acc, f) => acc + (f.tipo === 'receita' ? f.valor : -f.valor), 0);
+    const saldoTxt = `R$ ${saldo.toFixed(2)}`;
+    setSafeText('dash-saldo', saldoTxt);
+    setSafeText('fin-saldo-destaque', saldoTxt);
+    setSafeText('admin-saldo-caixa', saldoTxt);
+
+    const ultimo = window.db.mural[window.db.mural.length - 1];
+    if (ultimo) {
+      setSafeHTML('dash-ultimo-comunicado', `<strong>${ultimo.titulo}</strong><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">${ultimo.texto}</p>`);
+    } else {
+      setSafeHTML('dash-ultimo-comunicado', '<p style="color:var(--text-muted);">Nenhum aviso no momento.</p>');
+    }
+  }
+
+  function renderMural() {
+    setSafeHTML('public-mural-list', window.db.mural.map(m => `
+      <li style="border-bottom: 1px solid var(--border-color); padding: 12px 0;">
+        <h4 style="color:var(--roxo);">${m.titulo}</h4>
+        <p style="font-size:0.88rem; margin-top:4px; color:var(--text-color);">${m.texto}</p>
+      </li>
+    `).join('') || '<p style="color:var(--text-muted);">Sem avisos cadastrados.</p>');
+  }
+
+  function renderProjetos() {
+    setSafeHTML('public-projetos-list', window.db.projetos.map(p => `
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; background:var(--card-bg);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <strong style="color:var(--roxo);">${p.nome}</strong>
+          <span class="badge-status badge-${p.status}">${p.status.replace('_', ' ').toUpperCase()}</span>
+        </div>
+        <p style="font-size:0.85rem; color:var(--text-muted);">${p.desc}</p>
+      </div>
+    `).join('') || '<p style="color:var(--text-muted);">Nenhum projeto cadastrado.</p>');
+  }
+
+  // Integrantes com Indicador de Online em Tempo Real
+  function renderMembros() {
+    setSafeHTML('public-membros-list', window.db.membros.map(m => {
+      const agora = Date.now();
+      const isOnline = m.lastSeen && (agora - m.lastSeen < 120000); // 2 minutos para considerar online
+
+      const avatarHTML = m.foto 
+        ? `<img src="${m.foto}" alt="${m.nome}">` 
+        : (m.avatar || obterIniciais(m.nome));
+
+      return `
+        <li style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border-color);">
+          <div class="avatar-circle">
+            ${avatarHTML}
+            <div class="${isOnline ? 'online-indicator' : 'offline-indicator'}" title="${isOnline ? 'Online' : 'Offline'}"></div>
+          </div>
+          <div>
+            <strong>${m.nome}</strong>
+            <p style="font-size:0.78rem; color:var(--verde); font-weight:600;">${m.cargo}</p>
+          </div>
+        </li>
+      `;
+    }).join('') || '<p style="color:var(--text-muted);">Nenhum integrante cadastrado.</p>');
+  }
+
+  // 5. SISTEMA DE VOTAÇÃO CORRIGIDO E MELHORADO
+  window.votarEnquete = function(votacaoId, opcaoId) {
+    if (!window.db.perfil) return showToast('Por favor, informe seu nome na tela inicial!');
+
+    const votacao = window.db.votacoes.find(v => v.id === votacaoId);
+    if (!votacao) return;
+
+    if (!votacao.votosRegistrados) votacao.votosRegistrados = {};
+
+    const votoAnterior = votacao.votosRegistrados[window.db.perfil.nome];
+    
+    // Remove voto anterior se a pessoa alterar a opção
+    if (votoAnterior) {
+      const opAnt = votacao.opcoes.find(o => o.id === votoAnterior);
+      if (opAnt && opAnt.votos > 0) opAnt.votos--;
+    }
+
+    // Soma voto na nova opção
+    const opNova = votacao.opcoes.find(o => o.id === opcaoId);
+    if (opNova) {
+      opNova.votos = (opNova.votos || 0) + 1;
+      votacao.votosRegistrados[window.db.perfil.nome] = opcaoId;
       window.saveDB();
-      document.getElementById('adm-mural-id').value = '';
-      document.getElementById('adm-mural-titulo').value = '';
-      document.getElementById('adm-mural-texto').value = '';
-      showToast('Aviso salvo!');
+      showToast('Seu voto foi registrado com sucesso!');
+    }
+  };
+
+  function renderVotacoes() {
+    const container = document.getElementById('public-votacao-list');
+    if (!container) return;
+
+    container.innerHTML = window.db.votacoes.map(v => {
+      const meuVoto = v.votosRegistrados ? v.votosRegistrados[window.db.perfil?.nome] : null;
+      const totalVotos = v.opcoes.reduce((acc, curr) => acc + (curr.votos || 0), 0);
+
+      return `
+        <div style="border:1px solid var(--border-color); border-radius:10px; padding:16px; margin-bottom:15px; background:var(--card-bg);">
+          <h4 style="color:var(--roxo); margin-bottom:6px;">${v.titulo}</h4>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">${v.descricao}</p>
+          
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            ${v.opcoes.map(opt => {
+              const pct = totalVotos > 0 ? Math.round(((opt.votos || 0) / totalVotos) * 100) : 0;
+              const selecionado = meuVoto === opt.id;
+
+              return `
+                <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; background: rgba(0,0,0,0.02);">
+                  <button class="btn ${selecionado ? '' : 'btn-warning'}" onclick="votarEnquete(${v.id}, '${opt.id}')" style="width:100%; justify-content:space-between; margin-bottom:6px;">
+                    <span>${opt.texto} ${selecionado ? '✓ (Seu Voto)' : ''}</span>
+                    <span class="badge-status badge-planejamento">${opt.votos || 0} voto(s) (${pct}%)</span>
+                  </button>
+                  <div style="width:100%; background:var(--border-color); height:6px; border-radius:3px; overflow:hidden;">
+                    <div style="width:${pct}%; background:var(--verde); height:100%; transition: width 0.3s ease;"></div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }).join('') || '<p style="color:var(--text-muted);">Nenhuma votação cadastrada.</p>';
+  }
+
+  // 6. CALENDÁRIO
+  let currentCalDate = new Date();
+
+  function renderCalendario() {
+    const year = currentCalDate.getFullYear();
+    const month = currentCalDate.getMonth();
+    const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    
+    setSafeText('calendarMonthYear', `${monthNames[month]} ${year}`);
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+
+    const daysContainer = document.getElementById('calendarDays');
+    if (!daysContainer) return;
+    daysContainer.innerHTML = '';
+
+    for (let i = 0; i < firstDay; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'calendar-day-cell';
+      emptyCell.style.opacity = '0.3';
+      daysContainer.appendChild(emptyCell);
     }
 
-    function delMuralItem(id) {
-      const item = window.db.mural.find(m => m.id === id);
-      if (item) {
-        moverParaLixeira('mural', item);
-        window.db.mural = window.db.mural.filter(m => m.id !== id);
-        window.saveDB();
-        showToast('Movido para a lixeira.');
+    for (let day = 1; day <= daysInMonth; day++) {
+      const cell = document.createElement('div');
+      cell.className = 'calendar-day-cell';
+      if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+        cell.classList.add('today');
       }
+      cell.innerHTML = `<strong>${day}</strong>`;
+      daysContainer.appendChild(cell);
     }
+  }
 
-    function saveProjetoItem() {
-      const id = document.getElementById('adm-proj-id').value;
-      const nome = document.getElementById('adm-proj-nome').value.trim();
-      const desc = document.getElementById('adm-proj-desc').value.trim();
-      const status = document.getElementById('adm-proj-status').value;
-      if (!nome || !desc) return showToast('Preencha os campos.');
+  document.getElementById('btnPrevMonth')?.addEventListener('click', () => { currentCalDate.setMonth(currentCalDate.getMonth() - 1); renderCalendario(); });
+  document.getElementById('btnNextMonth')?.addEventListener('click', () => { currentCalDate.setMonth(currentCalDate.getMonth() + 1); renderCalendario(); });
+  document.getElementById('btnToday')?.addEventListener('click', () => { currentCalDate = new Date(); renderCalendario(); });
 
-      if (id) {
-        const idx = window.db.projetos.findIndex(p => p.id == id);
-        if (idx !== -1) window.db.projetos[idx] = { ...window.db.projetos[idx], nome, desc, status };
-      } else {
-        window.db.projetos.push({ id: Date.now(), nome, desc, status });
-      }
+  // 7. CHAT INTERNO (Com Degradê de Verde nas Recebidas e Roxo nas Enviadas)
+  let currentRoom = 'geral';
 
+  window.switchChatRoom = function(room, btn) {
+    currentRoom = room;
+    document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderChatMessages();
+  };
+
+  function renderChatMessages() {
+    const container = document.getElementById('chatMessages');
+    if (!container) return;
+
+    const msgs = window.db.chat[currentRoom] || [];
+    const myName = window.db.perfil?.nome || '';
+
+    container.innerHTML = msgs.map(m => {
+      const isMe = m.user === myName;
+      return `
+        <div class="chat-msg ${isMe ? 'me' : ''}">
+          <div class="meta">
+            <strong>${m.user}</strong>
+            <span>${m.time}</span>
+          </div>
+          <div>${m.text}</div>
+          ${isMe ? `<div class="actions"><button class="delete-msg-btn" onclick="apagarMensagem(${m.id})"><i class="ph ph-trash"></i> Apagar</button></div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    container.scrollTop = container.scrollHeight;
+  }
+
+  document.getElementById('chatForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    if (!window.db.perfil) return showToast('Configure seu perfil antes de enviar mensagens.');
+
+    const now = new Date();
+    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    if (!window.db.chat[currentRoom]) window.db.chat[currentRoom] = [];
+
+    window.db.chat[currentRoom].push({
+      id: Date.now(),
+      user: window.db.perfil.nome,
+      text,
+      time
+    });
+
+    input.value = '';
+    window.saveDB();
+  });
+
+  window.apagarMensagem = function(msgId) {
+    if (!window.db.chat[currentRoom]) return;
+    window.db.chat[currentRoom] = window.db.chat[currentRoom].filter(m => m.id !== msgId);
+    window.saveDB();
+  };
+
+  // 8. FINANCEIRO E GRÁFICO
+  let finChart = null;
+
+  function renderFinanceiro() {
+    setSafeHTML('public-financeiro-list', window.db.financeiro.map(f => `
+      <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color);">
+        <span>${f.desc}</span>
+        <strong style="color:${f.tipo === 'receita' ? 'var(--verde)' : 'var(--vermelho-light)'};">
+          ${f.tipo === 'receita' ? '+' : '-'} R$ ${f.valor.toFixed(2)}
+        </strong>
+      </li>
+    `).join('') || '<p style="color:var(--text-muted);">Nenhum lançamento.</p>');
+
+    renderFinanceiroChart();
+  }
+
+  function renderFinanceiroChart() {
+    const ctx = document.getElementById('financeiroChart')?.getContext('2d');
+    if (!ctx) return;
+
+    const receitas = window.db.financeiro.filter(f => f.tipo === 'receita').reduce((a, b) => a + b.valor, 0);
+    const despesas = window.db.financeiro.filter(f => f.tipo === 'despesa').reduce((a, b) => a + b.valor, 0);
+
+    if (finChart) finChart.destroy();
+
+    finChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Receitas', 'Despesas'],
+        datasets: [{
+          data: [receitas, despesas],
+          backgroundColor: ['#0B8E2F', '#EF4444']
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+  }
+
+  // 9. ÁREA ADMINISTRATIVA
+  window.autenticarAdmin = function() {
+    const pwd = document.getElementById('adminPasswordInput')?.value;
+    if (pwd === 'gremio2026' || pwd === '123') {
+      document.getElementById('admin-login-card').style.display = 'none';
+      document.getElementById('admin-panel').style.display = 'block';
+      showToast('Acesso de administrador concedido!');
+    } else {
+      showToast('Senha incorreta!');
+    }
+  };
+
+  window.deslogarAdmin = function() {
+    document.getElementById('admin-login-card').style.display = 'block';
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('adminPasswordInput').value = '';
+  };
+
+  function renderAdminPanel() {
+    // Renderiza formulários e listas de gestão no Admin
+    setSafeHTML('adm-mural-list', window.db.mural.map(m => `
+      <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span>${m.titulo}</span>
+        <button class="btn btn-danger btn-sm" onclick="deletarMural(${m.id})"><i class="ph ph-trash"></i></button>
+      </li>
+    `).join(''));
+
+    setSafeHTML('adm-membros-list', window.db.membros.map(m => `
+      <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span>${m.nome} (${m.cargo})</span>
+        <button class="btn btn-danger btn-sm" onclick="deletarMembro(${m.id})"><i class="ph ph-trash"></i></button>
+      </li>
+    `).join(''));
+  }
+
+  window.saveMuralItem = function() {
+    const titulo = document.getElementById('adm-mural-titulo')?.value.trim();
+    const texto = document.getElementById('adm-mural-texto')?.value.trim();
+    if (!titulo || !texto) return showToast('Preencha todos os campos!');
+
+    window.db.mural.push({ id: Date.now(), titulo, texto });
+    window.saveDB();
+    document.getElementById('adm-mural-titulo').value = '';
+    document.getElementById('adm-mural-texto').value = '';
+    showToast('Aviso publicado!');
+  };
+
+  window.deletarMural = function(id) {
+    window.db.mural = window.db.mural.filter(m => m.id !== id);
+    window.saveDB();
+  };
+
+  window.saveMembroItem = function() {
+    const nome = document.getElementById('adm-membro-nome')?.value.trim();
+    const cargo = document.getElementById('adm-membro-cargo')?.value.trim();
+    const fotoInput = document.getElementById('adm-membro-foto');
+
+    if (!nome || !cargo) return showToast('Preencha o nome e cargo!');
+
+    const processarEGuardar = (fotoBase64 = null) => {
+      window.db.membros.push({
+        id: Date.now(),
+        nome,
+        cargo,
+        foto: fotoBase64,
+        avatar: obterIniciais(nome),
+        lastSeen: Date.now()
+      });
       window.saveDB();
-      document.getElementById('adm-proj-id').value = '';
-      document.getElementById('adm-proj-nome').value = '';
-      document.getElementById('adm-proj-desc').value = '';
-      showToast('Projeto salvo!');
-    }
-
-    function delProjetoItem(id) {
-      const item = window.db.projetos.find(p => p.id === id);
-      if (item) {
-        moverParaLixeira('projetos', item);
-        window.db.projetos = window.db.projetos.filter(p => p.id !== id);
-        window.saveDB();
-        showToast('Projeto movido para a lixeira.');
-      }
-    }
-
-    function saveMembroItem() {
-      const id = document.getElementById('adm-membro-id').value;
-      const nome = document.getElementById('adm-membro-nome').value.trim();
-      const cargo = document.getElementById('adm-membro-cargo').value.trim();
-      if (!nome || !cargo) return showToast('Preencha os dados.');
-
-      if (id) {
-        const idx = window.db.membros.findIndex(m => m.id == id);
-        if (idx !== -1) window.db.membros[idx] = { ...window.db.membros[idx], nome, cargo, avatar: obterIniciais(nome) };
-      } else {
-        window.db.membros.push({ id: Date.now(), nome, cargo, avatar: obterIniciais(nome), online: true });
-      }
-
-      window.saveDB();
-      document.getElementById('adm-membro-id').value = '';
       document.getElementById('adm-membro-nome').value = '';
       document.getElementById('adm-membro-cargo').value = '';
-      showToast('Integrante salvo!');
+      if (fotoInput) fotoInput.value = '';
+      showToast('Integrante cadastrado!');
+    };
+
+    if (fotoInput && fotoInput.files && fotoInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) { processarEGuardar(e.target.result); };
+      reader.readAsDataURL(fotoInput.files[0]);
+    } else {
+      processarEGuardar(null);
+    }
+  };
+
+  window.deletarMembro = function(id) {
+    window.db.membros = window.db.membros.filter(m => m.id !== id);
+    window.saveDB();
+  };
+
+  // Filtros de pesquisa nas tabelas/listas
+  window.filterList = function(listId, query) {
+    const list = document.getElementById(listId);
+    if (!list) return;
+    const items = list.getElementsByTagName('li');
+    const term = query.toLowerCase();
+
+    for (let item of items) {
+      item.style.display = item.innerText.toLowerCase().includes(term) ? '' : 'none';
+    }
+  };
+
+  window.filterProjects = function(query) {
+    const container = document.getElementById('public-projetos-list');
+    if (!container) return;
+    const items = container.children;
+    const term = query.toLowerCase();
+
+    for (let item of items) {
+      item.style.display = item.innerText.toLowerCase().includes(term) ? '' : 'none';
+    }
+  };
+
+  // Inicialização no carregamento da janela
+  window.addEventListener('DOMContentLoaded', () => {
+    // Carrega dados salvos do perfil se existirem
+    const perfSalvo = localStorage.getItem('fala_estudante_perfil');
+    if (perfSalvo) {
+      try { window.db.perfil = JSON.parse(perfSalvo); } catch(e){}
     }
 
-    function delMembroItem(id) {
-      window.db.membros = window.db.membros.filter(m => m.id !== id);
-      window.saveDB();
-      showToast('Integrante removido.');
-    }
+    updateProfileUI();
+    refreshAllUI();
+  });
+</script>
 
-    function saveFinanceiroItem() {
-      const id = document.getElementById('adm-fin-id').value;
-      const desc = document.getElementById('adm-fin-desc').value.trim();
-      const valor = parseFloat(document.getElementById('adm-fin-valor').value);
-      const tipo = document.getElementById('adm-fin-tipo').value;
-      if (!desc || isNaN(valor) || valor <= 0) return showToast('Preencha os valores.');
-
-      if (id) {
-        const idx = window.db.financeiro.findIndex(f => f.id == id);
-        if (idx !== -1) window.db.financeiro[idx] = { ...window.db.financeiro[idx], desc, valor, tipo };
-      } else {
-        window.db.financeiro.push({ id: Date.now(), desc, valor, tipo, data: new Date().toLocaleDateString('pt-BR') });
-      }
-
-      window.saveDB();
-      document.getElementById('adm-fin-id').value = '';
-      document.getElementById('adm-fin-desc').value = '';
-      document.getElementById('adm-fin-valor').value = '';
-      showToast('Lançamento salvo!');
-    }
-
-    function delFinanceiroItem(id) {
-      const item = window.db.financeiro.find(f => f.id === id);
-      if (item) {
-        moverParaLixeira('financeiro', item);
-        window.db.financeiro = window.db.financeiro.filter(f => f.id !== id);
-        window.saveDB();
-        showToast('Lançamento movido para a lixeira.');
-      }
-    }
-
-    window.restaurarLixeira = function(lixeiraId) {
-      const item = window.db.lixeira.find(l => l.id === lixeiraId);
-      if (!item) return;
-
-      if (item.tipoOrigem === 'mural') window.db.mural.push(item.dados);
-      else if (item.tipoOrigem === 'projetos') window.db.projetos.push(item.dados);
-      else if (item.tipoOrigem === 'financeiro') window.db.financeiro.push(item.dados);
-      else if (item.tipoOrigem === 'votacoes') window.db.votacoes.push(item.dados);
-
-      window.db.lixeira = window.db.lixeira.filter(l => l.id !== lixeiraId);
-      window.saveDB();
-      showToast('Item restaurado com sucesso!');
-    };
-
-    window.excluirPermanenteLixeira = function(lixeiraId) {
-      window.db.lixeira = window.db.lixeira.filter(l => l.id !== lixeiraId);
-      window.saveDB();
-      showToast('Item excluído permanentemente.');
-    };
-
-    window.salvarChamada = function() {
-      const inputs = document.querySelectorAll('.presenca-input');
-      inputs.forEach(inp => {
-        const membroId = inp.dataset.id;
-        window.db.presencas[membroId] = inp.value;
-      });
-      window.saveDB();
-      showToast('Frequência salva!');
-    };
-
-    window.limparChamada = function() {
-      if (confirm("Tem certeza de que deseja apagar os dados de frequência da chamada atual?")) {
-        window.db.presencas = {};
-        window.saveDB();
-        showToast('Frequência reiniciada!');
-      }
-    };
-
-    /* VOTAÇÕES DA GESTÃO */
-    window.votarEnquete = function(votacaoId, opcaoId) {
-      if (!window.db.perfil) return showToast('Faça login primeiro.');
-
-      const votacao = window.db.votacoes.find(v => v.id === votacaoId);
-      if (!votacao) return;
-
-      if (!votacao.votosRegistrados) votacao.votosRegistrados = {};
-
-      const votoAnterior = votacao.votosRegistrados[window.db.perfil.nome];
-      if (votoAnterior) {
-        const opAnt = votacao.opcoes.find(o => o.id === votoAnterior);
-        if (opAnt && opAnt.votos > 0) opAnt.votos--;
-      }
-
-      const opNova = votacao.opcoes.find(o => o.id === opcaoId);
-      if (opNova) {
-        opNova.votos++;
-        votacao.votosRegistrados[window.db.perfil.nome] = opcaoId;
-        window.saveDB();
-        showToast('Seu voto foi registrado com sucesso!');
-      }
-    };
-
-    /* GERENCIAMENTO DE VOTAÇÕES NA ÁREA RESTRITA */
-    window.saveVotacaoItem = function() {
-      const id = document.getElementById('adm-votacao-id').value;
-      const titulo = document.getElementById('adm-votacao-titulo').value.trim();
-      const descricao = document.getElementById('adm-votacao-desc').value.trim();
-      const op1Text = document.getElementById('adm-votacao-op1').value.trim();
-      const op2Text = document.getElementById('adm-votacao-op2').value.trim();
-      const op3Text = document.getElementById('adm-votacao-op3').value.trim();
-
-      if (!titulo || !descricao || !op1Text || !op2Text) {
-        return showToast('Preencha o título, descrição e pelo menos 2 opções!');
-      }
-
-      if (id) {
-        const idx = window.db.votacoes.findIndex(v => v.id == id);
-        if (idx !== -1) {
-          const vAtual = window.db.votacoes[idx];
-          
-          const novasOpcoes = [
-            { id: 'opt1', texto: op1Text, votos: vAtual.opcoes[0] ? vAtual.opcoes[0].votos : 0 },
-            { id: 'opt2', texto: op2Text, votos: vAtual.opcoes[1] ? vAtual.opcoes[1].votos : 0 }
-          ];
-
-          if (op3Text) {
-            novasOpcoes.push({ id: 'opt3', texto: op3Text, votos: vAtual.opcoes[2] ? vAtual.opcoes[2].votos : 0 });
-          }
-
-          window.db.votacoes[idx] = {
-            ...vAtual,
-            titulo,
-            descricao,
-            opcoes: novasOpcoes
-          };
-        }
-      } else {
-        const novasOpcoes = [
-          { id: 'opt1', texto: op1Text, votos: 0 },
-          { id: 'opt2', texto: op2Text, votos: 0 }
-        ];
-
-        if (op3Text) {
-          novasOpcoes.push({ id: 'opt3', texto: op3Text, votos: 0 });
-        }
-
-        window.db.votacoes.push({
-          id: Date.now(),
-          titulo,
-          descricao,
-          opcoes: novasOpcoes,
-          votosRegistrados: {}
-        });
-      }
-
-      window.saveDB();
-      cancelarEdicaoVotacao();
-      showToast('Votação salva com sucesso!');
-    };
-
-    window.editVotacaoItem = function(id) {
-      const v = window.db.votacoes.find(item => item.id === id);
-      if (!v) return;
-
-      document.getElementById('adm-votacao-id').value = v.id;
-      document.getElementById('adm-votacao-titulo').value = v.titulo;
-      document.getElementById('adm-votacao-desc').value = v.descricao;
-      document.getElementById('adm-votacao-op1').value = v.opcoes[0]?.texto || '';
-      document.getElementById('adm-votacao-op2').value = v.opcoes[1]?.texto || '';
-      document.getElementById('adm-votacao-op3').value = v.opcoes[2]?.texto || '';
-      
-      document.getElementById('btn-cancelar-votacao').style.display = 'inline-flex';
-    };
-
-    window.cancelarEdicaoVotacao = function() {
-      document.getElementById('adm-votacao-id').value = '';
-      document.getElementById('adm-votacao-titulo').value = '';
-      document.getElementById('adm-votacao-desc').value = '';
-      document.getElementById('adm-votacao-op1').value = '';
-      document.getElementById('adm-votacao-op2').value = '';
-      document.getElementById('adm-votacao-op3').value = '';
-      document.getElementById('btn-cancelar-votacao').style.display = 'none';
-    };
-
-    window.delVotacaoItem = function(id) {
-      const item = window.db.votacoes.find(v => v.id === id);
-      if (item) {
-        moverParaLixeira('votacoes', item);
-        window.db.votacoes = window.db.votacoes.filter(v => v.id !== id);
-        window.saveDB();
-        showToast('Votação movida para a lixeira.');
-      }
-    };
-
-    function renderVotacoes() {
-      const container = document.getElementById('public-votacao-list');
-      if (!container) return;
-
-      container.innerHTML = window.db.votacoes.map(v => {
-        const meuVoto = v.votosRegistrados ? v.votosRegistrados[window.db.perfil?.nome] : null;
-
-        return `
-          <div style="border:1px solid var(--border-color); border-radius:10px; padding:16px; margin-bottom:15px; background:var(--card-bg);">
-            <h4 style="color:var(--roxo); margin-bottom:6px;">${v.titulo}</h4>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">${v.descricao}</p>
-            
-            <div style="display:flex; flex-direction:column; gap:8px;">
-              ${v.opcoes.map(opt => `
-                <button class="btn ${meuVoto === opt.id ? '' : 'btn-warning'}" onclick="votarEnquete(${v.id}, '${opt.id}')" 
-                        style="justify-content:space-between; text-align:left;">
-                  <span>${opt.texto} ${meuVoto === opt.id ? '✓ (Seu Voto)' : ''}</span>
-                  <span class="badge-status badge-planejamento">${opt.votos} voto(s)</span>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-        `;
-      }).join('') || '<p style="color:var(--text-muted);">Nenhuma votação cadastrada.</p>';
-    }
-
-    function checkUserProfile() {
-      if (!window.db.perfil) {
-        document.getElementById('welcome-screen').style.display = 'flex';
-      } else {
-        document.getElementById('welcome-screen').style.display = 'none';
-        document.getElementById('headerName').innerText = window.db.perfil.nome;
-        document.getElementById('headerRole').innerText = window.db.perfil.cargo || 'Membro';
-        document.getElementById('headerTurma').innerText = window.db.perfil.turma;
-        
-        const iniciais = window.db.perfil.nome.trim().substring(0, 2).toUpperCase();
-        const avatarElem = document.getElementById('headerAvatar');
-        if (avatarElem) {
-          avatarElem.innerHTML = `${iniciais}<div class="online-indicator"></div>`;
-        }
-      }
-    }
-
-    function salvarPerfilInicial() {
-      const nome = document.getElementById('welcome-nome').value.trim();
-      const cargo = document.getElementById('welcome-cargo').value.trim() || 'Estudante';
-      const turma = document.getElementById('welcome-turma').value.trim();
-
-      if (!nome || !turma) {
-        showToast("Preencha seu Nome e Turma para continuar!");
-        return;
-      }
-
-      window.db.perfil = { nome, cargo, turma };
-      localStorage.setItem('fala_estudante_perfil', JSON.stringify(window.db.perfil));
-      checkUserProfile();
-      showToast(`Bem-vindo(a), ${nome}!`);
-    }    document.addEventListener("DOMContentLoaded", () => {
-      checkUserProfile();
-
-      document.getElementById('btnSalvarPerfilInicial')?.addEventListener('click', salvarPerfilInicial);
-
-      document.getElementById('chatForm')?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = document.getElementById('chatInput');
-        const text = input ? input.value.trim() : '';
-        if (!text || !window.db.perfil) return;
-
-        if (!window.db.chat[currentRoom]) window.db.chat[currentRoom] = [];
-
-        window.db.chat[currentRoom].push({
-          id: Date.now(),
-          sender: `${window.db.perfil.nome} (${window.db.perfil.turma})`,
-          role: window.db.perfil.cargo,
-          text: text,
-          date: new Date().toLocaleDateString('pt-BR'),
-          time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-          visto: true
-        });
-
-        if (window.db.digitando[window.db.perfil.nome]) {
-          delete window.db.digitando[window.db.perfil.nome];
-        }
-
-        window.saveDB();
-        input.value = '';
-      });
-    });
-
-    window.switchTab = function(tabName, btn) {
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      
-      document.getElementById(`tab-${tabName}`)?.classList.add('active');
-      if (btn) btn.classList.add('active');
-      document.getElementById('mainSidebar')?.classList.remove('open');
-    };
-
-    window.switchChatRoom = function(room, element) {
-      currentRoom = room;
-      document.querySelectorAll('.room-btn').forEach(btn => btn.classList.remove('active'));
-      if (element) element.classList.add('active');
-      renderChatMessages();
-    };
-
-    function renderChatMessages() {
-      const container = document.getElementById('chatMessages');
-      if (!container) return;
-      const msgs = window.db.chat[currentRoom] || [];
-
-      container.innerHTML = msgs.map((m) => {
-        const isMe = window.db.perfil && m.sender.startsWith(window.db.perfil.nome);
-        return `
-          <div class="chat-msg ${isMe ? 'me' : ''}">
-            <div class="meta">
-              <span><strong>${isMe ? 'Você' : m.sender}</strong> (${m.role})</span>
-              <span>${m.time}</span>
-            </div>
-            <div>${m.text}</div>
-            <div class="actions">
-              <span style="opacity:0.8;" title="Mensagem Visualizada"><i class="ph ph-check-double"></i> Visto</span>
-              ${isMe || isAdminAuth ? `<button class="delete-msg-btn" onclick="deleteChatMessage(${m.id})" title="Apagar Mensagem"><i class="ph ph-trash"></i> Apagar</button>` : ''}
-            </div>
-          </div>
-        `;
-      }).join('') || '<p style="text-align:center; color:var(--text-muted); margin-top:20px;">Sem mensagens nesta sala.</p>';
-
-      container.scrollTop = container.scrollHeight;
-
-      const quemDigita = Object.keys(window.db.digitando || {}).filter(n => n !== window.db.perfil?.nome);
-      setSafeText('typingStatus', quemDigita.length > 0 ? `${quemDigita.join(', ')} está digitando...` : '');
-    }
-
-    window.renderApp = function() {
-      setSafeText('kpi-membros', window.db.membros.length);
-      setSafeText('kpi-projetos', window.db.projetos.filter(p => p.status !== 'concluido').length);
-      setSafeText('kpi-eventos', window.db.eventos.length);
-
-      const muralOrdenado = [...window.db.mural].sort((a,b) => b.id - a.id);
-      const ultAviso = muralOrdenado[0];
-
-      setSafeHTML('dash-ultimo-comunicado', ultAviso ? `
-        <h4 style="color:var(--roxo);">${ultAviso.titulo}</h4>
-        <p style="font-size:0.85rem;">${ultAviso.texto}</p>
-      ` : '<p style="color:var(--text-muted);">Nenhum aviso no mural.</p>');
-
-      setSafeHTML('public-mural-list', muralOrdenado.map(m => `
-        <li style="padding:10px 0; border-bottom:1px solid var(--border-color);">
-          <strong style="color:var(--roxo);">${m.titulo}</strong>
-          <p style="font-size:0.85rem;">${m.texto}</p>
-          <span style="font-size:0.75rem; color:var(--text-muted);">${m.data || ''}</span>
-        </li>
-      `).join('') || '<p style="color:var(--text-muted);">Nenhum aviso no mural.</p>');
-
-      const statusLabels = { planejamento: "Em Planejamento", em_andamento: "Em Andamento", concluido: "Concluído" };
-      setSafeHTML('public-projetos-list', window.db.projetos.map(p => `
-        <div style="padding:12px; border:1px solid var(--border-color); border-radius:8px; margin-bottom:10px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <strong style="color:var(--roxo); font-size:1rem;">${p.nome}</strong>
-            <span class="badge-status badge-${p.status}">${statusLabels[p.status] || p.status}</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--text-color);">${p.desc}</p>
-        </div>
-      `).join('') || '<p style="color:var(--text-muted);">Nenhum projeto cadastrado.</p>');
-
-      setSafeHTML('public-membros-list', window.db.membros.map(m => {
-        const isOnline = m.online !== false;
-        return `
-          <li style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border-color);">
-            <div class="avatar-circle">
-              ${m.avatar || obterIniciais(m.nome)}
-              <div class="${isOnline ? 'online-indicator' : 'offline-indicator'}" title="${isOnline ? 'Online' : 'Offline'}"></div>
-            </div>
-            <div>
-              <strong>${m.nome}</strong>
-              <p style="font-size:0.78rem; color:var(--verde); font-weight:600;">${m.cargo}</p>
-            </div>
-          </li>
-        `;
-      }).join('') || '<p style="color:var(--text-muted);">Nenhum integrante cadastrado.</p>');
-
-      const totalReceita = window.db.financeiro.filter(f => f.tipo === 'receita').reduce((a,b) => a + b.valor, 0);
-      const totalDespesa = window.db.financeiro.filter(f => f.tipo === 'despesa').reduce((a,b) => a + b.valor, 0);
-      const saldo = totalReceita - totalDespesa;
-      const totalMovimentado = totalReceita + totalDespesa;
-      
-      const pctReceita = totalMovimentado > 0 ? ((totalReceita / totalMovimentado) * 100).toFixed(1) : 0;
-      const pctDespesa = totalMovimentado > 0 ? ((totalDespesa / totalMovimentado) * 100).toFixed(1) : 0;
-
-      const saldoFormatado = saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      setSafeText('dash-saldo', saldoFormatado);
-      setSafeText('fin-saldo-destaque', saldoFormatado);
-      setSafeText('admin-saldo-caixa', saldoFormatado);
-      
-      setSafeText('fin-percentual-resumo', `Entradas: ${pctReceita}% | Saídas: ${pctDespesa}%`);
-
-      setSafeHTML('public-financeiro-list', window.db.financeiro.map(f => `
-        <li style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-color);">
-          <div><strong>${f.desc}</strong><p style="font-size:0.75rem; color:var(--text-muted);">${f.data}</p></div>
-          <span style="font-weight:bold; color:${f.tipo === 'receita' ? 'var(--verde)' : 'var(--vermelho-light)'};">
-            ${f.tipo === 'receita' ? '+' : '-'} ${f.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </span>
-        </li>
-      `).join('') || '<p style="color:var(--text-muted);">Nenhum lançamento.</p>');
-
-      renderVotacoes();
-      renderCalendar();
-      renderChatMessages();
-      renderFinanceChart(totalReceita, totalDespesa, pctReceita, pctDespesa);
-
-      if (isAdminAuth) renderAdminLists();
-    };
-
-    function renderAdminLists() {
-      setSafeHTML('adm-votacoes-list', window.db.votacoes.map(v => `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color);">
-          <span><strong>${v.titulo}</strong></span>
-          <div style="display:flex; gap:4px;">
-            <button class="btn btn-sm" onclick="editVotacaoItem(${v.id})"><i class="ph ph-pencil"></i> Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="delVotacaoItem(${v.id})"><i class="ph ph-trash"></i> Excluir</button>
-          </div>
-        </div>
-      `).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Nenhuma votação ativa.</p>');
-
-      setSafeHTML('adm-mural-list', window.db.mural.map(m => `
-        <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
-          <span><strong>${m.titulo}</strong></span>
-          <div>
-            <button class="btn btn-danger btn-sm" onclick="delMuralItem(${m.id})"><i class="ph ph-trash"></i> Excluir</button>
-          </div>
-        </li>
-      `).join(''));
-
-      setSafeHTML('adm-projetos-list', window.db.projetos.map(p => `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
-          <span><strong>${p.nome}</strong></span>
-          <div>
-            <button class="btn btn-danger btn-sm" onclick="delProjetoItem(${p.id})"><i class="ph ph-trash"></i> Excluir</button>
-          </div>
-        </div>
-      `).join(''));
-
-      setSafeHTML('adm-membros-list', window.db.membros.map(m => `
-        <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
-          <span>${m.nome} (${m.cargo})</span>
-          <div>
-            <button class="btn btn-danger btn-sm" onclick="delMembroItem(${m.id})"><i class="ph ph-trash"></i> Remover</button>
-          </div>
-        </li>
-      `).join(''));
-
-      setSafeHTML('adm-financeiro-list', window.db.financeiro.map(f => `
-        <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
-          <span>${f.desc} - R$ ${f.valor.toFixed(2)}</span>
-          <div>
-            <button class="btn btn-danger btn-sm" onclick="delFinanceiroItem(${f.id})"><i class="ph ph-trash"></i> Excluir</button>
-          </div>
-        </li>
-      `).join(''));
-
-      setSafeHTML('adm-lixeira-list', window.db.lixeira.map(l => `
-        <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color); font-size:0.85rem;">
-          <div>
-            <strong style="text-transform:capitalize; color:var(--roxo);">[${l.tipoOrigem}]</strong> 
-            ${l.dados.titulo || l.dados.nome || l.dados.desc}
-          </div>
-          <div style="display:flex; gap:4px;">
-            <button class="btn btn-sm" onclick="restaurarLixeira(${l.id})" title="Restaurar"><i class="ph ph-arrow-u-up-left"></i></button>
-            <button class="btn btn-danger btn-sm" onclick="excluirPermanenteLixeira(${l.id})" title="Apagar Definitivamente"><i class="ph ph-x"></i></button>
-          </div>
-        </li>
-      `).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Lixeira vazia.</p>');
-
-      setSafeHTML('adm-chamada-list', window.db.membros.map(m => {
-        const pVal = window.db.presencas[m.id] || 'presente';
-        return `
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color);">
-            <span style="font-size:0.85rem;"><strong>${m.nome}</strong></span>
-            <select class="form-control presenca-input" data-id="${m.id}" style="width:120px; margin-bottom:0; padding:4px;">
-              <option value="presente" ${pVal === 'presente' ? 'selected' : ''}>Presente</option>
-              <option value="ausente" ${pVal === 'ausente' ? 'selected' : ''}>Ausente</option>
-            </select>
-          </div>
-        `;
-      }).join('') || '<p style="color:var(--text-muted); font-size:0.85rem;">Nenhum membro cadastrado.</p>');
-
-      renderPresencaChart();
-    }
-
-    function renderCalendar() {
-      const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-      setSafeText('calendarMonthYear', `${monthNames[currentMonth]} ${currentYear}`);
-
-      const grid = document.getElementById('calendarDays');
-      if (!grid) return;
-
-      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      grid.innerHTML = '';
-
-      for (let i = 0; i < firstDay; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.style.opacity = '0.2';
-        grid.appendChild(emptyCell);
-      }
-
-      const today = new Date();
-      for (let day = 1; day <= daysInMonth; day++) {
-        const cell = document.createElement('div');
-        cell.className = 'calendar-day-cell';
-        if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
-          cell.classList.add('today');
-        }
-        cell.innerHTML = `<strong>${day}</strong>`;
-
-        const formattedDay = String(day).padStart(2, '0');
-        const formattedMonth = String(currentMonth + 1).padStart(2, '0');
-        const dateStr = `${currentYear}-${formattedMonth}-${formattedDay}`;
-
-        window.db.eventos.filter(e => e.data === dateStr).forEach(ev => {
-          const tag = document.createElement('span');
-          tag.style.backgroundColor = ev.cor || "#0B8E2F";
-          tag.style.color = "#ffffff";
-          tag.style.fontSize = "0.7rem";
-          tag.style.borderRadius = "4px";
-          tag.style.padding = "2px 4px";
-          tag.style.display = "block";
-          tag.style.marginTop = "2px";
-          tag.innerText = ev.nome;
-          cell.appendChild(tag);
-        });
-
-        grid.appendChild(cell);
-      }
-    }
-
-    function renderFinanceChart(receitas, despesas, pctR, pctD) {
-      const ctx = document.getElementById('financeiroChart');
-      if (!ctx) return;
-      if (chartInstance) chartInstance.destroy();
-
-      chartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: [`Entradas (${pctR}%)`, `Saídas (${pctD}%)`],
-          datasets: [{ data: [receitas, despesas], backgroundColor: ['#0B8E2F', '#EF4444'] }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-    }
-
-    function renderPresencaChart() {
-      const ctx = document.getElementById('presencaChart');
-      if (!ctx) return;
-      if (chartPresencaInstance) chartPresencaInstance.destroy();
-
-      const vals = Object.values(window.db.presencas || {});
-      const presentes = vals.filter(v => v === 'presente').length;
-      const ausentes = vals.filter(v => v === 'ausente').length;
-
-      chartPresencaInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['Presentes', 'Ausentes'],
-          datasets: [{
-            label: 'Integrantes',
-            data: [presentes, ausentes],
-            backgroundColor: ['#0B8E2F', '#EF4444']
-          }]
-        },
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: false,
-          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-        }
-      });
-    }
-
-    document.getElementById('btnPrevMonth')?.addEventListener('click', () => {
-      currentMonth--;
-      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-      renderCalendar();
-    });
-
-    document.getElementById('btnNextMonth')?.addEventListener('click', () => {
-      currentMonth++;
-      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-      renderCalendar();
-    });
-
-    document.getElementById('btnToday')?.addEventListener('click', () => {
-      const now = new Date();
-      currentMonth = now.getMonth();
-      currentYear = now.getFullYear();
-      renderCalendar();
-    });
-  </script>
 </body>
 </html>
