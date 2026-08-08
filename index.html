@@ -225,7 +225,7 @@
     .chat-main { flex: 1; display: flex; flex-direction: column; }
     .chat-messages { flex: 1; overflow-y: auto; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; display: flex; flex-direction: column; }
     
-    /* CHAT DEGRADÊ: RECEBIDO (VERDE DEGRADÊ), ENVIADO (ROXO) */
+    /* CHAT DEGRADÊ VERDE MENSAGENS RECEBIDAS */
     .chat-msg { 
       margin-bottom: 12px; 
       padding: 10px 14px; 
@@ -248,11 +248,6 @@
       border-bottom-right-radius: 2px;
     }
     .chat-msg .meta { font-size: 0.72rem; display: flex; justify-content: space-between; gap: 12px; margin-bottom: 4px; opacity: 0.9; }
-    .chat-msg .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 0.75rem; }
-    .delete-msg-btn { background: none; border: none; color: #FCA5A5; cursor: pointer; font-size: 0.8rem; padding: 0 4px; }
-    .chat-msg.me .delete-msg-btn { color: #FCA5A5; }
-
-    .typing-status { font-size: 0.75rem; font-style: italic; color: var(--text-muted); height: 18px; margin-bottom: 4px; }
 
     .badge-status { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; color: white; }
     .badge-em_andamento { background: var(--amarelo); color: #1E293B; }
@@ -306,7 +301,7 @@
       <input type="text" id="welcome-cargo" class="form-control" placeholder="Seu Cargo (Ex: Presidente, Diretor, Estudante)">
       <input type="text" id="welcome-turma" class="form-control" placeholder="Sua Turma (Ex: 3º Ano A, 1º Ano B)" required>
       
-      <label style="font-size:0.8rem; display:block; text-align:left; margin-bottom:4px; color:var(--text-muted);">Foto de Perfil (Opcional):</label>
+      <label style="font-size:0.8rem; display:block; text-align:left; margin-bottom:4px; color:var(--text-muted);">Foto de Perfil (Abre a galeria):</label>
       <input type="file" id="welcome-foto" class="form-control" accept="image/*">
       
       <button class="btn" id="btnSalvarPerfilInicial" style="width:100%; justify-content:center; margin-top:10px;">
@@ -314,7 +309,8 @@
       </button>
     </div>
   </div>
-    <div class="app-container">
+
+  <div class="app-container">
     <sidebar id="mainSidebar">
       <button class="nav-btn active" onclick="switchTab('dashboard', this)"><i class="ph ph-house"></i> Dashboard</button>
       <button class="nav-btn" onclick="switchTab('mural', this)"><i class="ph ph-megaphone"></i> Mural</button>
@@ -342,7 +338,7 @@
           </div>
           <div class="kpi-card">
             <i class="ph ph-calendar-event kpi-icon"></i>
-            <div><p style="font-size:0.75rem; color:var(--text-muted);">Eventos</p><h3 id="kpi-eventos">0</h3></div>
+            <div><p style="font-size:0.75rem; color:var(--text-muted);">Avisos</p><h3 id="kpi-eventos">0</h3></div>
           </div>
           <div class="kpi-card">
             <i class="ph ph-wallet kpi-icon"></i>
@@ -353,7 +349,7 @@
         <div class="grid-2">
           <div class="card">
             <h3><i class="ph ph-info"></i> Último Comunicado</h3>
-            <div id="dash-ultimo-comunicado"><p style="color:var(--text-muted);">Sincronizando...</p></div>
+            <div id="dash-ultimo-comunicado"><p style="color:var(--text-muted);">Nenhum comunicado no momento.</p></div>
           </div>
         </div>
       </section>
@@ -361,7 +357,7 @@
       <section id="tab-mural" class="tab-content">
         <div class="card">
           <h3><i class="ph ph-megaphone"></i> Mural de Avisos</h3>
-          <input type="text" id="search-mural" class="form-control" placeholder="🔍 Pesquisar avisos..." onkeyup="filterList('public-mural-list', this.value)">
+          <input type="text" class="form-control" placeholder="🔍 Pesquisar avisos..." onkeyup="filterList('public-mural-list', this.value)">
           <ul id="public-mural-list" style="list-style:none;"></ul>
         </div>
       </section>
@@ -369,7 +365,7 @@
       <section id="tab-projetos" class="tab-content">
         <div class="card">
           <h3><i class="ph ph-folder"></i> Projetos da Gestão</h3>
-          <input type="text" id="search-projetos" class="form-control" placeholder="🔍 Pesquisar projetos..." onkeyup="filterProjects(this.value)">
+          <input type="text" class="form-control" placeholder="🔍 Pesquisar projetos..." onkeyup="filterProjects(this.value)">
           <div id="public-projetos-list"></div>
         </div>
       </section>
@@ -377,15 +373,15 @@
       <section id="tab-membros" class="tab-content">
         <div class="card">
           <h3><i class="ph ph-users"></i> Integrantes da Gestão</h3>
-          <input type="text" id="search-membros" class="form-control" placeholder="🔍 Pesquisar integrantes..." onkeyup="filterList('public-membros-list', this.value)">
+          <input type="text" class="form-control" placeholder="🔍 Pesquisar integrantes..." onkeyup="filterList('public-membros-list', this.value)">
           <ul id="public-membros-list" style="list-style:none;"></ul>
         </div>
       </section>
 
       <section id="tab-votacao" class="tab-content">
         <div class="card">
-          <h3><i class="ph ph-check-square"></i> Votações Abertas</h3>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Participe das decisões do Grêmio Estudantil votando nas enquetes e propostas ativas.</p>
+          <h3><i class="ph ph-check-square"></i> Votações e Enquetes</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Participe das decisões do Grêmio Estudantil votando nas enquetes abaixo.</p>
           <div id="public-votacao-list"></div>
         </div>
       </section>
@@ -409,7 +405,7 @@
 
       <section id="tab-chat" class="tab-content">
         <div class="card">
-          <h3><i class="ph ph-chats-teardrop"></i> Chat Interno Online</h3>
+          <h3><i class="ph ph-chats-teardrop"></i> Chat Interno</h3>
           <div class="chat-layout">
             <div class="chat-rooms">
               <button class="room-btn active" onclick="switchChatRoom('geral', this)"># Geral</button>
@@ -418,9 +414,8 @@
             </div>
             <div class="chat-main">
               <div class="chat-messages" id="chatMessages"></div>
-              <div class="typing-status" id="typingStatus"></div>
               <form id="chatForm" style="display:flex; gap:8px;">
-                <input type="text" id="chatInput" class="form-control" style="margin-bottom:0;" placeholder="Digite sua mensagem ao vivo..." oninput="handleChatTyping()" required>
+                <input type="text" id="chatInput" class="form-control" style="margin-bottom:0;" placeholder="Digite sua mensagem..." required>
                 <button type="submit" class="btn"><i class="ph ph-paper-plane-right"></i> Enviar</button>
               </form>
             </div>
@@ -432,12 +427,11 @@
         <div class="fin-summary-box">
           <p style="font-size:0.9rem; color:var(--text-muted);">Saldo Total Disponível no Grêmio</p>
           <h2 id="fin-saldo-destaque" style="color:var(--verde); font-size:2rem; margin:5px 0;">R$ 0,00</h2>
-          <p id="fin-percentual-resumo" style="font-size:0.85rem; font-weight:bold; color:var(--roxo);"></p>
         </div>
 
         <div class="grid-2">
           <div class="card">
-            <h3><i class="ph ph-chart-pie"></i> Distribuição Financeira (%)</h3>
+            <h3><i class="ph ph-chart-pie"></i> Distribuição Financeira</h3>
             <div style="height: 220px;"><canvas id="financeiroChart"></canvas></div>
           </div>
           <div class="card">
@@ -459,88 +453,51 @@
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
             <div>
               <h2 style="color:var(--roxo);"><i class="ph ph-shield-check"></i> Painel de Gerenciamento</h2>
-              <span style="font-size:0.9rem; font-weight:bold; color:var(--verde);">Caixa do Grêmio: <span id="admin-saldo-caixa">R$ 0,00</span></span>
+              <span style="font-size:0.9rem; font-weight:bold; color:var(--verde);">Caixa: <span id="admin-saldo-caixa">R$ 0,00</span></span>
             </div>
             <button class="btn btn-warning btn-sm" onclick="deslogarAdmin()"><i class="ph ph-sign-out"></i> Sair do Admin</button>
           </div>
 
           <div class="grid-2">
             <div class="card">
-              <h3><i class="ph ph-check-square-offset"></i> Presença em Reuniões</h3>
-              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Registre a frequência dos membros na última reunião.</p>
-              
-              <div id="adm-chamada-list" style="max-height:200px; overflow-y:auto; margin-bottom:12px;"></div>
-              
-              <div style="display:flex; gap:8px;">
-                <button class="btn" onclick="salvarChamada()"><i class="ph ph-floppy-disk"></i> Salvar Frequência</button>
-                <button class="btn btn-danger" onclick="limparChamada()"><i class="ph ph-trash"></i> Reiniciar Frequência</button>
-              </div>
-
-              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-              
-              <h4>Assiduidade Geral</h4>
-              <div style="height: 180px; margin-top:10px;"><canvas id="presencaChart"></canvas></div>
-            </div>
-
-            <div class="card">
-              <h3 id="adm-mural-form-title"><i class="ph ph-megaphone"></i> Novo Aviso no Mural</h3>
-              <input type="hidden" id="adm-mural-id">
+                       <h3><i class="ph ph-megaphone"></i> Criar Aviso</h3>
               <input type="text" id="adm-mural-titulo" class="form-control" placeholder="Título do aviso">
-              <textarea id="adm-mural-texto" class="form-control" rows="3" placeholder="Descrição do comunicado"></textarea>
+              <textarea id="adm-mural-texto" class="form-control" rows="3" placeholder="Descrição"></textarea>
               <button class="btn" onclick="saveMuralItem()"><i class="ph ph-floppy-disk"></i> Salvar Aviso</button>
               <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-              <h4>Avisos Publicados</h4>
-              <ul id="adm-mural-list" style="list-style:none; margin-top:10px;"></ul>
+              <ul id="adm-mural-list" style="list-style:none;"></ul>
             </div>
 
             <div class="card">
-              <h3 id="adm-proj-form-title"><i class="ph ph-folder-plus"></i> Novo Projeto</h3>
-              <input type="hidden" id="adm-proj-id">
-              <input type="text" id="adm-proj-nome" class="form-control" placeholder="Nome do Projeto">
-              <textarea id="adm-proj-desc" class="form-control" rows="2" placeholder="Descrição detalhada"></textarea>
-              <select id="adm-proj-status" class="form-control">
-                <option value="planejamento">Em Planejamento</option>
-                <option value="em_andamento">Em Andamento</option>
-                <option value="concluido">Concluído</option>
-              </select>
-              <button class="btn" onclick="saveProjetoItem()"><i class="ph ph-floppy-disk"></i> Salvar Projeto</button>
-              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-              <h4>Projetos Cadastrados</h4>
-              <div id="adm-projetos-list" style="margin-top:10px;"></div>
+              <h3><i class="ph ph-check-square"></i> Criar Nova Votação</h3>
+              <input type="text" id="adm-vot-titulo" class="form-control" placeholder="Título da Votação">
+              <input type="text" id="adm-vot-desc" class="form-control" placeholder="Descrição">
+              <input type="text" id="adm-vot-op1" class="form-control" placeholder="Opção 1">
+              <input type="text" id="adm-vot-op2" class="form-control" placeholder="Opção 2">
+              <input type="text" id="adm-vot-op3" class="form-control" placeholder="Opção 3 (Opcional)">
+              <button class="btn" onclick="saveVotacaoItem()"><i class="ph ph-floppy-disk"></i> Criar Enquete</button>
             </div>
 
             <div class="card">
-              <h3><i class="ph ph-user-plus"></i> Novo Integrante</h3>
-              <input type="hidden" id="adm-membro-id">
+              <h3><i class="ph ph-user-plus"></i> Adicionar Integrante</h3>
               <input type="text" id="adm-membro-nome" class="form-control" placeholder="Nome completo">
-              <input type="text" id="adm-membro-cargo" class="form-control" placeholder="Cargo (Ex: Presidente, Diretor)">
-              <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Foto (Opcional):</label>
+              <input type="text" id="adm-membro-cargo" class="form-control" placeholder="Cargo (Ex: Diretor)">
+              <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Foto da Galeria:</label>
               <input type="file" id="adm-membro-foto" class="form-control" accept="image/*">
               <button class="btn" onclick="saveMembroItem()"><i class="ph ph-floppy-disk"></i> Salvar Integrante</button>
               <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-              <h4>Integrantes Cadastrados</h4>
-              <ul id="adm-membros-list" style="list-style:none; margin-top:10px;"></ul>
+              <ul id="adm-membros-list" style="list-style:none;"></ul>
             </div>
 
             <div class="card">
-              <h3><i class="ph ph-currency-dollar-simple"></i> Novo Lançamento Financeiro</h3>
-              <input type="hidden" id="adm-fin-id">
-              <input type="text" id="adm-fin-desc" class="form-control" placeholder="Descrição do gasto/receita">
+              <h3><i class="ph ph-currency-dollar"></i> Lançamento Financeiro</h3>
+              <input type="text" id="adm-fin-desc" class="form-control" placeholder="Descrição">
               <input type="number" id="adm-fin-valor" class="form-control" placeholder="Valor (R$)" step="0.01">
               <select id="adm-fin-tipo" class="form-control">
-                <option value="receita">Entrada (Receita)</option>
-                <option value="despesa">Saída (Despesa)</option>
+                <option value="receita">Receita (Entrada)</option>
+                <option value="despesa">Despesa (Saída)</option>
               </select>
-              <button class="btn" onclick="saveFinanceiroItem()"><i class="ph ph-floppy-disk"></i> Salvar Lançamento</button>
-              <hr style="margin:15px 0; border:none; border-top:1px solid var(--border-color);">
-              <h4>Histórico de Lançamentos</h4>
-              <ul id="adm-financeiro-list" style="list-style:none; margin-top:10px;"></ul>
-            </div>
-
-            <div class="card" style="border-top-color: var(--vermelho-light);">
-              <h3><i class="ph ph-trash"></i> Lixeira da Gestão</h3>
-              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Itens excluídos podem ser restaurados ou apagados permanentemente.</p>
-              <ul id="adm-lixeira-list" style="list-style:none;"></ul>
+              <button class="btn" onclick="saveFinanceiroItem()"><i class="ph ph-floppy-disk"></i> Registrar Lançamento</button>
             </div>
           </div>
         </div>
@@ -549,621 +506,586 @@
   </div>
 
   <div id="toast-container"></div>
+
   <script>
-  // 1. INICIALIZAÇÃO E ARMAZENAMENTO LOCAL (DB)
-  const DB_KEY = 'fala_estudante_db_v2';
+    const DB_KEY = 'fala_estudante_db_v3';
 
-  const defaultDB = {
-    perfil: null,
-    mural: [
-      { id: 1, titulo: 'Boas-vindas à Gestão!', texto: 'Sejam bem-vindos ao painel oficial do Grêmio Estudantil CETI José Marques.' }
-    ],
-    projetos: [
-      { id: 1, nome: 'Interclasse de Futsal', desc: 'Organização do torneio esportivo de integração.', status: 'em_andamento' },
-      { id: 2, nome: 'Rádio Escolar', desc: 'Projeto de transmissão de avisos e música nos intervalos.', status: 'planejamento' }
-    ],
-    membros: [
-      { id: 101, nome: 'Ana Silva (3º Ano A)', cargo: 'Presidente', foto: null, avatar: 'AS', lastSeen: Date.now() },
-      { id: 102, nome: 'Carlos Eduardo (2º Ano B)', cargo: 'Vice-Presidente', foto: null, avatar: 'CE', lastSeen: Date.now() - 300000 }
-    ],
-    votacoes: [
-      {
-        id: 1,
-        titulo: 'Escolha do Tema da Festa Cultural',
-        descricao: 'Qual tema você prefere para a feira de cultura deste semestre?',
-        opcoes: [
-          { id: 'opt1', texto: 'Anos 2000', votos: 12 },
-          { id: 'opt2', texto: 'Mundo Geek & Tecnologia', votos: 25 },
-          { id: 'opt3', texto: 'Diversidade Regional', votos: 8 }
-        ],
-        votosRegistrados: {}
-      }
-    ],
-    chat: {
-      geral: [
-        { id: 1, user: 'Ana Silva', text: 'Pessoal, a reunião de hoje será às 14h!', time: '10:30', foto: null }
-      ],
-      eventos: [],
+    const defaultDB = {
+      perfil: null,
+      mural: [],
+      projetos: [],
+      membros: [],
+      votacoes: [],
+      chat: { geral: [], eventos: [], financeiro: [] },
       financeiro: []
-    },
-    financeiro: [
-      { id: 1, desc: 'Venda de Rifas - Arraiá', valor: 350.00, tipo: 'receita' },
-      { id: 2, desc: 'Material de Pintura para Placas', valor: 45.50, tipo: 'despesa' }
-    ],
-    chamada: {},
-    lixeira: []
-  };
+    };
 
-  function loadDB() {
-    const data = localStorage.getItem(DB_KEY);
-    if (!data) return defaultDB;
-    try {
-      const parsed = JSON.parse(data);
-      return { ...defaultDB, ...parsed };
-    } catch(e) {
-      return defaultDB;
-    }
-  }
-
-  window.db = loadDB();
-
-  window.saveDB = function() {
-    localStorage.setItem(DB_KEY, JSON.stringify(window.db));
-    refreshAllUI();
-  };
-
-  // 2. FUNÇÕES AUXILIARES DE UI
-  function setSafeText(id, text) {
-    const el = document.getElementById(id);
-    if (el) el.innerText = text;
-  }
-
-  function setSafeHTML(id, html) {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = html;
-  }
-
-  function showToast(msg) {
-    const container = document.getElementById('toast-container');
-    if (!container) return;
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.innerText = msg;
-    container.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-  }
-
-  function obterIniciais(nome) {
-    if (!nome) return 'GE';
-    const partes = nome.trim().split(' ');
-    if (partes.length >= 2) return (partes[0][0] + partes[1][0]).toUpperCase();
-    return partes[0].substring(0, 2).toUpperCase();
-  }
-
-  function toggleSidebar() {
-    document.getElementById('mainSidebar')?.classList.toggle('open');
-  }
-
-  function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-  }
-
-  function switchTab(tabId, btnEl) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-
-    const target = document.getElementById(`tab-${tabId}`);
-    if (target) target.classList.add('active');
-    if (btnEl) btnEl.classList.add('active');
-
-    if (window.innerWidth <= 768) {
-      document.getElementById('mainSidebar')?.classList.remove('open');
+    function loadDB() {
+      const data = localStorage.getItem(DB_KEY);
+      if (!data) return defaultDB;
+      try {
+        return { ...defaultDB, ...JSON.parse(data) };
+      } catch(e) {
+        return defaultDB;
+      }
     }
 
-    refreshAllUI();
-  }
+    window.db = loadDB();
 
-  // 3. FOTO DE PERFIL E REGISTRO INICIAL
-  document.getElementById('btnSalvarPerfilInicial')?.addEventListener('click', () => {
-    const nome = document.getElementById('welcome-nome')?.value.trim();
-    const cargo = document.getElementById('welcome-cargo')?.value.trim() || 'Estudante';
-    const turma = document.getElementById('welcome-turma')?.value.trim() || 'Não informada';
-    const fotoInput = document.getElementById('welcome-foto');
+    window.saveDB = function() {
+      localStorage.setItem(DB_KEY, JSON.stringify(window.db));
+      refreshAllUI();
+    };
 
-    if (!nome) {
-      showToast('Por favor, informe seu nome!');
-      return;
+    function setSafeText(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.innerText = text;
     }
 
-    const processarPerfil = (fotoBase64 = null) => {
-      window.db.perfil = { nome, cargo, turma, foto: fotoBase64, lastSeen: Date.now() };
-      localStorage.setItem('fala_estudante_perfil', JSON.stringify(window.db.perfil));
+    function setSafeHTML(id, html) {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = html;
+    }
 
-      const idx = window.db.membros.findIndex(m => m.nome.toLowerCase().includes(nome.toLowerCase()));
-      if (idx !== -1) {
-        window.db.membros[idx].foto = fotoBase64;
-        window.db.membros[idx].lastSeen = Date.now();
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerText = msg;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function obterIniciais(nome) {
+      if (!nome) return 'GE';
+      const partes = nome.trim().split(' ');
+      if (partes.length >= 2) return (partes[0][0] + partes[1][0]).toUpperCase();
+      return partes[0].substring(0, 2).toUpperCase();
+    }
+
+    function toggleSidebar() {
+      document.getElementById('mainSidebar')?.classList.toggle('open');
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function switchTab(tabId, btnEl) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+      const target = document.getElementById(`tab-${tabId}`);
+      if (target) target.classList.add('active');
+      if (btnEl) btnEl.classList.add('active');
+
+      if (window.innerWidth <= 768) {
+        document.getElementById('mainSidebar')?.classList.remove('open');
+      }
+
+      refreshAllUI();
+    }
+
+    document.getElementById('btnSalvarPerfilInicial')?.addEventListener('click', () => {
+      const nome = document.getElementById('welcome-nome')?.value.trim();
+      const cargo = document.getElementById('welcome-cargo')?.value.trim() || 'Estudante';
+      const turma = document.getElementById('welcome-turma')?.value.trim() || 'Não informada';
+      const fotoInput = document.getElementById('welcome-foto');
+
+      if (!nome) return showToast('Por favor, informe seu nome!');
+
+      const salvarEProsseguir = (fotoBase64 = null) => {
+        window.db.perfil = { nome, cargo, turma, foto: fotoBase64, lastSeen: Date.now() };
+        localStorage.setItem('fala_estudante_perfil', JSON.stringify(window.db.perfil));
+
+        const idx = window.db.membros.findIndex(m => m.nome.toLowerCase().includes(nome.toLowerCase()));
+        if (idx !== -1) {
+          window.db.membros[idx].foto = fotoBase64;
+          window.db.membros[idx].lastSeen = Date.now();
+        } else {
+          window.db.membros.push({ 
+            id: Date.now(), 
+            nome: `${nome} (${turma})`, 
+            cargo, 
+            foto: fotoBase64,
+            avatar: obterIniciais(nome),
+            lastSeen: Date.now()
+          });
+        }
+        
+        window.saveDB();
+        document.getElementById('welcome-screen').style.display = 'none';
+        updateProfileUI();
+        showToast(`Bem-vindo(a), ${nome}!`);
+      };
+
+      if (fotoInput && fotoInput.files && fotoInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) { salvarEProsseguir(e.target.result); };
+        reader.readAsDataURL(fotoInput.files[0]);
       } else {
-        window.db.membros.push({ 
-          id: Date.now(), 
-          nome: `${nome} (${turma})`, 
-          cargo, 
+        salvarEProsseguir(null);
+      }
+    });
+
+    function logoutUser() {
+      if (confirm('Deseja sair da sua conta?')) {
+        window.db.perfil = null;
+        localStorage.removeItem('fala_estudante_perfil');
+        location.reload();
+      }
+    }
+
+    function updateProfileUI() {
+      if (window.db.perfil) {
+        setSafeText('headerName', window.db.perfil.nome.split(' ')[0]);
+        setSafeText('headerRole', window.db.perfil.cargo);
+        setSafeText('headerTurma', window.db.perfil.turma || '');
+        
+        const avatarEl = document.getElementById('headerAvatar');
+        if (avatarEl) {
+          if (window.db.perfil.foto) {
+            avatarEl.innerHTML = `<img src="${window.db.perfil.foto}" alt="Avatar"><div class="online-indicator"></div>`;
+          } else {
+            avatarEl.innerHTML = `${obterIniciais(window.db.perfil.nome)}<div class="online-indicator"></div>`;
+          }
+        }
+
+        window.db.perfil.lastSeen = Date.now();
+      } else {
+        const modal = document.getElementById('welcome-screen');
+        if (modal) modal.style.display = 'flex';
+      }
+    }
+
+    setInterval(() => {
+      if (window.db.perfil) {
+        window.db.perfil.lastSeen = Date.now();
+        const mIdx = window.db.membros.findIndex(m => m.nome.includes(window.db.perfil.nome));
+        if (mIdx !== -1) window.db.membros[mIdx].lastSeen = Date.now();
+        renderMembros();
+      }
+    }, 20000);
+
+    function refreshAllUI() {
+      renderKPIs();
+      renderMural();
+      renderProjetos();
+      renderMembros();
+      renderVotacoes();
+      renderCalendario();
+      renderChatMessages();
+      renderFinanceiro();
+      renderAdminPanel();
+    }
+
+    function renderKPIs() {
+      setSafeText('kpi-membros', window.db.membros.length);
+      setSafeText('kpi-projetos', window.db.projetos.filter(p => p.status !== 'concluido').length);
+      setSafeText('kpi-eventos', window.db.mural.length);
+
+      const saldo = window.db.financeiro.reduce((acc, f) => acc + (f.tipo === 'receita' ? f.valor : -f.valor), 0);
+      const saldoTxt = `R$ ${saldo.toFixed(2)}`;
+      setSafeText('dash-saldo', saldoTxt);
+      setSafeText('fin-saldo-destaque', saldoTxt);
+      setSafeText('admin-saldo-caixa', saldoTxt);
+
+      const ultimo = window.db.mural[window.db.mural.length - 1];
+      if (ultimo) {
+        setSafeHTML('dash-ultimo-comunicado', `<strong>${ultimo.titulo}</strong><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">${ultimo.texto}</p>`);
+      } else {
+        setSafeHTML('dash-ultimo-comunicado', '<p style="color:var(--text-muted);">Nenhum aviso cadastrado no momento.</p>');
+      }
+    }
+
+    function renderMural() {
+      setSafeHTML('public-mural-list', window.db.mural.map(m => `
+        <li style="border-bottom: 1px solid var(--border-color); padding: 12px 0;">
+          <h4 style="color:var(--roxo);">${m.titulo}</h4>
+          <p style="font-size:0.88rem; margin-top:4px;">${m.texto}</p>
+        </li>
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum aviso publicado.</p>');
+    }
+
+    function renderProjetos() {
+      setSafeHTML('public-projetos-list', window.db.projetos.map(p => `
+        <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+          <strong style="color:var(--roxo);">${p.nome}</strong>
+          <p style="font-size:0.85rem; color:var(--text-muted);">${p.desc}</p>
+        </div>
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum projeto registrado.</p>');
+    }
+
+    function renderMembros() {
+      setSafeHTML('public-membros-list', window.db.membros.map(m => {
+        const agora = Date.now();
+        const isOnline = m.lastSeen && (agora - m.lastSeen < 120000);
+
+        const avatarHTML = m.foto 
+          ? `<img src="${m.foto}" alt="${m.nome}">` 
+          : (m.avatar || obterIniciais(m.nome));
+
+        return `
+          <li style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border-color);">
+            <div class="avatar-circle">
+              ${avatarHTML}
+              <div class="${isOnline ? 'online-indicator' : 'offline-indicator'}" title="${isOnline ? 'Online' : 'Offline'}"></div>
+            </div>
+            <div>
+              <strong>${m.nome}</strong>
+              <p style="font-size:0.78rem; color:var(--verde); font-weight:600;">${m.cargo}</p>
+            </div>
+          </li>
+        `;
+      }).join('') || '<p style="color:var(--text-muted);">Nenhum integrante cadastrado.</p>');
+    }
+
+    window.votarEnquete = function(votacaoId, opcaoId) {
+      if (!window.db.perfil) return showToast('Faça seu cadastro inicial primeiro!');
+
+      const votacao = window.db.votacoes.find(v => v.id === votacaoId);
+      if (!votacao) return;
+
+      if (!votacao.votosRegistrados) votacao.votosRegistrados = {};
+
+      const votoAnterior = votacao.votosRegistrados[window.db.perfil.nome];
+      if (votoAnterior) {
+        const opAnt = votacao.opcoes.find(o => o.id === votoAnterior);
+        if (opAnt && opAnt.votos > 0) opAnt.votos--;
+      }
+
+      const opNova = votacao.opcoes.find(o => o.id === opcaoId);
+      if (opNova) {
+        opNova.votos = (opNova.votos || 0) + 1;
+        votacao.votosRegistrados[window.db.perfil.nome] = opcaoId;
+        window.saveDB();
+        showToast('Voto contabilizado!');
+      }
+    };
+
+    function renderVotacoes() {
+      const container = document.getElementById('public-votacao-list');
+      if (!container) return;
+
+      container.innerHTML = window.db.votacoes.map(v => {
+        const meuVoto = v.votosRegistrados ? v.votosRegistrados[window.db.perfil?.nome] : null;
+        const totalVotos = v.opcoes.reduce((acc, curr) => acc + (curr.votos || 0), 0);
+
+        return `
+          <div style="border:1px solid var(--border-color); border-radius:10px; padding:16px; margin-bottom:15px; background:var(--card-bg);">
+            <h4 style="color:var(--roxo); margin-bottom:6px;">${v.titulo}</h4>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">${v.descricao}</p>
+            
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              ${v.opcoes.map(opt => {
+                const pct = totalVotos > 0 ? Math.round(((opt.votos || 0) / totalVotos) * 100) : 0;
+                const selecionado = meuVoto === opt.id;
+
+                return `
+                  <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; background: rgba(0,0,0,0.02);">
+                    <button class="btn ${selecionado ? '' : 'btn-warning'}" onclick="votarEnquete(${v.id}, '${opt.id}')" style="width:100%; justify-content:space-between; margin-bottom:6px;">
+                      <span>${opt.texto} ${selecionado ? '✓ (Seu Voto)' : ''}</span>
+                      <span class="badge-status badge-planejamento">${opt.votos || 0} voto(s) (${pct}%)</span>
+                    </button>
+                    <div style="width:100%; background:var(--border-color); height:6px; border-radius:3px; overflow:hidden;">
+                      <div style="width:${pct}%; background:var(--verde); height:100%; transition: width 0.3s ease;"></div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('') || '<p style="color:var(--text-muted);">Nenhuma votação aberta no momento.</p>';
+    }
+
+    let currentCalDate = new Date();
+    function renderCalendario() {
+      const year = currentCalDate.getFullYear();
+      const month = currentCalDate.getMonth();
+      const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+      
+      setSafeText('calendarMonthYear', `${monthNames[month]} ${year}`);
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const today = new Date();
+
+      const daysContainer = document.getElementById('calendarDays');
+      if (!daysContainer) return;
+      daysContainer.innerHTML = '';
+
+      for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-day-cell';
+        emptyCell.style.opacity = '0.3';
+        daysContainer.appendChild(emptyCell);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day-cell';
+        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+          cell.classList.add('today');
+        }
+        cell.innerHTML = `<strong>${day}</strong>`;
+        daysContainer.appendChild(cell);
+      }
+    }
+
+    document.getElementById('btnPrevMonth')?.addEventListener('click', () => { currentCalDate.setMonth(currentCalDate.getMonth() - 1); renderCalendario(); });
+    document.getElementById('btnNextMonth')?.addEventListener('click', () => { currentCalDate.setMonth(currentCalDate.getMonth() + 1); renderCalendario(); });
+    document.getElementById('btnToday')?.addEventListener('click', () => { currentCalDate = new Date(); renderCalendario(); });
+
+    let currentRoom = 'geral';
+    window.switchChatRoom = function(room, btn) {
+      currentRoom = room;
+      document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderChatMessages();
+    };
+
+    function renderChatMessages() {
+      const container = document.getElementById('chatMessages');
+      if (!container) return;
+
+      const msgs = window.db.chat[currentRoom] || [];
+      const myName = window.db.perfil?.nome || '';
+
+      container.innerHTML = msgs.map(m => {
+        const isMe = m.user === myName;
+        return `
+          <div class="chat-msg ${isMe ? 'me' : ''}">
+            <div class="meta">
+              <strong>${m.user}</strong>
+              <span>${m.time}</span>
+            </div>
+            <div>${m.text}</div>
+          </div>
+        `;
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    document.getElementById('chatForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      if (!window.db.perfil) return showToast('Cadastre seu nome primeiro!');
+
+      const now = new Date();
+      const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      if (!window.db.chat[currentRoom]) window.db.chat[currentRoom] = [];
+
+      window.db.chat[currentRoom].push({ id: Date.now(), user: window.db.perfil.nome, text, time });
+      input.value = '';
+      window.saveDB();
+    });
+
+    let finChart = null;
+    function renderFinanceiro() {
+      setSafeHTML('public-financeiro-list', window.db.financeiro.map(f => `
+        <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color);">
+          <span>${f.desc}</span>
+          <strong style="color:${f.tipo === 'receita' ? 'var(--verde)' : 'var(--vermelho-light)'};">
+            ${f.tipo === 'receita' ? '+' : '-'} R$ ${f.valor.toFixed(2)}
+          </strong>
+        </li>
+      `).join('') || '<p style="color:var(--text-muted);">Nenhum lançamento registrado.</p>');
+
+      renderFinanceiroChart();
+    }
+
+    function renderFinanceiroChart() {
+      const ctx = document.getElementById('financeiroChart')?.getContext('2d');
+      if (!ctx) return;
+
+      const receitas = window.db.financeiro.filter(f => f.tipo === 'receita').reduce((a, b) => a + b.valor, 0);
+      const despesas = window.db.financeiro.filter(f => f.tipo === 'despesa').reduce((a, b) => a + b.valor, 0);
+
+      if (finChart) finChart.destroy();
+
+      finChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Receitas', 'Despesas'],
+          datasets: [{
+            data: [receitas || 0, despesas || 0],
+            backgroundColor: ['#0B8E2F', '#EF4444']
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    window.autenticarAdmin = function() {
+      const pwd = document.getElementById('adminPasswordInput')?.value;
+      if (pwd === 'gremio2026' || pwd === '123') {
+        document.getElementById('admin-login-card').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        showToast('Login efetuado!');
+      } else {
+        showToast('Senha incorreta!');
+      }
+    };
+
+    window.deslogarAdmin = function() {
+      document.getElementById('admin-login-card').style.display = 'block';
+      document.getElementById('admin-panel').style.display = 'none';
+      document.getElementById('adminPasswordInput').value = '';
+    };
+
+    function renderAdminPanel() {
+      setSafeHTML('adm-mural-list', window.db.mural.map(m => `
+        <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span>${m.titulo}</span>
+          <button class="btn btn-danger btn-sm" onclick="deletarMural(${m.id})"><i class="ph ph-trash"></i></button>
+        </li>
+      `).join(''));
+
+      setSafeHTML('adm-membros-list', window.db.membros.map(m => `
+        <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span>${m.nome} (${m.cargo})</span>
+          <button class="btn btn-danger btn-sm" onclick="deletarMembro(${m.id})"><i class="ph ph-trash"></i></button>
+        </li>
+      `).join(''));
+    }
+
+    window.saveMuralItem = function() {
+      const titulo = document.getElementById('adm-mural-titulo')?.value.trim();
+      const texto = document.getElementById('adm-mural-texto')?.value.trim();
+      if (!titulo || !texto) return showToast('Preencha os campos!');
+
+      window.db.mural.push({ id: Date.now(), titulo, texto });
+      window.saveDB();
+      document.getElementById('adm-mural-titulo').value = '';
+      document.getElementById('adm-mural-texto').value = '';
+      showToast('Aviso publicado!');
+    };
+
+    window.deletarMural = function(id) {
+      window.db.mural = window.db.mural.filter(m => m.id !== id);
+      window.saveDB();
+    };
+
+    window.saveVotacaoItem = function() {
+      const titulo = document.getElementById('adm-vot-titulo')?.value.trim();
+      const desc = document.getElementById('adm-vot-desc')?.value.trim();
+      const op1 = document.getElementById('adm-vot-op1')?.value.trim();
+      const op2 = document.getElementById('adm-vot-op2')?.value.trim();
+      const op3 = document.getElementById('adm-vot-op3')?.value.trim();
+
+      if (!titulo || !op1 || !op2) return showToast('Preencha o título e ao menos 2 opções!');
+
+      const opcoes = [
+        { id: 'opt1', texto: op1, votos: 0 },
+        { id: 'opt2', texto: op2, votos: 0 }
+      ];
+
+      if (op3) opcoes.push({ id: 'opt3', texto: op3, votos: 0 });
+
+      window.db.votacoes.push({
+        id: Date.now(),
+        titulo,
+        descricao: desc,
+        opcoes,
+        votosRegistrados: {}
+      });
+
+      window.saveDB();
+      document.getElementById('adm-vot-titulo').value = '';
+      document.getElementById('adm-vot-desc').value = '';
+      document.getElementById('adm-vot-op1').value = '';
+      document.getElementById('adm-vot-op2').value = '';
+      document.getElementById('adm-vot-op3').value = '';
+      showToast('Votação criada com sucesso!');
+    };
+
+    window.saveMembroItem = function() {
+      const nome = document.getElementById('adm-membro-nome')?.value.trim();
+      const cargo = document.getElementById('adm-membro-cargo')?.value.trim();
+      const fotoInput = document.getElementById('adm-membro-foto');
+
+      if (!nome || !cargo) return showToast('Preencha o nome e cargo!');
+
+      const salvar = (fotoBase64 = null) => {
+        window.db.membros.push({
+          id: Date.now(),
+          nome,
+          cargo,
           foto: fotoBase64,
           avatar: obterIniciais(nome),
           lastSeen: Date.now()
         });
-      }
-      
-      window.saveDB();
-      document.getElementById('welcome-screen').style.display = 'none';
-      updateProfileUI();
-      showToast(`Bem-vindo(a), ${nome}!`);
-    };
-
-    if (fotoInput && fotoInput.files && fotoInput.files[0]) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        processarPerfil(e.target.result);
+        window.saveDB();
+        document.getElementById('adm-membro-nome').value = '';
+        document.getElementById('adm-membro-cargo').value = '';
+        if (fotoInput) fotoInput.value = '';
+        showToast('Integrante cadastrado!');
       };
-      reader.readAsDataURL(fotoInput.files[0]);
-    } else {
-      processarPerfil(null);
-    }
-  });
 
-  function logoutUser() {
-    if (confirm('Deseja realmente sair da sua conta?')) {
-      window.db.perfil = null;
-      localStorage.removeItem('fala_estudante_perfil');
-      location.reload();
-    }
-  }
-
-  function updateProfileUI() {
-    if (window.db.perfil) {
-      setSafeText('headerName', window.db.perfil.nome.split(' ')[0]);
-      setSafeText('headerRole', window.db.perfil.cargo);
-      setSafeText('headerTurma', window.db.perfil.turma || '');
-      
-      const avatarEl = document.getElementById('headerAvatar');
-      if (avatarEl) {
-        if (window.db.perfil.foto) {
-          avatarEl.innerHTML = `<img src="${window.db.perfil.foto}" alt="Avatar"><div class="online-indicator"></div>`;
-        } else {
-          avatarEl.innerHTML = `${obterIniciais(window.db.perfil.nome)}<div class="online-indicator"></div>`;
-        }
+      if (fotoInput && fotoInput.files && fotoInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) { salvar(e.target.result); };
+        reader.readAsDataURL(fotoInput.files[0]);
+      } else {
+        salvar(null);
       }
-
-      // Heartbeat status online (última ação)
-      window.db.perfil.lastSeen = Date.now();
-      const mIdx = window.db.membros.findIndex(m => m.nome.includes(window.db.perfil.nome));
-      if (mIdx !== -1) {
-        window.db.membros[mIdx].lastSeen = Date.now();
-      }
-    } else {
-      const modal = document.getElementById('welcome-screen');
-      if (modal) modal.style.display = 'flex';
-    }
-  }
-
-  // Heartbeat a cada 30 segundos para manter status online
-  setInterval(() => {
-    if (window.db.perfil) {
-      window.db.perfil.lastSeen = Date.now();
-      const mIdx = window.db.membros.findIndex(m => m.nome.includes(window.db.perfil.nome));
-      if (mIdx !== -1) {
-        window.db.membros[mIdx].lastSeen = Date.now();
-      }
-      renderMembros();
-    }
-  }, 30000);
-      // 4. ATUALIZAÇÃO E RENDERIZAÇÃO GERAL DA INTERFACE
-  function refreshAllUI() {
-    renderKPIs();
-    renderMural();
-    renderProjetos();
-    renderMembros();
-    renderVotacoes();
-    renderCalendario();
-    renderChatMessages();
-    renderFinanceiro();
-    renderAdminPanel();
-  }
-
-  function renderKPIs() {
-    setSafeText('kpi-membros', window.db.membros.length);
-    setSafeText('kpi-projetos', window.db.projetos.filter(p => p.status !== 'concluido').length);
-    setSafeText('kpi-eventos', window.db.mural.length);
-
-    const saldo = window.db.financeiro.reduce((acc, f) => acc + (f.tipo === 'receita' ? f.valor : -f.valor), 0);
-    const saldoTxt = `R$ ${saldo.toFixed(2)}`;
-    setSafeText('dash-saldo', saldoTxt);
-    setSafeText('fin-saldo-destaque', saldoTxt);
-    setSafeText('admin-saldo-caixa', saldoTxt);
-
-    const ultimo = window.db.mural[window.db.mural.length - 1];
-    if (ultimo) {
-      setSafeHTML('dash-ultimo-comunicado', `<strong>${ultimo.titulo}</strong><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">${ultimo.texto}</p>`);
-    } else {
-      setSafeHTML('dash-ultimo-comunicado', '<p style="color:var(--text-muted);">Nenhum aviso no momento.</p>');
-    }
-  }
-
-  function renderMural() {
-    setSafeHTML('public-mural-list', window.db.mural.map(m => `
-      <li style="border-bottom: 1px solid var(--border-color); padding: 12px 0;">
-        <h4 style="color:var(--roxo);">${m.titulo}</h4>
-        <p style="font-size:0.88rem; margin-top:4px; color:var(--text-color);">${m.texto}</p>
-      </li>
-    `).join('') || '<p style="color:var(--text-muted);">Sem avisos cadastrados.</p>');
-  }
-
-  function renderProjetos() {
-    setSafeHTML('public-projetos-list', window.db.projetos.map(p => `
-      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 10px; background:var(--card-bg);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <strong style="color:var(--roxo);">${p.nome}</strong>
-          <span class="badge-status badge-${p.status}">${p.status.replace('_', ' ').toUpperCase()}</span>
-        </div>
-        <p style="font-size:0.85rem; color:var(--text-muted);">${p.desc}</p>
-      </div>
-    `).join('') || '<p style="color:var(--text-muted);">Nenhum projeto cadastrado.</p>');
-  }
-
-  // Integrantes com Indicador de Online em Tempo Real
-  function renderMembros() {
-    setSafeHTML('public-membros-list', window.db.membros.map(m => {
-      const agora = Date.now();
-      const isOnline = m.lastSeen && (agora - m.lastSeen < 120000); // 2 minutos para considerar online
-
-      const avatarHTML = m.foto 
-        ? `<img src="${m.foto}" alt="${m.nome}">` 
-        : (m.avatar || obterIniciais(m.nome));
-
-      return `
-        <li style="display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border-color);">
-          <div class="avatar-circle">
-            ${avatarHTML}
-            <div class="${isOnline ? 'online-indicator' : 'offline-indicator'}" title="${isOnline ? 'Online' : 'Offline'}"></div>
-          </div>
-          <div>
-            <strong>${m.nome}</strong>
-            <p style="font-size:0.78rem; color:var(--verde); font-weight:600;">${m.cargo}</p>
-          </div>
-        </li>
-      `;
-    }).join('') || '<p style="color:var(--text-muted);">Nenhum integrante cadastrado.</p>');
-  }
-
-  // 5. SISTEMA DE VOTAÇÃO CORRIGIDO E MELHORADO
-  window.votarEnquete = function(votacaoId, opcaoId) {
-    if (!window.db.perfil) return showToast('Por favor, informe seu nome na tela inicial!');
-
-    const votacao = window.db.votacoes.find(v => v.id === votacaoId);
-    if (!votacao) return;
-
-    if (!votacao.votosRegistrados) votacao.votosRegistrados = {};
-
-    const votoAnterior = votacao.votosRegistrados[window.db.perfil.nome];
-    
-    // Remove voto anterior se a pessoa alterar a opção
-    if (votoAnterior) {
-      const opAnt = votacao.opcoes.find(o => o.id === votoAnterior);
-      if (opAnt && opAnt.votos > 0) opAnt.votos--;
-    }
-
-    // Soma voto na nova opção
-    const opNova = votacao.opcoes.find(o => o.id === opcaoId);
-    if (opNova) {
-      opNova.votos = (opNova.votos || 0) + 1;
-      votacao.votosRegistrados[window.db.perfil.nome] = opcaoId;
-      window.saveDB();
-      showToast('Seu voto foi registrado com sucesso!');
-    }
-  };
-
-  function renderVotacoes() {
-    const container = document.getElementById('public-votacao-list');
-    if (!container) return;
-
-    container.innerHTML = window.db.votacoes.map(v => {
-      const meuVoto = v.votosRegistrados ? v.votosRegistrados[window.db.perfil?.nome] : null;
-      const totalVotos = v.opcoes.reduce((acc, curr) => acc + (curr.votos || 0), 0);
-
-      return `
-        <div style="border:1px solid var(--border-color); border-radius:10px; padding:16px; margin-bottom:15px; background:var(--card-bg);">
-          <h4 style="color:var(--roxo); margin-bottom:6px;">${v.titulo}</h4>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">${v.descricao}</p>
-          
-          <div style="display:flex; flex-direction:column; gap:10px;">
-            ${v.opcoes.map(opt => {
-              const pct = totalVotos > 0 ? Math.round(((opt.votos || 0) / totalVotos) * 100) : 0;
-              const selecionado = meuVoto === opt.id;
-
-              return `
-                <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; background: rgba(0,0,0,0.02);">
-                  <button class="btn ${selecionado ? '' : 'btn-warning'}" onclick="votarEnquete(${v.id}, '${opt.id}')" style="width:100%; justify-content:space-between; margin-bottom:6px;">
-                    <span>${opt.texto} ${selecionado ? '✓ (Seu Voto)' : ''}</span>
-                    <span class="badge-status badge-planejamento">${opt.votos || 0} voto(s) (${pct}%)</span>
-                  </button>
-                  <div style="width:100%; background:var(--border-color); height:6px; border-radius:3px; overflow:hidden;">
-                    <div style="width:${pct}%; background:var(--verde); height:100%; transition: width 0.3s ease;"></div>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
-      `;
-    }).join('') || '<p style="color:var(--text-muted);">Nenhuma votação cadastrada.</p>';
-  }
-
-  // 6. CALENDÁRIO
-  let currentCalDate = new Date();
-
-  function renderCalendario() {
-    const year = currentCalDate.getFullYear();
-    const month = currentCalDate.getMonth();
-    const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    
-    setSafeText('calendarMonthYear', `${monthNames[month]} ${year}`);
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const today = new Date();
-
-    const daysContainer = document.getElementById('calendarDays');
-    if (!daysContainer) return;
-    daysContainer.innerHTML = '';
-
-    for (let i = 0; i < firstDay; i++) {
-      const emptyCell = document.createElement('div');
-      emptyCell.className = 'calendar-day-cell';
-      emptyCell.style.opacity = '0.3';
-      daysContainer.appendChild(emptyCell);
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const cell = document.createElement('div');
-      cell.className = 'calendar-day-cell';
-      if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-        cell.classList.add('today');
-      }
-      cell.innerHTML = `<strong>${day}</strong>`;
-      daysContainer.appendChild(cell);
-    }
-  }
-
-  document.getElementById('btnPrevMonth')?.addEventListener('click', () => { currentCalDate.setMonth(currentCalDate.getMonth() - 1); renderCalendario(); });
-  document.getElementById('btnNextMonth')?.addEventListener('click', () => { currentCalDate.setMonth(currentCalDate.getMonth() + 1); renderCalendario(); });
-  document.getElementById('btnToday')?.addEventListener('click', () => { currentCalDate = new Date(); renderCalendario(); });
-
-  // 7. CHAT INTERNO (Com Degradê de Verde nas Recebidas e Roxo nas Enviadas)
-  let currentRoom = 'geral';
-
-  window.switchChatRoom = function(room, btn) {
-    currentRoom = room;
-    document.querySelectorAll('.room-btn').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    renderChatMessages();
-  };
-
-  function renderChatMessages() {
-    const container = document.getElementById('chatMessages');
-    if (!container) return;
-
-    const msgs = window.db.chat[currentRoom] || [];
-    const myName = window.db.perfil?.nome || '';
-
-    container.innerHTML = msgs.map(m => {
-      const isMe = m.user === myName;
-      return `
-        <div class="chat-msg ${isMe ? 'me' : ''}">
-          <div class="meta">
-            <strong>${m.user}</strong>
-            <span>${m.time}</span>
-          </div>
-          <div>${m.text}</div>
-          ${isMe ? `<div class="actions"><button class="delete-msg-btn" onclick="apagarMensagem(${m.id})"><i class="ph ph-trash"></i> Apagar</button></div>` : ''}
-        </div>
-      `;
-    }).join('');
-
-    container.scrollTop = container.scrollHeight;
-  }
-
-  document.getElementById('chatForm')?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const input = document.getElementById('chatInput');
-    const text = input.value.trim();
-    if (!text) return;
-
-    if (!window.db.perfil) return showToast('Configure seu perfil antes de enviar mensagens.');
-
-    const now = new Date();
-    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
-    if (!window.db.chat[currentRoom]) window.db.chat[currentRoom] = [];
-
-    window.db.chat[currentRoom].push({
-      id: Date.now(),
-      user: window.db.perfil.nome,
-      text,
-      time
-    });
-
-    input.value = '';
-    window.saveDB();
-  });
-
-  window.apagarMensagem = function(msgId) {
-    if (!window.db.chat[currentRoom]) return;
-    window.db.chat[currentRoom] = window.db.chat[currentRoom].filter(m => m.id !== msgId);
-    window.saveDB();
-  };
-
-  // 8. FINANCEIRO E GRÁFICO
-  let finChart = null;
-
-  function renderFinanceiro() {
-    setSafeHTML('public-financeiro-list', window.db.financeiro.map(f => `
-      <li style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border-color);">
-        <span>${f.desc}</span>
-        <strong style="color:${f.tipo === 'receita' ? 'var(--verde)' : 'var(--vermelho-light)'};">
-          ${f.tipo === 'receita' ? '+' : '-'} R$ ${f.valor.toFixed(2)}
-        </strong>
-      </li>
-    `).join('') || '<p style="color:var(--text-muted);">Nenhum lançamento.</p>');
-
-    renderFinanceiroChart();
-  }
-
-  function renderFinanceiroChart() {
-    const ctx = document.getElementById('financeiroChart')?.getContext('2d');
-    if (!ctx) return;
-
-    const receitas = window.db.financeiro.filter(f => f.tipo === 'receita').reduce((a, b) => a + b.valor, 0);
-    const despesas = window.db.financeiro.filter(f => f.tipo === 'despesa').reduce((a, b) => a + b.valor, 0);
-
-    if (finChart) finChart.destroy();
-
-    finChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Receitas', 'Despesas'],
-        datasets: [{
-          data: [receitas, despesas],
-          backgroundColor: ['#0B8E2F', '#EF4444']
-        }]
-      },
-      options: { responsive: true, maintainAspectRatio: false }
-    });
-  }
-
-  // 9. ÁREA ADMINISTRATIVA
-  window.autenticarAdmin = function() {
-    const pwd = document.getElementById('adminPasswordInput')?.value;
-    if (pwd === 'gremio2026' || pwd === '123') {
-      document.getElementById('admin-login-card').style.display = 'none';
-      document.getElementById('admin-panel').style.display = 'block';
-      showToast('Acesso de administrador concedido!');
-    } else {
-      showToast('Senha incorreta!');
-    }
-  };
-
-  window.deslogarAdmin = function() {
-    document.getElementById('admin-login-card').style.display = 'block';
-    document.getElementById('admin-panel').style.display = 'none';
-    document.getElementById('adminPasswordInput').value = '';
-  };
-
-  function renderAdminPanel() {
-    // Renderiza formulários e listas de gestão no Admin
-    setSafeHTML('adm-mural-list', window.db.mural.map(m => `
-      <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <span>${m.titulo}</span>
-        <button class="btn btn-danger btn-sm" onclick="deletarMural(${m.id})"><i class="ph ph-trash"></i></button>
-      </li>
-    `).join(''));
-
-    setSafeHTML('adm-membros-list', window.db.membros.map(m => `
-      <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-        <span>${m.nome} (${m.cargo})</span>
-        <button class="btn btn-danger btn-sm" onclick="deletarMembro(${m.id})"><i class="ph ph-trash"></i></button>
-      </li>
-    `).join(''));
-  }
-
-  window.saveMuralItem = function() {
-    const titulo = document.getElementById('adm-mural-titulo')?.value.trim();
-    const texto = document.getElementById('adm-mural-texto')?.value.trim();
-    if (!titulo || !texto) return showToast('Preencha todos os campos!');
-
-    window.db.mural.push({ id: Date.now(), titulo, texto });
-    window.saveDB();
-    document.getElementById('adm-mural-titulo').value = '';
-    document.getElementById('adm-mural-texto').value = '';
-    showToast('Aviso publicado!');
-  };
-
-  window.deletarMural = function(id) {
-    window.db.mural = window.db.mural.filter(m => m.id !== id);
-    window.saveDB();
-  };
-
-  window.saveMembroItem = function() {
-    const nome = document.getElementById('adm-membro-nome')?.value.trim();
-    const cargo = document.getElementById('adm-membro-cargo')?.value.trim();
-    const fotoInput = document.getElementById('adm-membro-foto');
-
-    if (!nome || !cargo) return showToast('Preencha o nome e cargo!');
-
-    const processarEGuardar = (fotoBase64 = null) => {
-      window.db.membros.push({
-        id: Date.now(),
-        nome,
-        cargo,
-        foto: fotoBase64,
-        avatar: obterIniciais(nome),
-        lastSeen: Date.now()
-      });
-      window.saveDB();
-      document.getElementById('adm-membro-nome').value = '';
-      document.getElementById('adm-membro-cargo').value = '';
-      if (fotoInput) fotoInput.value = '';
-      showToast('Integrante cadastrado!');
     };
 
-    if (fotoInput && fotoInput.files && fotoInput.files[0]) {
-      const reader = new FileReader();
-      reader.onload = function(e) { processarEGuardar(e.target.result); };
-      reader.readAsDataURL(fotoInput.files[0]);
-    } else {
-      processarEGuardar(null);
-    }
-  };
+    window.deletarMembro = function(id) {
+      window.db.membros = window.db.membros.filter(m => m.id !== id);
+      window.saveDB();
+    };
 
-  window.deletarMembro = function(id) {
-    window.db.membros = window.db.membros.filter(m => m.id !== id);
-    window.saveDB();
-  };
+    window.saveFinanceiroItem = function() {
+      const desc = document.getElementById('adm-fin-desc')?.value.trim();
+      const valor = parseFloat(document.getElementById('adm-fin-valor')?.value);
+      const tipo = document.getElementById('adm-fin-tipo')?.value;
 
-  // Filtros de pesquisa nas tabelas/listas
-  window.filterList = function(listId, query) {
-    const list = document.getElementById(listId);
-    if (!list) return;
-    const items = list.getElementsByTagName('li');
-    const term = query.toLowerCase();
+      if (!desc || isNaN(valor)) return showToast('Preencha a descrição e valor!');
 
-    for (let item of items) {
-      item.style.display = item.innerText.toLowerCase().includes(term) ? '' : 'none';
-    }
-  };
+      window.db.financeiro.push({ id: Date.now(), desc, valor, tipo });
+      window.saveDB();
+      document.getElementById('adm-fin-desc').value = '';
+      document.getElementById('adm-fin-valor').value = '';
+      showToast('Lançamento registrado!');
+    };
 
-  window.filterProjects = function(query) {
-    const container = document.getElementById('public-projetos-list');
-    if (!container) return;
-    const items = container.children;
-    const term = query.toLowerCase();
+    window.filterList = function(listId, query) {
+      const list = document.getElementById(listId);
+      if (!list) return;
+      const items = list.getElementsByTagName('li');
+      const term = query.toLowerCase();
+      for (let item of items) {
+        item.style.display = item.innerText.toLowerCase().includes(term) ? '' : 'none';
+      }
+    };
 
-    for (let item of items) {
-      item.style.display = item.innerText.toLowerCase().includes(term) ? '' : 'none';
-    }
-  };
+    window.filterProjects = function(query) {
+      const container = document.getElementById('public-projetos-list');
+      if (!container) return;
+      const items = container.children;
+      const term = query.toLowerCase();
+      for (let item of items) {
+        item.style.display = item.innerText.toLowerCase().includes(term) ? '' : 'none';
+      }
+    };
 
-  // Inicialização no carregamento da janela
-  window.addEventListener('DOMContentLoaded', () => {
-    // Carrega dados salvos do perfil se existirem
-    const perfSalvo = localStorage.getItem('fala_estudante_perfil');
-    if (perfSalvo) {
-      try { window.db.perfil = JSON.parse(perfSalvo); } catch(e){}
-    }
+    window.addEventListener('DOMContentLoaded', () => {
+      const perfSalvo = localStorage.getItem('fala_estudante_perfil');
+      if (perfSalvo) {
+        try { window.db.perfil = JSON.parse(perfSalvo); } catch(e){}
+      }
 
-    updateProfileUI();
-    refreshAllUI();
-  });
-</script>
-
+      updateProfileUI();
+      refreshAllUI();
+    });
+  </script>
 </body>
 </html>
