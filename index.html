@@ -4,396 +4,548 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="docTitle">Escravo, Nem Pensar!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --fundo: #F4E7C8;
-      --fundo-claro: #FFF7E6;
-      --branco: #FFFFFF;
-      --terracota: #B94E2E;
-      --terracota-escuro: #963B24;
-      --laranja-terra: #D87532;
-      --azul-marinho: #142B3D;
-      --azul-marinho-claro: #1D3A4D;
-      --bege: #F5DDA5;
-      --bege-claro: #FFF1CC;
-      --texto: #142B3D;
-      --texto-secundario: #5C4635;
-      --ocre: #C58A35;
-      --amarelo-sol: #E6A83B;
-      --vermelho: #A63D2F;
-      --card-border: rgba(185, 78, 46, 0.2);
+      --bg: #F8F9FA;
+      --surface: #FFFFFF;
+      --texto: #1A1D20;
+      --texto-secundario: #5A6573;
+      --terracota: #C25E38;
+      --terracota-hover: #A74D29;
+      --vermelho: #D93838;
+      --borda: #E2E8F0;
+      --sombra: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
       --sidebar-width: 260px;
-      --sidebar-collapsed-width: 70px;
-      --header-height: 60px;
     }
 
     [data-theme="dark"] {
-      --fundo: #111820;
-      --fundo-claro: #18232C;
-      --branco: #FFFFFF;
-      --terracota: #D66A43;
-      --terracota-escuro: #B84E30;
-      --laranja-terra: #D98A45;
-      --azul-marinho: #E7D3A5;
-      --azul-marinho-claro: #F1DFC0;
-      --bege: #FFFFFF;
-      --bege-claro: #FFFFFF;
-      --texto: #FFFFFF;
-      --texto-secundario: #D8C9B5;
-      --ocre: #D49A43;
-      --amarelo-sol: #E5AE4A;
-      --card-border: rgba(214, 106, 67, 0.3);
+      --bg: #121417;
+      --surface: #1E2229;
+      --texto: #F1F5F9;
+      --texto-secundario: #94A3B8;
+      --terracota: #E07A5F;
+      --terracota-hover: #C25E38;
+      --vermelho: #EF4444;
+      --borda: #2D333B;
+      --sombra: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      transition: background-color 0.25s, color 0.25s, border-color 0.25s;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }
 
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: var(--fundo-claro);
+      background-color: var(--bg);
       color: var(--texto);
-      min-height: 100vh;
       display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    /* HEADER */
-    header {
+    /* SIDEBAR */
+    aside {
+      width: var(--sidebar-width);
+      background-color: var(--surface);
+      border-right: 1px solid var(--borda);
+      display: flex;
+      flex-direction: column;
       position: fixed;
       top: 0;
+      bottom: 0;
       left: 0;
-      right: 0;
-      height: var(--header-height);
-      background-color: var(--terracota);
-      color: var(--bege-claro);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.25rem;
       z-index: 100;
+      transition: transform 0.3s ease;
     }
 
-    .header-left {
+    .sidebar-brand {
+      padding: 1.5rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--terracota);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--borda);
+    }
+
+    .sidebar-nav {
+      padding: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      padding: 0.75rem 1.5rem;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--texto-secundario);
+      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      width: 100%;
     }
 
-    .header-logos {
+    .nav-item:hover, .nav-item.active {
+      background-color: rgba(194, 94, 56, 0.08);
+      color: var(--terracota);
+      border-right: 3px solid var(--terracota);
+    }
+
+    .sidebar-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--borda);
+      font-size: 0.85rem;
+      color: var(--texto-secundario);
+    }
+
+    /* MAIN CONTENT WRAPPER */
+    .main-wrapper {
+      margin-left: var(--sidebar-width);
+      flex: 1;
       display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--borda);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      background-color: var(--terracota);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: inline-flex;
       align-items: center;
       gap: 0.5rem;
     }
 
-    .header-logo {
-      height: 38px;
-      max-width: 100px;
-      object-fit: contain;
-      border-radius: 4px;
+    .btn-action:hover {
+      background-color: var(--terracota-hover);
     }
 
-    .icon-btn {
-      background: none;
-      border: none;
-      color: var(--bege-claro);
-      font-size: 1.4rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.3rem;
-      border-radius: 4px;
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--texto);
+      border: 1px solid var(--borda);
     }
 
-    .icon-btn:hover, .icon-btn:focus-visible {
-      background-color: var(--terracota-escuro);
-      outline: 2px solid var(--bege-claro);
+    .btn-secondary:hover {
+      background-color: rgba(0,0,0,0.05);
     }
 
-    .header-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+    [data-theme="dark"] .btn-secondary:hover {
+      background-color: rgba(255,255,255,0.05);
     }
 
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .theme-btn {
-      background-color: var(--azul-marinho);
-      color: var(--bege-claro);
-      border: 1px solid var(--laranja-terra);
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-
-    /* SIDEBAR & OVERLAY */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 85;
+    /* PAGES */
+    .page {
       display: none;
-    }
-
-    aside {
-      position: fixed;
-      top: var(--header-height);
-      bottom: 0;
-      left: 0;
-      width: var(--sidebar-width);
-      background-color: var(--azul-marinho);
-      color: var(--bege-claro);
-      z-index: 90;
-      transition: width 0.25s ease, transform 0.25s ease;
-      overflow-y: auto;
-    }
-
-    body.sidebar-collapsed aside {
-      width: var(--sidebar-collapsed-width);
-    }
-
-    nav {
-      display: flex;
-      flex-direction: column;
-      padding-top: 1rem;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      padding: 0.85rem 1.25rem;
-      color: var(--bege-claro);
-      text-decoration: none;
-      cursor: pointer;
-      gap: 1rem;
-      white-space: nowrap;
-      border-left: 4px solid transparent;
-    }
-
-    .nav-item:hover, .nav-item.active {
-      background-color: var(--azul-marinho-claro);
-      border-left-color: var(--laranja-terra);
-    }
-
-    body.sidebar-collapsed .nav-text {
-      display: none;
-    }
-
-    /* MAIN */
-    main {
-      margin-top: var(--header-height);
-      margin-left: var(--sidebar-width);
       padding: 2rem;
+      max-width: 1200px;
       width: 100%;
-      transition: margin-left 0.25s ease;
+      margin: 0 auto;
     }
 
-    body.sidebar-collapsed main {
-      margin-left: var(--sidebar-collapsed-width);
+    .page.active {
+      display: block;
     }
 
-    .page { display: none; }
-    .page.active { display: block; }
-
-    /* DESTAQUE PRINCIPAL (HOME) */
-    .featured-hero {
-      background: linear-gradient(135deg, var(--azul-marinho), var(--azul-marinho-claro));
-      color: var(--bege-claro);
+    /* HERO / BANNER */
+    .hero-card {
+      background: linear-gradient(135deg, var(--terracota), #D96B43);
+      color: #FFF;
       padding: 2.5rem;
       border-radius: 12px;
       margin-bottom: 2rem;
-      border: 1px solid var(--laranja-terra);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      box-shadow: var(--sombra);
     }
 
-    .featured-hero h2 {
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--amarelo-sol);
-      margin-bottom: 0.5rem;
-    }
-
-    .featured-hero h1 {
+    .hero-card h1 {
       font-size: 2rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
-    .featured-hero p {
+    .hero-card p {
       font-size: 1.05rem;
-      margin-bottom: 1.5rem;
-      opacity: 0.9;
+      opacity: 0.95;
+      max-width: 700px;
       line-height: 1.5;
     }
 
-    .hero-banner {
-      background-color: var(--fundo);
-      border: 1px solid var(--card-border);
-      padding: 1.5rem;
-      border-radius: 8px;
+    /* SEARCH BAR */
+    .search-box {
       margin-bottom: 2rem;
+      display: flex;
+      gap: 0.5rem;
     }
 
-    .hero-banner h1 {
-      color: var(--terracota);
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
+    .search-box input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--borda);
+      background-color: var(--surface);
+      color: var(--texto);
+      font-size: 1rem;
     }
 
-    /* CARDS */
+    /* GRID DE CARDS (Estilo Windows Cards) */
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 1.5rem;
     }
 
     .window-card {
-      background-color: var(--fundo);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
+      background-color: var(--surface);
+      border: 1px solid var(--borda);
+      border-radius: 10px;
       overflow: hidden;
-      cursor: pointer;
+      box-shadow: var(--sombra);
       display: flex;
       flex-direction: column;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .window-card:hover {
       transform: translateY(-3px);
-      border-color: var(--terracota);
-    }
-
-    .window-header {
-      background-color: var(--azul-marinho);
-      color: var(--bege-claro);
-      padding: 0.6rem 1rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
     }
 
     .card-cover-img {
       width: 100%;
       height: 160px;
       object-fit: cover;
-      border-bottom: 1px solid var(--card-border);
+    }
+
+    .window-header {
+      background-color: rgba(0,0,0,0.02);
+      border-bottom: 1px solid var(--borda);
+      padding: 0.6rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--texto-secundario);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    [data-theme="dark"] .window-header {
+      background-color: rgba(255,255,255,0.02);
     }
 
     .window-body {
       padding: 1.25rem;
-      flex-grow: 1;
+      flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      gap: 1rem;
     }
 
     .window-title {
-      color: var(--terracota);
       font-size: 1.15rem;
+      font-weight: 700;
       margin-bottom: 0.5rem;
+      color: var(--texto);
     }
 
     .window-desc {
+      font-size: 0.95rem;
       color: var(--texto-secundario);
-      font-size: 0.9rem;
-      line-height: 1.4;
-      margin-bottom: 0.75rem;
+      line-height: 1.5;
     }
 
     .meta-tag {
       display: inline-block;
-      font-size: 0.75rem;
-      background-color: var(--laranja-terra);
-      color: #fff;
+      background-color: rgba(194, 94, 56, 0.1);
+      color: var(--terracota);
       padding: 0.2rem 0.5rem;
       border-radius: 4px;
-      margin-top: 0.5rem;
-    }
-
-    .card-date {
       font-size: 0.75rem;
-      color: var(--texto-secundario);
-      margin-top: 0.5rem;
+      font-weight: 600;
     }
 
-    /* GALERIA DE FOTOS GRID */
+    /* GALERIA FOTOS */
+    .tabs-header {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--borda);
+      padding-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--texto-secundario);
+      cursor: pointer;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background-color: var(--terracota);
+      color: #FFF;
+    }
+
     .photo-gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
     }
 
     .photo-thumb-card {
-      background-color: var(--fundo);
-      border: 1px solid var(--card-border);
+      background-color: var(--surface);
+      border: 1px solid var(--borda);
       border-radius: 8px;
       overflow: hidden;
       cursor: pointer;
-      position: relative;
+      box-shadow: var(--sombra);
+      transition: transform 0.2s;
+    }
+
+    .photo-thumb-card:hover {
+      transform: scale(1.02);
     }
 
     .photo-thumb-card img {
       width: 100%;
-      height: 150px;
+      height: 180px;
       object-fit: cover;
       display: block;
-      transition: transform 0.3s;
-    }
-
-    .photo-thumb-card:hover img {
-      transform: scale(1.05);
     }
 
     .photo-thumb-caption {
-      padding: 0.5rem;
-      font-size: 0.85rem;
+      padding: 0.75rem;
+      font-size: 0.9rem;
       font-weight: 600;
       color: var(--texto);
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
-    /* MODAL DE FOTO (LIGHTBOX) */
+    /* APRENDA E REFLITA */
+    .learn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .learn-card {
+      background-color: var(--surface);
+      border: 1px solid var(--borda);
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: var(--sombra);
+    }
+
+    .badge-mito {
+      background-color: rgba(217, 56, 56, 0.1);
+      color: var(--vermelho);
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+    }
+
+    .learn-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .learn-card blockquote {
+      font-style: italic;
+      color: var(--texto-secundario);
+      border-left: 3px solid var(--terracota);
+      padding-left: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* ADMINISTRAÇÃO */
+    .admin-card {
+      background-color: var(--surface);
+      border: 1px solid var(--borda);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--sombra);
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-box {
+      background-color: var(--surface);
+      border: 1px solid var(--borda);
+      padding: 1.25rem;
+      border-radius: 8px;
+      box-shadow: var(--sombra);
+    }
+
+    .stat-box span {
+      font-size: 0.85rem;
+      color: var(--texto-secundario);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-box strong {
+      font-size: 1.75rem;
+      color: var(--terracota);
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .admin-table th, .admin-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--borda);
+      text-align: left;
+    }
+
+    .admin-table th {
+      background-color: rgba(0,0,0,0.02);
+      font-weight: 600;
+      color: var(--texto-secundario);
+    }
+
+    [data-theme="dark"] .admin-table th {
+      background-color: rgba(255,255,255,0.02);
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: var(--texto-secundario);
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border-radius: 6px;
+      border: 1px solid var(--borda);
+      background-color: var(--bg);
+      color: var(--texto);
+      font-size: 0.95rem;
+    }
+
+    /* WYSIWYG EDITOR SIMPLES */
+    .editor-container {
+      border: 1px solid var(--borda);
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: var(--bg);
+    }
+
+    .editor-toolbar {
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--borda);
+      padding: 0.5rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .editor-toolbar button, .editor-toolbar select {
+      background: none;
+      border: 1px solid var(--borda);
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--texto);
+    }
+
+    .editor-content {
+      padding: 1rem;
+      min-height: 150px;
+      outline: none;
+      color: var(--texto);
+    }
+
+    /* MODAL / LIGHTBOX */
     .lightbox-modal {
       position: fixed;
-      inset: 0;
-      background-color: rgba(0, 0, 0, 0.85);
-      z-index: 1000;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.7);
       display: none;
-      align-items: center;
       justify-content: center;
-      padding: 2rem;
+      align-items: center;
+      z-index: 1000;
+      padding: 1rem;
     }
 
     .lightbox-content {
-      background-color: var(--fundo);
-      border-radius: 12px;
-      max-width: 800px;
+      background-color: var(--surface);
+      border-radius: 10px;
       width: 100%;
+      max-width: 600px;
       overflow: hidden;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
       display: flex;
       flex-direction: column;
-      position: relative;
     }
 
     .lightbox-header {
-      background-color: var(--azul-marinho);
-      color: var(--bege-claro);
-      padding: 0.75rem 1.25rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--borda);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -406,461 +558,187 @@
     }
 
     .lightbox-body img {
-      max-height: 50vh;
       max-width: 100%;
-      object-fit: contain;
+      max-height: 400px;
       border-radius: 6px;
       margin-bottom: 1rem;
+      object-fit: contain;
     }
 
     .lightbox-footer {
-      padding: 1rem 1.5rem;
-      background-color: var(--fundo-claro);
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--borda);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-top: 1px solid var(--card-border);
+      background-color: rgba(0,0,0,0.02);
     }
 
-    /* ÁREA APRENDA E REFLITA */
-    .learn-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1.5rem;
-    }
-
-    .learn-card {
-      background-color: var(--fundo);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.03);
-    }
-
-    .learn-card h3 {
-      color: var(--terracota);
-      font-size: 1.2rem;
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .learn-card blockquote {
-      background-color: var(--fundo-claro);
-      border-left: 4px solid var(--laranja-terra);
-      padding: 0.75rem;
-      margin: 0.75rem 0;
-      font-style: italic;
-      color: var(--texto);
-    }
-
-    .badge-mito {
-      display: inline-block;
-      background-color: var(--vermelho);
-      color: #fff;
-      font-size: 0.8rem;
-      font-weight: bold;
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-      margin-bottom: 0.5rem;
-    }
-
-    /* ÁREA DE CONTEÚDO */
-    .content-area {
-      background-color: var(--fundo);
-      border: 1px solid var(--card-border);
-      padding: 2rem;
-      border-radius: 8px;
-      margin-top: 1rem;
-      line-height: 1.6;
-    }
-
-    .content-area img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 6px;
-      margin: 1rem 0;
-      display: block;
-    }
-
-    .content-actions-bar {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--card-border);
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-action {
-      background-color: var(--terracota);
-      color: var(--bege-claro);
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .btn-action:hover {
-      background-color: var(--terracota-escuro);
-    }
-
-    .btn-action:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-secondary {
-      background-color: transparent;
-      border: 1px solid var(--terracota);
-      color: var(--texto);
-    }
-    
-    .btn-secondary:hover {
-      background-color: var(--card-border);
-    }
-
-    /* EDITOR WYSIWYG */
-    .editor-container {
-      border: 1px solid var(--card-border);
-      border-radius: 6px;
-      overflow: hidden;
-      background-color: var(--fundo-claro);
-    }
-
-    .editor-toolbar {
-      background-color: var(--fundo);
-      border-bottom: 1px solid var(--card-border);
-      padding: 0.5rem;
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .editor-toolbar button, .editor-toolbar select {
-      background: var(--fundo-claro);
-      border: 1px solid var(--card-border);
-      color: var(--texto);
-      padding: 0.3rem 0.6rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 0.85rem;
-    }
-
-    .editor-toolbar button:hover {
-      background-color: var(--terracota);
-      color: var(--bege-claro);
-    }
-
-    .editor-content {
-      min-height: 200px;
-      padding: 1rem;
-      outline: none;
-      color: var(--texto);
-    }
-
-    /* ADMIN & TABELAS */
-    .admin-card {
-      background-color: var(--fundo);
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin-bottom: 2rem;
-      border: 1px solid var(--card-border);
-    }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.3rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%;
-      padding: 0.6rem;
-      border-radius: 4px;
-      border: 1px solid var(--card-border);
-      background-color: var(--fundo-claro);
-      color: var(--texto);
-      font-family: inherit;
-    }
-
-    .admin-table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: var(--fundo);
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 2rem;
-    }
-
-    .admin-table th, .admin-table td {
-      padding: 0.8rem 1rem;
-      text-align: left;
-      border-bottom: 1px solid var(--card-border);
-    }
-
-    .admin-table th {
-      background-color: var(--azul-marinho);
-      color: var(--bege-claro);
-    }
-
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .stat-box {
-      background-color: var(--fundo);
-      border: 1px solid var(--card-border);
-      padding: 1.25rem;
-      border-radius: 8px;
-    }
-
-    .stat-box span {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--texto-secundario);
-      margin-bottom: 0.2rem;
-    }
-
-    .stat-box strong {
-      font-size: 1.6rem;
-      color: var(--terracota);
-    }
-
-    .tabs-header {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      border-bottom: 2px solid var(--card-border);
-      overflow-x: auto;
-    }
-
-    .tab-btn {
-      padding: 0.5rem 1rem;
+    .icon-btn {
       background: none;
       border: none;
-      font-weight: 600;
-      color: var(--texto-secundario);
+      font-size: 1.25rem;
       cursor: pointer;
-      border-bottom: 3px solid transparent;
-      white-space: nowrap;
+      color: var(--texto);
     }
 
-    .tab-btn.active {
-      color: var(--terracota);
-      border-bottom-color: var(--terracota);
-    }
-
-    /* SPINNER DE UPLOAD */
-    .upload-loader {
-      display: none;
-      font-size: 0.85rem;
-      color: var(--laranja-terra);
-      margin-top: 0.3rem;
-    }
-
+    /* RESPONSIVIDADE SIDEBAR */
     @media (max-width: 768px) {
       aside {
         transform: translateX(-100%);
-        width: var(--sidebar-width) !important;
       }
-      body.sidebar-open aside { transform: translateX(0); }
-      body.sidebar-open .overlay { display: block; }
-      main { margin-left: 0 !important; }
-      .stats-container { grid-template-columns: 1fr; }
-      .header-logo { height: 30px; }
-      .header-title { font-size: 1rem; }
-      .admin-table { display: block; overflow-x: auto; }
+      body.sidebar-open aside {
+        transform: translateX(0);
+      }
+      .main-wrapper {
+        margin-left: 0;
+      }
+      .sidebar-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        z-index: 95;
+      }
+      body.sidebar-open .sidebar-overlay {
+        display: block;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="overlay" id="overlay"></div>
+  <div class="sidebar-overlay" id="overlay"></div>
 
-  <header>
-    <div class="header-left">
-      <button class="icon-btn" id="btnToggleSidebar" aria-label="Menu lateral">☰</button>
-      <div class="header-logos">
-        <img src="Logo.png" alt="Logo Plataforma" class="header-logo" id="platformLogo" loading="lazy" onerror="this.style.display='none'">
-        <img src="EscolaLogo.png" alt="Logo Escola" class="header-logo" id="schoolLogo" loading="lazy" onerror="this.style.display='none'">
-      </div>
-      <div class="header-title" id="headerTitleText">Escravo, Nem Pensar!</div>
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="sidebar-brand">
+      <span>⚖️</span> <span id="headerTitleText">Escravo, Nem Pensar!</span>
     </div>
-    <div class="header-right">
-      <button class="btn-action btn-secondary" id="btnViewSite" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; display: none;" onclick="App.navigateTo('home')">👁️ Ver Site</button>
-      <button class="theme-btn" id="btnToggleTheme" aria-label="Alternar tema">Modo Escuro</button>
-    </div>
-  </header>
-
-  <aside aria-label="Menu principal">
-    <nav>
-      <a class="nav-item active" data-target="home">
-        <span>🏠</span>
-        <span class="nav-text">Início</span>
-      </a>
-      <a class="nav-item" data-target="about">
-        <span>📖</span>
-        <span class="nav-text">Sobre o projeto</span>
-      </a>
-      <a class="nav-item" data-target="activities">
-        <span>🎯</span>
-        <span class="nav-text">Atividades</span>
-      </a>
-      <a class="nav-item" data-target="practice">
-        <span>📸</span>
-        <span class="nav-text">Projeto na Prática</span>
-      </a>
-      <a class="nav-item" data-target="learn">
-        <span>💡</span>
-        <span class="nav-text">Aprenda e Reflita</span>
-      </a>
-      <a class="nav-item" data-target="materials">
-        <span>📚</span>
-        <span class="nav-text">Materiais</span>
-      </a>
-      <a class="nav-item" data-target="admin">
-        <span>🔐</span>
-        <span class="nav-text">Administração</span>
-      </a>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-target="home">🏠 Início</button>
+      <button class="nav-item" data-target="about">📖 Sobre o Projeto</button>
+      <button class="nav-item" data-target="activities">📋 Atividades</button>
+      <button class="nav-item" data-target="practice">📸 Projeto na Prática</button>
+      <button class="nav-item" data-target="learn">💡 Aprenda e Reflita</button>
+      <button class="nav-item" data-target="materials">📚 Materiais</button>
+      <button class="nav-item" data-target="admin">🔐 Administração</button>
     </nav>
+    <div class="sidebar-footer">
+      Plataforma Educacional
+    </div>
   </aside>
 
-  <main>
-    <!-- PÁGINA INICIAL -->
-    <section id="home" class="page active">
-      <!-- DESTAQUE DA HOME -->
-      <div class="featured-hero" id="featuredHeroContainer">
-        <h2>EM DESTAQUE</h2>
-        <h1 id="featuredTitle">Trabalho escravo contemporâneo</h1>
-        <p id="featuredDesc">Conheça, reflita e aprenda a identificar situações de exploração e garantir direitos fundamentais.</p>
-        <button class="btn-action" id="featuredBtn" style="background-color: var(--laranja-terra); color: #fff;">Explorar conteúdo →</button>
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+    <header>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="btn-action btn-secondary" id="btnToggleSidebar">☰ Menu</button>
+        <span style="font-weight: 600; font-size: 0.95rem; color: var(--texto-secundario);">Painel Educativo</span>
       </div>
-
-      <div class="hero-banner">
-        <h1 id="heroTitleText">Projeto Escravo, Nem Pensar!</h1>
-        <p style="color: var(--texto-secundario);">
-          Plataforma de conteúdos educativos e informativos para a prevenção ao trabalho escravo e promoção dos direitos humanos.
-        </p>
+      <div class="header-actions">
+        <button class="btn-action btn-secondary" id="btnToggleTheme" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">Modo Escuro</button>
+        <button class="btn-action btn-secondary" id="btnViewSite" style="display: none; font-size: 0.85rem; padding: 0.4rem 0.8rem;" onclick="App.navigateTo('home')">Ver Site</button>
       </div>
+    </header>
 
-      <h2>Atividades e Conteúdos Recentes</h2>
-      <br>
-      <div class="form-group" style="max-width: 400px;">
-        <input type="text" id="searchInput" placeholder="🔍 Buscar por título, descrição, conteúdo...">
-      </div>
-      <div id="searchMessage" style="margin-bottom: 1rem; font-style: italic; color: var(--texto-secundario); display: none;"></div>
-      <br>
-      <div class="cards-grid" id="cardsContainer"></div>
-    </section>
-
-    <!-- SOBRE O PROJETO -->
-    <section id="about" class="page">
-      <h1>Sobre o projeto</h1>
-      <div class="content-area" id="aboutPageContent"></div>
-    </section>
-
-    <!-- ATIVIDADES -->
-    <section id="activities" class="page">
-      <h1>🎯 Atividades Pedagógicas</h1>
-      <p style="margin-bottom: 1.5rem; color: var(--texto-secundario);">Explore o acervo completo de atividades educativas ordenadas pelas mais recentes.</p>
-      <div class="cards-grid" id="activitiesContainer"></div>
-    </section>
-
-    <!-- PROJETO NA PRÁTICA -->
-    <section id="practice" class="page">
-      <h1>📸 Projeto na Prática</h1>
-      <p style="margin-bottom: 1.5rem; color: var(--texto-secundario);">Registros das ações, culminâncias, apresentações e trabalhos realizados pelos estudantes.</p>
-      
-      <div class="tabs-header">
-        <button class="tab-btn active" onclick="App.filterPractice('Todos', this)">Todos</button>
-        <button class="tab-btn" onclick="App.filterPractice('Culminância', this)">Culminâncias</button>
-        <button class="tab-btn" onclick="App.filterPractice('Apresentação', this)">Apresentação</button>
-        <button class="tab-btn" onclick="App.filterPractice('Pesquisa', this)">Pesquisa</button>
-      </div>
-
-      <div class="photo-gallery-grid" id="practiceGalleryContainer"></div>
-    </section>
-
-    <!-- APRENDA E REFLITA -->
-    <section id="learn" class="page">
-      <h1>💡 Aprenda e Reflita</h1>
-      <p style="margin-bottom: 1.5rem; color: var(--texto-secundario);">Desconstruindo mitos e esclarecendo conceitos essenciais sobre o trabalho escravo moderno.</p>
-      
-      <div class="learn-grid">
-        <div class="learn-card">
-          <span class="badge-mito">MITO COMUM</span>
-          <h3>"A escravidão moderna só acontece em carvoarias e lavouras isoladas."</h3>
-          <blockquote>"É apenas no campo que o trabalhador é mantido sob condições degradantes ou cerceamento de liberdade."</blockquote>
-          <p style="font-size: 0.95rem; color: var(--texto-secundario); line-height: 1.5;">
-            <strong>A realidade:</strong> O trabalho escravo contemporâneo também ocorre em áreas urbanas, em oficinas de costura clandestinas, na construção civil, em canteiros de obras irregulares e no trabalho doméstico.
-          </p>
+    <main>
+      <!-- INÍCIO / HOME -->
+      <section id="home" class="page active">
+        <div class="hero-card">
+          <h1 id="featuredTitle">Trabalho escravo contemporâneo</h1>
+          <p id="featuredDesc">Conheça, reflita e aprenda a identificar situações de exploração e garantir direitos fundamentais.</p>
         </div>
 
-        <div class="learn-card">
-          <span class="badge-mito">MITO COMUM</span>
-          <h3>"Se a pessoa recebe algum salário, não pode ser trabalho escravo."</h3>
-          <blockquote>"O pagamento em dinheiro afasta qualquer hipótese de exploração análoga à de escravo."</blockquote>
-          <p style="font-size: 0.95rem; color: var(--texto-secundario); line-height: 1.5;">
-            <strong>A realidade:</strong> Conforme o Código Penal brasileiro (art. 149), o que define a escravidão moderna não é apenas a ausência de remuneração, mas sim a submissão a trabalhos forçados, jornada exaustiva, condições degradantes de trabalho ou restrição de liberdade.
-          </p>
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Pesquisar atividades, artigos ou termos...">
+        </div>
+        <p id="searchMessage" style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--terracota); display: none;"></p>
+
+        <h2 style="margin-bottom: 1.25rem; font-size: 1.25rem;">Conteúdos e Ações Recentes</h2>
+        <div class="cards-grid" id="cardsContainer"></div>
+      </section>
+
+      <!-- SOBRE O PROJETO -->
+      <section id="about" class="page">
+        <h1>📖 Sobre o Projeto</h1>
+        <div class="admin-card" style="margin-top: 1.5rem; line-height: 1.7;" id="aboutPageContent"></div>
+      </section>
+
+      <!-- ATIVIDADES -->
+      <section id="activities" class="page">
+        <h1>📋 Atividades Realizadas</h1>
+        <p style="margin-bottom: 1.5rem; color: var(--texto-secundario);">Acompanhe o andamento das oficinas, debates e produções desenvolvidas.</p>
+        <div class="cards-grid" id="activitiesContainer"></div>
+      </section>
+
+      <!-- PROJETO NA PRÁTICA -->
+      <section id="practice" class="page">
+        <h1>📸 Projeto na Prática</h1>
+        <p style="margin-bottom: 1.5rem; color: var(--texto-secundario);">Registros fotográficos das ações pedagógicas e engajamento dos estudantes.</p>
+        
+        <div class="tabs-header">
+          <button class="tab-btn active" onclick="App.filterPractice('Todos', this)">Todas as Fotos</button>
+          <button class="tab-btn" onclick="App.filterPractice('Culminância', this)">Culminância</button>
+          <button class="tab-btn" onclick="App.filterPractice('Apresentação', this)">Apresentação</button>
+          <button class="tab-btn" onclick="App.filterPractice('Pesquisa', this)">Pesquisa</button>
         </div>
 
-        <div class="learn-card">
-          <span class="badge-mito">MITO COMUM</span>
-          <h3>"As pessoas aceitam esse tipo de trabalho porque querem ou porque não têm opção."</h3>
-          <blockquote>"Ninguém é obrigado a aceitar, se estão lá é por falta de escolha própria."</blockquote>
-          <p style="font-size: 0.95rem; color: var(--texto-secundario); line-height: 1.5;">
-            <strong>A realidade:</strong> A extrema vulnerabilidade social, a pobreza, o desemprego e as falsas promessas de emprego (aliciamento) são usadas por exploradores para enganar e prender trabalhadores em ciclos de dívidas fictícias e opressão.
-          </p>
+        <div class="photo-gallery-grid" id="practiceGalleryContainer"></div>
+      </section>
+
+      <!-- APRENDA E REFLITA -->
+      <section id="learn" class="page">
+        <h1>💡 Aprenda e Reflita</h1>
+        <p style="margin-bottom: 1.5rem; color: var(--texto-secundario);">Desconstruindo mitos e esclarecendo conceitos essenciais sobre o trabalho escravo moderno.</p>
+        
+        <div class="learn-grid">
+          <div class="learn-card">
+            <span class="badge-mito">MITO COMUM</span>
+            <h3>"A escravidão moderna só acontece em carvoarias e lavouras isoladas."</h3>
+            <blockquote>"É apenas no campo que o trabalhador é mantido sob condições degradantes ou cerceamento de liberdade."</blockquote>
+            <p style="font-size: 0.95rem; color: var(--texto-secundario); line-height: 1.5;">
+              <strong>A realidade:</strong> O trabalho escravo contemporâneo também ocorre em áreas urbanas, em oficinas de costura clandestinas, na construção civil, em canteiros de obras irregulares e no trabalho doméstico.
+            </p>
+          </div>
+
+          <div class="learn-card">
+            <span class="badge-mito">MITO COMUM</span>
+            <h3>"Se a pessoa recebe algum salário, não pode ser trabalho escravo."</h3>
+            <blockquote>"O pagamento em dinheiro afasta qualquer hipótese de exploração análoga à de escravo."</blockquote>
+            <p style="font-size: 0.95rem; color: var(--texto-secundario); line-height: 1.5;">
+              <strong>A realidade:</strong> Conforme o Código Penal brasileiro (art. 149), o que define a escravidão moderna não é apenas a ausência de remuneração, mas sim a submissão a trabalhos forçados, jornada exaustiva, condições degradantes de trabalho ou restrição de liberdade.
+            </p>
+          </div>
+
+          <div class="learn-card">
+            <span class="badge-mito">MITO COMUM</span>
+            <h3>"As pessoas aceitam esse tipo de trabalho porque querem ou porque não têm opção."</h3>
+            <blockquote>"Ninguém é obrigado a aceitar, se estão lá é por falta de escolha própria."</blockquote>
+            <p style="font-size: 0.95rem; color: var(--texto-secundario); line-height: 1.5;">
+              <strong>A realidade:</strong> A extrema vulnerabilidade social, a pobreza, o desemprego e as falsas promessas de emprego (aliciamento) são usadas por exploradores para enganar e prender trabalhadores em ciclos de dívidas fictícias e opressão.
+            </p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- MATERIAIS -->
-    <section id="materials" class="page">
-      <h1>📚 Materiais Didáticos e Documentos</h1>
-      <p style="margin-bottom: 1.5rem; color: var(--texto-secundario);">Baixe cartilhas, planos de aula, legislações e guias de apoio pedagógico.</p>
-      <div class="cards-grid" id="materialsContainer"></div>
-    </section>
+      <!-- MATERIAIS -->
+      <section id="materials" class="page">
+        <h1>📚 Materiais Didáticos e Docuntários</h1>
+        <p style="margin-bottom: 1.5rem; color: var(--texto-secundario);">Acesse documentos oficiais, cartilhas informativas e apresentações de apoio.</p>
+        
+        <div class="cards-grid" id="materialsContainer"></div>
+      </section>
 
-    <!-- ADMINISTRAÇÃO -->
-    <section id="admin" class="page">
-      <h1>🔐 Painel Administrativo</h1>
-      <p style="margin-bottom: 1.5rem; color: var(--texto-secundario);">Gerencie o conteúdo, artigos, galeria de fotos e configurações da plataforma.</p>
+      <!-- ADMINISTRAÇÃO -->
+      <section id="admin" class="page">
+        <h1>🔐 Painel de Administração</h1>
+        <p style="margin-bottom: 1.5rem; color: var(--texto-secundario);">Gerencie o conteúdo do site, edite textos e adicione novos registros.</p>
 
-      <div id="adminLoginWrapper" class="admin-card" style="max-width: 400px; margin: 0 auto;">
-        <h3 style="margin-bottom: 1rem; color: var(--terracota);">Entrar no Sistema</h3>
-        <div class="form-group">
-          <label for="adminPassInput">Senha de Acesso</label>
-          <input type="password" id="adminPassInput" placeholder="Digite a senha administrativa...">
-        </div>
-        <button class="btn-action" onclick="AdminAuth.login()" style="width: 100%; justify-content: center;">Entrar</button>
-        <p id="adminLoginError" style="color: var(--vermelho); font-size: 0.85rem; margin-top: 0.5rem; display: none;">Senha incorreta.</p>
-      </div>
-
-      <div id="adminDashboard" style="display: none;">
         <div class="stats-container">
           <div class="stat-box">
-            <span>Total de Registros/Cards</span>
-            <strong id="statTotalCards">0</strong>
+            <span>Total de Conteúdos</span>
+            <strong id="statTotalItems">0</strong>
           </div>
           <div class="stat-box">
             <span>Fotos na Galeria</span>
@@ -872,789 +750,498 @@
           </div>
         </div>
 
-        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-          <button class="btn-action" onclick="AdminPanel.openModal('card')">+ Novo Conteúdo / Atividade</button>
-          <button class="btn-action" onclick="AdminPanel.openModal('photo')">+ Adicionar Foto (Prática)</button>
-          <button class="btn-action" onclick="AdminPanel.openModal('material')">+ Novo Material Didático</button>
-          <button class="btn-action btn-secondary" onclick="AdminAuth.logout()">Sair do Painel</button>
-        </div>
-
-        <div class="tabs-header">
-          <button class="tab-btn active" onclick="AdminPanel.switchTab('cards', this)">Gerenciar Conteúdos</button>
-          <button class="tab-btn" onclick="AdminPanel.switchTab('photos', this)">Gerenciar Fotos</button>
-          <button class="tab-btn" onclick="AdminPanel.switchTab('materials', this)">Gerenciar Materiais</button>
-          <button class="tab-btn" onclick="AdminPanel.switchTab('settings', this)">Configurações Gerais</button>
-        </div>
-
-        <!-- TAB CARDS -->
-        <div id="adminTabCards" class="admin-tab-content">
-          <div style="overflow-x: auto;">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Título</th>
-                  <th>Categoria</th>
-                  <th>Data</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="adminCardsTableBody"></tbody>
-            </table>
+        <div class="admin-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 id="formTitle">Adicionar Novo Conteúdo / Atividade</h3>
+            <button class="btn-action btn-secondary" id="btnResetForm" style="font-size: 0.8rem; padding: 0.3rem 0.6rem; display: none;" onclick="App.resetForm()">Cancelar Edição</button>
           </div>
-        </div>
-
-        <!-- TAB PHOTOS -->
-        <div id="adminTabPhotos" class="admin-tab-content" style="display: none;">
-          <div style="overflow-x: auto;">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Foto</th>
-                  <th>Legenda</th>
-                  <th>Categoria</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="adminPhotosTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- TAB MATERIALS -->
-        <div id="adminTabMaterials" class="admin-tab-content" style="display: none;">
-          <div style="overflow-x: auto;">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Título</th>
-                  <th>Descrição</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="adminMaterialsTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- TAB SETTINGS -->
-        <div id="adminTabSettings" class="admin-tab-content" style="display: none;">
-          <div class="admin-card">
-            <h3 style="margin-bottom: 1rem; color: var(--terracota);">Configurações da Plataforma</h3>
+          
+          <form id="adminForm" onsubmit="App.handleFormSubmit(event)">
+            <input type="hidden" id="editIndex" value="-1">
+            
             <div class="form-group">
-              <label for="settingPlatformName">Título da Plataforma / Cabeçalho</label>
-              <input type="text" id="settingPlatformName" value="Escravo, Nem Pensar!">
+              <label for="formCategory">Categoria / Seção</label>
+              <select id="formCategory" required>
+                <option value="home">Início (Destaque/Card)</option>
+                <option value="activities">Atividades</option>
+                <option value="practice">Projeto na Prática (Foto)</option>
+                <option value="materials">Materiais Didáticos</option>
+              </select>
             </div>
+
             <div class="form-group">
-              <label for="settingHeroTitle">Título do Banner Principal (Home)</label>
-              <input type="text" id="settingHeroTitle" value="Trabalho escravo contemporâneo">
+              <label for="formTitleInput">Título</label>
+              <input type="text" id="formTitleInput" required placeholder="Ex: Oficina de Debates com os Alunos">
             </div>
-            <div class="form-group">
-              <label for="settingHeroDesc">Descrição do Banner Principal (Home)</label>
-              <textarea id="settingHeroDesc" rows="3">Conheça, reflita e aprenda a identificar situações de exploração e garantir direitos fundamentais.</textarea>
+
+            <div class="form-group" id="groupImageUrl">
+              <label for="formImage">URL da Imagem de Capa / Foto</label>
+              <input type="url" id="formImage" placeholder="https://exemplo.com/imagem.jpg">
             </div>
+
+            <div class="form-group" id="groupTag">
+              <label for="formTag">Etiqueta / Tag (Ex: Oficina, Pesquisa, PDF)</label>
+              <input type="text" id="formTag" placeholder="Oficina">
+            </div>
+
             <div class="form-group">
-              <label>Texto da Página "Sobre o Projeto" (Editor WYSIWYG)</label>
+              <label for="formDesc">Descrição / Conteúdo Completo</label>
               <div class="editor-container">
                 <div class="editor-toolbar">
-                  <select onchange="AdminPanel.formatEditor('about', 'formatBlock', this.value)">
-                    <option value="">Estilo de Bloco</option>
-                    <option value="H2">Título 2</option>
-                    <option value="H3">Título 3</option>
-                    <option value="P">Parágrafo</option>
-                  </select>
-                  <button type="button" onclick="AdminPanel.formatEditor('about', 'bold')"><b>B</b></button>
-                  <button type="button" onclick="AdminPanel.formatEditor('about', 'italic')"><i>I</i></button>
-                  <button type="button" onclick="AdminPanel.formatEditor('about', 'underline')"><u>U</u></button>
-                  <button type="button" onclick="AdminPanel.formatEditor('about', 'insertUnorderedList')">• Lista</button>
+                  <button type="button" onclick="App.formatText('bold')"><b>B</b></button>
+                  <button type="button" onclick="App.formatText('italic')"><i>I</i></button>
+                  <button type="button" onclick="App.formatText('underline')"><u>U</u></button>
                 </div>
-                <div class="editor-content" id="editorAbout" contenteditable="true">
-                  <p>O projeto <strong>Escravo, Nem Pensar!</strong> é uma iniciativa educacional voltada para a conscientização, prevenção e combate ao trabalho escravo contemporâneo no Brasil.</p>
-                  <p>Através de ações pedagógicas nas escolas, buscamos engajar estudantes, professores e comunidade na defesa dos direitos humanos e da dignidade no trabalho.</p>
-                </div>
+                <div class="editor-content" id="formDesc" contenteditable="true" style="min-height: 120px;"></div>
               </div>
             </div>
-            <button class="btn-action" onclick="AdminPanel.saveSettings()">Salvar Configurações</button>
+
+            <button type="submit" class="btn-action" id="btnSubmitForm">Salvar Conteúdo</button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h3>Gerenciar Registros Existentes</h3>
+          <div style="overflow-x: auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Seção</th>
+                  <th>Tag</th>
+                  <th style="text-align: right;">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="adminTableBody">
+                <!-- Preenchido via JavaScript -->
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- MODAL DE VISUALIZAÇÃO DE CONTEÚDO (LEITURA) -->
-  <div class="lightbox-modal" id="contentModal">
-    <div class="lightbox-content" style="max-width: 700px;">
-      <div class="lightbox-header">
-        <span id="modalContentCategory">Categoria</span>
-        <button class="icon-btn" onclick="App.closeContentModal()">✕</button>
-      </div>
-      <div class="lightbox-body" style="text-align: left; max-height: 70vh; overflow-y: auto;">
-        <img id="modalContentImg" src="" alt="" style="width: 100%; max-height: 300px; object-fit: cover; display: none;">
-        <h2 id="modalContentTitle" style="color: var(--terracota); margin-bottom: 0.5rem; font-size: 1.5rem;"></h2>
-        <p id="modalContentDate" style="font-size: 0.8rem; color: var(--texto-secundario); margin-bottom: 1rem;"></p>
-        <div id="modalContentBody" style="line-height: 1.6; font-size: 1rem;"></div>
-      </div>
-      <div class="lightbox-footer">
-        <span id="modalContentMeta" class="meta-tag">Tag</span>
-        <button class="btn-action btn-secondary" onclick="App.closeContentModal()">Fechar</button>
-      </div>
-    </div>
+      </section>
+    </main>
   </div>
 
-  <!-- MODAL DE LIGHTBOX PARA FOTOS -->
-  <div class="lightbox-modal" id="photoLightbox">
-    <div class="lightbox-content" style="max-width: 700px;">
+  <!-- LIGHTBOX MODAL PARA FOTOS/ITENS -->
+  <div class="lightbox-modal" id="lightboxModal">
+    <div class="lightbox-content">
       <div class="lightbox-header">
-        <span id="lightboxCategory">Categoria</span>
-        <button class="icon-btn" onclick="App.closePhotoLightbox()">✕</button>
+        <span id="lightboxTitle">Detalhes</span>
+        <button class="icon-btn" onclick="App.closeLightbox()">&times;</button>
       </div>
-      <div class="lightbox-body">
-        <img id="lightboxImg" src="" alt="Foto ampliada">
-        <p id="lightboxCaption" style="font-weight: 600; font-size: 1.1rem; color: var(--texto);"></p>
+      <div class="lightbox-body" id="lightboxBody">
+        <!-- Conteúdo dinâmico -->
       </div>
       <div class="lightbox-footer">
-        <span style="font-size: 0.85rem; color: var(--texto-secundario);">Projeto na Prática</span>
-        <button class="btn-action btn-secondary" onclick="App.closePhotoLightbox()">Fechar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL GENÉRICO DE FORMULÁRIO ADMIN (CRIAR/EDITAR) -->
-  <div class="lightbox-modal" id="adminFormModal">
-    <div class="lightbox-content" style="max-width: 600px;">
-      <div class="lightbox-header">
-        <span id="adminModalTitle">Adicionar Novo</span>
-        <button class="icon-btn" onclick="AdminPanel.closeModal()">✕</button>
-      </div>
-      <div class="lightbox-body" style="text-align: left; max-height: 70vh; overflow-y: auto;">
-        <form id="adminDynamicForm" onsubmit="AdminPanel.handleFormSubmit(event)">
-          <input type="hidden" id="formEditType">
-          <input type="hidden" id="formEditIndex" value="-1">
-          
-          <div id="formFieldsContainer"></div>
-          
-          <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem; justify-content: flex-end;">
-            <button type="button" class="btn-action btn-secondary" onclick="AdminPanel.closeModal()">Cancelar</button>
-            <button type="submit" class="btn-action">Salvar Registro</button>
-          </div>
-        </form>
+        <span id="lightboxMeta" style="font-size: 0.85rem; color: var(--texto-secundario);"></span>
+        <button class="btn-action" onclick="App.closeLightbox()" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Fechar</button>
       </div>
     </div>
   </div>
 
   <script>
-    // BANCO DE DADOS LOCAL E ESTADO DA APLICAÇÃO
-    const STORAGE_KEY =_ "escravo_nem_pensar_db_v1";
-
-    const defaultData = {
-      settings: {
-        platformName: "Escravo, Nem Pensar!",
-        heroTitle: "Trabalho escravo contemporâneo",
-        heroDesc: "Conheça, reflita e aprenda a identificar situações de exploração e garantir direitos fundamentais.",
-        aboutHtml: `<p>O projeto <strong>Escravo, Nem Pensar!</strong> é uma iniciativa educacional voltada para a conscientização, prevenção e combate ao trabalho escravo contemporâneo no Brasil.</p><p>Através de ações pedagógicas nas escolas, buscamos engajar estudantes, professores e comunidade na defesa dos direitos humanos e da dignidade no trabalho.</p>`
-      },
-      cards: [
+    // Banco de Dados Local / Estado Inicial da Aplicação
+    const initialData = {
+      theme: 'light',
+      siteTitle: 'Escravo, Nem Pensar!',
+      items: [
         {
           id: 1,
-          title: "Seminário sobre Direitos Humanos e Trabalho",
-          category: "Atividade",
-          date: "12/05/2026",
-          description: "Estudantes do Ensino Médio debateram sobre a legislação trabalhista e formas de aliciamento.",
-          content: "<p>Durante o seminário, foram apresentados dados estatísticos recentes sobre resgates de trabalhadores em condições análogas à de escravo no Brasil. Os alunos dividiram-se em grupos para analisar casos reais e apresentar soluções de conscientização comunitária.</p><p>O evento contou com a participação de especialistas na área e exibição de curtas-documentários.</p>",
-          cover: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&q=80",
-          tag: "Destaque"
+          category: 'home',
+          title: 'Pesquisa de Campo e Mapeamento',
+          image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&q=80',
+          tag: 'Pesquisa',
+          desc: 'Estudantes realizaram um levantamento bibliográfico e estatístico sobre os principais setores econômicos afetados pelo trabalho escravo no Brasil.'
         },
         {
           id: 2,
-          title: "Produção de Cartazes e Infográficos",
-          category: "Pedagógico",
-          date: "28/04/2026",
-          description: "Turmas criaram materiais visuais educativos para fixação nos murais da escola.",
-          content: "<p>Com foco na criatividade e informação direta, os estudantes desenvolveram infográficos detalhando quais são os canais oficiais de denúncia (como o Disque 100 e o Sistema Inspeção do Trabalho) e como identificar falsas promessas de emprego.</p>",
-          cover: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80",
-          tag: "Oficina"
+          category: 'home',
+          title: 'Rodas de Conversa nas Escolas',
+          image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80',
+          tag: 'Debate',
+          desc: 'Discussões abertas com turmas do Ensino Médio para desmistificar conceitos e identificar redes de apoio e denúncia.'
         },
         {
           id: 3,
-          title: "Pesquisa Histórica: Da Abolição ao Século XXI",
-          category: "Pesquisa",
-          date: "10/03/2026",
-          description: "Análise comparativa sobre as formas de exploração do passado e as novas faces da escravidão moderna.",
-          content: "<p>Um mergulho histórico que demonstrou como estruturas de desigualdade persisten e se adaptam à economia moderna, exigindo vigilância constante da sociedade civil e rigor no cumprimento das leis trabalhistas.</p>",
-          cover: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=600&q=80",
-          tag: "Estudo"
+          category: 'activities',
+          title: 'Produção de Cartazes Informativos',
+          image: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=600&q=80',
+          tag: 'Oficina',
+          desc: 'Elaboração coletiva de material visual educativo distribuído pelos corredores da instituição.'
+        },
+        {
+          id: 4,
+          category: 'activities',
+          title: 'Apresentação de Seminários Temáticos',
+          image: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=600&q=80',
+          tag: 'Apresentação',
+          desc: 'Grupos apresentaram análises críticas sobre casos reais julgados pela Justiça do Trabalho.'
+        },
+        {
+          id: 5,
+          category: 'practice',
+          title: 'Exposição na Culminância do Projeto',
+          image: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=600&q=80',
+          tag: 'Culminância',
+          desc: 'Momento em que os resultados das pesquisas foram abertos à comunidade escolar.'
+        },
+        {
+          id: 6,
+          category: 'practice',
+          title: 'Debate com Especialista Convidado',
+          image: 'https://images.unsplash.com/photo-1531545514256-b1400bc00f31?auto=format&fit=crop&w=600&q=80',
+          tag: 'Apresentação',
+          desc: 'Palestra esclarecedora abordando os canais oficiais de denúncia e proteção ao trabalhador.'
+        },
+        {
+          id: 7,
+          category: 'materials',
+          title: 'Cartilha Educativa Oficial - Escravo, Nem Pensar!',
+          image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=600&q=80',
+          tag: 'PDF / Cartilha',
+          desc: 'Guia completo de orientação pedagógica e conceitual para professores e estudantes combaterem a exploração.'
+        },
+        {
+          id: 8,
+          category: 'materials',
+          title: 'Guia Prático de Direitos Trabalhistas',
+          image: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80',
+          tag: 'Documento',
+          desc: 'Resumo prático com leis, artigos do Código Penal e o passo a passo para realizar denúncias seguras.'
         }
       ],
-      photos: [
-        {
-          id: 1,
-          title: "Apresentação de Trabalhos",
-          category: "Apresentação",
-          url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80"
-        },
-        {
-          id: 2,
-          title: "Culminância do Projeto",
-          category: "Culminância",
-          url: "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=600&q=80"
-        },
-        {
-          id: 3,
-          title: "Pesquisa em Grupo na Biblioteca",
-          category: "Pesquisa",
-          url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80"
-        }
-      ],
-      materials: [
-        {
-          id: 1,
-          title: "Cartilha Pedagógica - Escravo, Nem Pensar!",
-          description: "Guia completo com orientações didáticas para professores trabalharem o tema em sala de aula.",
-          link: "#"
-        },
-        {
-          id: 2,
-          title: "Fluxograma de Denúncias e Direitos",
-          description: "Material visual resumindo os passos para realizar denúncias seguras e proteger vítimas.",
-          link: "#"
-        }
-      ]
+      aboutContent: `
+        <p>O projeto <strong>"Escravo, Nem Pensar!"</strong> é uma iniciativa pedagógica voltada à conscientização, prevenção e combate ao trabalho escravo contemporâneo no Brasil.</p>
+        <br>
+        <p>Por meio de ações práticas, pesquisas orientadas, debates e produções artísticas e textuais, buscamos engajar a comunidade escolar na defesa intransigente dos direitos humanos, da dignidade da pessoa humana e das leis trabalhistas.</p>
+        <br>
+        <p>Acreditamos que a educação é a principal ferramenta de transformação social, capaz de desconstruir mitos, alertar sobre aliciamentos e capacitar cidadãos conscientes de seus direitos e deveres.</p>
+      `
     };
 
-    let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultData;
-
-    function saveDB() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-    }
-
-    // CONTROLADOR PRINCIPAL DA APLICAÇÃO
+    // Objeto Principal de Controle da Aplicação
     const App = {
+      data: JSON.parse(localStorage.getItem('escravoNemPensarData')) || initialData,
+
       init() {
-        this.setupTheme();
-        this.setupNavigation();
+        this.applyTheme(this.data.theme);
+        this.setupEventListeners();
         this.renderAll();
-        this.setupSearch();
       },
 
-      setupTheme() {
-        const savedTheme = localStorage.getItem("escravo_theme") || "light";
-        document.documentElement.setAttribute("data-theme", savedTheme);
-        document.getElementById("btnToggleTheme").textContent = savedTheme === "dark" ? "Modo Claro" : "Modo Escuro";
-
-        document.getElementById("btnToggleTheme").addEventListener("click", () => {
-          const current = document.documentElement.getAttribute("data-theme");
-          const next = current === "dark" ? "light" : "dark";
-          document.documentElement.setAttribute("data-theme", next);
-          localStorage.setItem("escravo_theme", next);
-          document.getElementById("btnToggleTheme").textContent = next === "dark" ? "Modo Claro" : "Modo Escuro";
-        });
+      save() {
+        localStorage.setItem('escravoNemPensarData', JSON.stringify(this.data));
+        this.renderAll();
       },
 
-      setupNavigation() {
-        const navItems = document.querySelectorAll(".nav-item");
-        navItems.forEach(item => {
-          item.addEventListener("click", () => {
-            const target = item.getAttribute("data-target");
-            this.navigateTo(target);
-            if (window.innerWidth <= 768) {
-              document.body.classList.remove("sidebar-open");
-            }
-          });
-        });
+      applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        const btnTheme = document.getElementById('btnToggleTheme');
+        btnTheme.textContent = theme === 'dark' ? 'Modo Claro' : 'Modo Escuro';
+      },
 
-        document.getElementById("btnToggleSidebar").addEventListener("click", () => {
-          if (window.innerWidth <= 768) {
-            document.body.classList.toggle("sidebar-open");
-          } else {
-            document.body.classList.toggle("sidebar-collapsed");
-          }
-        });
-
-        document.getElementById("overlay").addEventListener("click", () => {
-          document.body.classList.remove("sidebar-open");
-        });
+      toggleTheme() {
+        this.data.theme = this.data.theme === 'light' ? 'dark' : 'light';
+        this.applyTheme(this.data.theme);
+        this.save();
       },
 
       navigateTo(pageId) {
-        document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-        document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        
         const targetPage = document.getElementById(pageId);
-        if (targetPage) targetPage.classList.add("active");
+        if (targetPage) targetPage.classList.add('active');
 
         const targetNav = document.querySelector(`.nav-item[data-target="${pageId}"]`);
-        if (targetNav) targetNav.classList.add("active");
+        if (targetNav) targetNav.classList.add('active');
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
-        // Controle do botão ver site no header
-        const btnViewSite = document.getElementById("btnViewSite");
-        if (pageId === "admin" && AdminAuth.isLoggedIn) {
-          btnViewSite.style.display = "inline-flex";
+        // Gerenciar visibilidade do botão "Ver Site" no header
+        const btnViewSite = document.getElementById('btnViewSite');
+        if (pageId === 'admin') {
+          btnViewSite.style.display = 'inline-flex';
         } else {
-          btnViewSite.style.display = "none";
+          btnViewSite.style.display = 'none';
+        }
+
+        // Fechar sidebar mobile se aberta
+        document.body.classList.remove('sidebar-open');
+        window.scrollTo(0, 0);
+      },
+
+      setupEventListeners() {
+        // Navegação por clique na sidebar
+        document.querySelectorAll('.nav-item').forEach(item => {
+          item.addEventListener('click', () => {
+            const target = item.getAttribute('data-target');
+            this.navigateTo(target);
+          });
+        });
+
+        // Botões de Tema e Sidebar
+        document.getElementById('btnToggleTheme').addEventListener('click', () => this.toggleTheme());
+        document.getElementById('btnToggleSidebar').addEventListener('click', () => {
+          document.body.classList.toggle('sidebar-open');
+        });
+        document.getElementById('overlay').addEventListener('click', () => {
+          document.body.classList.remove('sidebar-open');
+        });
+
+        // Campo de busca na página inicial
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+          searchInput.addEventListener('input', (e) => {
+            this.handleSearch(e.target.value);
+          });
         }
       },
 
       renderAll() {
-        // Configurações gerais
-        document.getElementById("headerTitleText").textContent = db.settings.platformName;
-        document.getElementById("docTitle").textContent = db.settings.platformName;
-        document.getElementById("featuredTitle").textContent = db.settings.heroTitle;
-        document.getElementById("featuredDesc").textContent = db.settings.heroDesc;
-        document.getElementById("aboutPageContent").innerHTML = db.settings.aboutHtml;
+        // Renderizar conteúdo Sobre
+        document.getElementById('aboutPageContent').innerHTML = this.data.aboutContent;
 
-        // Cards Home e Atividades
-        this.renderCards("cardsContainer", db.cards);
-        this.renderCards("activitiesContainer", db.cards);
+        // Renderizar Home (Cards da categoria home)
+        this.renderCards('home', 'cardsContainer');
 
-        // Galeria Prática
-        this.renderPracticeGallery(db.photos);
+        // Renderizar Atividades
+        this.renderCards('activities', 'activitiesContainer');
 
-        // Materiais
-        this.renderMaterials(db.materials);
+        // Renderizar Projeto na Prática (Galeria)
+        this.renderPracticeGallery('Todos');
 
-        // Admin Stats & Tables
-        if (typeof AdminPanel !== 'undefined') {
-          AdminPanel.updateStats();
-          AdminPanel.renderTables();
-        }
+        // Renderizar Materiais
+        this.renderCards('materials', 'materialsContainer');
+
+        // Renderizar Painel Admin (Tabela e Estatísticas)
+        this.renderAdminTable();
+        this.updateStats();
       },
 
-      renderCards(containerId, cardsArray) {
+      renderCards(category, containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        if (cardsArray.length === 0) {
-          container.innerHTML = `<p style="color: var(--texto-secundario); font-style: italic;">Nenhum conteúdo cadastrado.</p>`;
-          return;
-        }
-
-        container.innerHTML = cardsArray.map((card, index) => `
-          <div class="window-card" onclick="App.openContentModal(${card.id})">
-            ${card.cover ? `<img src="${card.cover}" alt="${card.title}" class="card-cover-img" loading="lazy">` : ''}
-            <div class="window-header">
-              <span>${card.category}</span>
-              <span>${card.date || ''}</span>
-            </div>
-            <div class="window-body">
-              <div>
-                <h3 class="window-title">${card.title}</h3>
-                <p class="window-desc">${card.description}</p>
-              </div>
-              <div>
-                ${card.tag ? `<span class="meta-tag">${card.tag}</span>` : ''}
-              </div>
-            </div>
-          </div>
-        `).join("");
-      },
-
-      renderPracticeGallery(photosArray) {
-        const container = document.getElementById("practiceGalleryContainer");
-        if (!container) return;
-
-        if (photosArray.length === 0) {
-          container.innerHTML = `<p style="color: var(--texto-secundario); font-style: italic;">Nenhuma foto cadastrada.</p>`;
-          return;
-        }
-
-        container.innerHTML = photosArray.map((photo, index) => `
-          <div class="photo-thumb-card" onclick="App.openPhotoLightbox('${photo.url}', '${photo.title}', '${photo.category}')">
-            <img src="${photo.url}" alt="${photo.title}" loading="lazy">
-            <div class="photo-thumb-caption">${photo.title}</div>
-          </div>
-        `).join("");
-      },
-
-      filterPractice(category, btnElement) {
-        const buttons = document.querySelectorAll("#practice .tab-btn");
-        buttons.forEach(b => b.classList.remove("active"));
-        btnElement.classList.add("active");
-
-        if (category === "Todos") {
-          this.renderPracticeGallery(db.photos);
-        } else {
-          const filtered = db.photos.filter(p => p.category === category);
-          this.renderPracticeGallery(filtered);
-        }
-      },
-
-      renderMaterials(materialsArray) {
-        const container = document.getElementById("materialsContainer");
-        if (!container) return;
-
-        if (materialsArray.length === 0) {
-          container.innerHTML = `<p style="color: var(--texto-secundario); font-style: italic;">Nenhum material cadastrado.</p>`;
-          return;
-        }
-
-        container.innerHTML = materialsArray.map(mat => `
-          <div class="window-card">
-            <div class="window-header">
-              <span>Documento PDF / Guia</span>
-            </div>
-            <div class="window-body">
-              <div>
-                <h3 class="window-title">${mat.title}</h3>
-                <p class="window-desc">${mat.description}</p>
-              </div>
-              <div style="margin-top: 1rem;">
-                <a href="${mat.link}" target="_blank" class="btn-action" style="text-decoration: none; font-size: 0.85rem; padding: 0.4rem 0.8rem;">📥 Baixar Material</a>
-              </div>
-            </div>
-          </div>
-        `).join("");
-      },
-
-      openContentModal(id) {
-        const card = db.cards.find(c => c.id === id);
-        if (!card) return;
-
-        document.getElementById("modalContentCategory").textContent = card.category;
-        document.getElementById("modalContentTitle").textContent = card.title;
-        document.getElementById("modalContentDate").textContent = card.date ? `Publicado em: ${card.date}` : "";
-        document.getElementById("modalContentBody").innerHTML = card.content || card.description;
-        document.getElementById("modalContentMeta").textContent = card.tag || card.category;
-
-        const imgEl = document.getElementById("modalContentImg");
-        if (card.cover) {
-          imgEl.src = card.cover;
-          imgEl.style.display = "block";
-        } else {
-          imgEl.style.display = "none";
-        }
-
-        document.getElementById("contentModal").style.display = "flex";
-      },
-
-      closeContentModal() {
-        document.getElementById("contentModal").style.display = "none";
-      },
-
-      openPhotoLightbox(url, title, category) {
-        document.getElementById("lightboxImg").src = url;
-        document.getElementById("lightboxCaption").textContent = title;
-        document.getElementById("lightboxCategory").textContent = category;
-        document.getElementById("photoLightbox").style.display = "flex";
-      },
-
-      closePhotoLightbox() {
-        document.getElementById("photoLightbox").style.display = "none";
-      },
-
-      setupSearch() {
-        const searchInput = document.getElementById("searchInput");
-        const searchMsg = document.getElementById("searchMessage");
-
-        if (!searchInput) return;
-
-        searchInput.addEventListener("input", (e) => {
-          const term = e.target.value.toLowerCase().trim();
-          if (term === "") {
-            searchMsg.style.display = "none";
-            this.renderCards("cardsContainer", db.cards);
-            return;
-          }
-
-          const filtered = db.cards.filter(c => 
-            c.title.toLowerCase().includes(term) || 
-            c.description.toLowerCase().includes(term) ||
-            c.content.toLowerCase().includes(term) ||
-            c.category.toLowerCase().includes(term)
-          );
-
-          searchMsg.style.display = "block";
-          searchMsg.textContent = `Encontrado(s) ${filtered.length} resultado(s) para "${term}".`;
-          this.renderCards("cardsContainer", filtered);
-        });
-      }
-    };
-
-    // AUTENTICAÇÃO E PAINEL ADMINISTRATIVO
-    const AdminAuth = {
-      isLoggedIn: false,
-
-      login() {
-        const pass = document.getElementById("adminPassInput").value;
-        const err = document.getElementById("adminLoginError");
+        const items = this.data.items.filter(item => item.category === category);
         
-        // Senha padrão administrativa simples para demonstração
-        if (pass === "admin123" || pass === "1234") {
-          this.isLoggedIn = true;
-          err.style.display = "none";
-          document.getElementById("adminLoginWrapper").style.display = "none";
-          document.getElementById("adminDashboard").style.display = "block";
-          document.getElementById("btnViewSite").style.display = "inline-flex";
-          App.renderAll();
-        } else {
-          err.style.display = "block";
+        if (items.length === 0) {
+          container.innerHTML = `<p style="color: var(--texto-secundario); font-size: 0.95rem;">Nenhum conteúdo cadastrado nesta seção ainda.</p>`;
+          return;
         }
+
+        container.innerHTML = items.map(item => `
+          <div class="window-card" onclick="App.openLightboxItem(${item.id})">
+            ${item.image ? `<img src="${item.image}" alt="${item.title}" class="card-cover-img">` : ''}
+            <div class="window-header">
+              <span>${item.category.toUpperCase()}</span>
+              <span class="meta-tag">${item.tag || 'Geral'}</span>
+            </div>
+            <div class="window-body">
+              <div>
+                <div class="window-title">${item.title}</div>
+                <div class="window-desc">${this.truncateText(item.desc, 100)}</div>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--terracota); font-weight: 600;">Ver detalhes &rarr;</div>
+            </div>
+          </div>
+        `).join('');
       },
 
-      logout() {
-        this.isLoggedIn = false;
-        document.getElementById("adminDashboard").style.display = "none";
-        document.getElementById("adminLoginWrapper").style.display = "block";
-        document.getElementById("adminPassInput").value = "";
-        document.getElementById("btnViewSite").style.display = "none";
-      }
-    };
+      renderPracticeGallery(filterTag) {
+        const container = document.getElementById('practiceGalleryContainer');
+        if (!container) return;
 
-    const AdminPanel = {
-      switchTab(tabName, btnEl) {
-        document.querySelectorAll("#admin .tab-btn").forEach(b => b.classList.remove("active"));
-        btnEl.classList.add("active");
+        let items = this.data.items.filter(item => item.category === 'practice');
+        if (filterTag !== 'Todos') {
+          items = items.filter(item => item.tag.toLowerCase() === filterTag.toLowerCase());
+        }
 
-        document.querySelectorAll(".admin-tab-content").forEach(c => c.style.display = "none");
-        if (tabName === 'cards') document.getElementById("adminTabCards").style.display = "block";
-        if (tabName === 'photos') document.getElementById("adminTabPhotos").style.display = "block";
-        if (tabName === 'materials') document.getElementById("adminTabMaterials").style.display = "block";
-        if (tabName === 'settings') document.getElementById("adminTabSettings").style.display = "block";
+        if (items.length === 0) {
+          container.innerHTML = `<p style="color: var(--texto-secundario); font-size: 0.95rem;">Nenhuma foto encontrada para este filtro.</p>`;
+          return;
+        }
+
+        container.innerHTML = items.map(item => `
+          <div class="photo-thumb-card" onclick="App.openLightboxItem(${item.id})">
+            <img src="${item.image || 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&q=80'}" alt="${item.title}">
+            <div class="photo-thumb-caption">
+              <span class="meta-tag" style="margin-bottom: 0.3rem; display: inline-block;">${item.tag}</span>
+              <div>${item.title}</div>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      filterPractice(tag, btnElement) {
+        document.querySelectorAll('#practice .tab-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+        this.renderPracticeGallery(tag);
+      },
+
+      handleSearch(query) {
+        const container = document.getElementById('cardsContainer');
+        const msg = document.getElementById('searchMessage');
+        const q = query.toLowerCase().trim();
+
+        if (!q) {
+          msg.style.display = 'none';
+          this.renderCards('home', 'cardsContainer');
+          return;
+        }
+
+        const filtered = this.data.items.filter(item => 
+          item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q) || (item.tag && item.tag.toLowerCase().includes(q))
+        );
+
+        msg.style.display = 'block';
+        msg.textContent = `Encontrados ${filtered.length} resultado(s) para "${query}"`;
+
+        if (filtered.length === 0) {
+          container.innerHTML = `<p style="color: var(--texto-secundario);">Nenhum resultado correspondente.</p>`;
+          return;
+        }
+
+        container.innerHTML = filtered.map(item => `
+          <div class="window-card" onclick="App.openLightboxItem(${item.id})">
+            ${item.image ? `<img src="${item.image}" alt="${item.title}" class="card-cover-img">` : ''}
+            <div class="window-header">
+              <span>SEÇÃO: ${item.category.toUpperCase()}</span>
+              <span class="meta-tag">${item.tag || 'Geral'}</span>
+            </div>
+            <div class="window-body">
+              <div>
+                <div class="window-title">${item.title}</div>
+                <div class="window-desc">${this.truncateText(item.desc, 100)}</div>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--terracota); font-weight: 600;">Ver detalhes &rarr;</div>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      renderAdminTable() {
+        const tbody = document.getElementById('adminTableBody');
+        if (!tbody) return;
+
+        if (this.data.items.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--texto-secundario);">Nenhum registro cadastrado.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = this.data.items.map((item, index) => `
+          <tr>
+            <td><strong>${item.title}</strong></td>
+            <td><span class="meta-tag">${item.category.toUpperCase()}</span></td>
+            <td>${item.tag || '-'}</td>
+            <td style="text-align: right;">
+              <button class="btn-action btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.8rem; margin-right: 0.4rem;" onclick="App.editItem(${index})">Editar</button>
+              <button class="btn-action" style="padding: 0.2rem 0.5rem; font-size: 0.8rem; background-color: var(--vermelho);" onclick="App.deleteItem(${index})">Excluir</button>
+            </td>
+          </tr>
+        `).join('');
       },
 
       updateStats() {
-        document.getElementById("statTotalCards").textContent = db.cards.length;
-        document.getElementById("statTotalPhotos").textContent = db.photos.length;
-        document.getElementById("statTotalMaterials").textContent = db.materials.length;
-      },
-
-      renderTables() {
-        // Tabela Cards
-        const cardsTbody = document.getElementById("adminCardsTableBody");
-        cardsTbody.innerHTML = db.cards.map((card, idx) => `
-          <tr>
-            <td><strong>${card.title}</strong><br><small style="color:var(--texto-secundario)">${card.description.substring(0,60)}...</small></td>
-            <td><span class="meta-tag">${card.category}</span></td>
-            <td>${card.date || '-'}</td>
-            <td>
-              <button class="btn-action" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="AdminPanel.editItem('card', ${card.id})">Editar</button>
-              <button class="btn-action" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; background-color: var(--vermelho);" onclick="AdminPanel.deleteItem('card', ${card.id})">Excluir</button>
-            </td>
-          </tr>
-        `).join("");
-
-        // Tabela Photos
-        const photosTbody = document.getElementById("adminPhotosTableBody");
-        photosTbody.innerHTML = db.photos.map((photo, idx) => `
-          <tr>
-            <td><img src="${photo.url}" style="width: 50px; height: 35px; object-fit: cover; border-radius: 4px;"></td>
-            <td><strong>${photo.title}</strong></td>
-            <td><span class="meta-tag">${photo.category}</span></td>
-            <td>
-              <button class="btn-action" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="AdminPanel.editItem('photo', ${photo.id})">Editar</button>
-              <button class="btn-action" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; background-color: var(--vermelho);" onclick="AdminPanel.deleteItem('photo', ${photo.id})">Excluir</button>
-            </td>
-          </tr>
-        `).join("");
-
-        // Tabela Materials
-        const matsTbody = document.getElementById("adminMaterialsTableBody");
-        matsTbody.innerHTML = db.materials.map((mat, idx) => `
-          <tr>
-            <td><strong>${mat.title}</strong></td>
-            <td>${mat.description}</td>
-            <td>
-              <button class="btn-action" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="AdminPanel.editItem('material', ${mat.id})">Editar</button>
-              <button class="btn-action" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; background-color: var(--vermelho);" onclick="AdminPanel.deleteItem('material', ${mat.id})">Excluir</button>
-            </td>
-          </tr>
-        `).join("");
-      },
-
-      openModal(type, id = null) {
-        const modal = document.getElementById("adminFormModal");
-        const titleEl = document.getElementById("adminModalTitle");
-        const fieldsContainer = document.getElementById("formFieldsContainer");
-        const editType = document.getElementById("formEditType");
-        const editIndex = document.getElementById("formEditIndex");
-
-        editType.value = type;
-        editIndex.value = id !== null ? id : -1;
-
-        let item = null;
-        if (id !== null) {
-          if (type === 'card') item = db.cards.find(c => c.id === id);
-          if (type === 'photo') item = db.photos.find(p => p.id === id);
-          if (type === 'material') item = db.materials.find(m => m.id === id);
-        }
-
-        if (type === 'card') {
-          titleEl.textContent = id !== null ? "Editar Conteúdo / Atividade" : "Adicionar Novo Conteúdo / Atividade";
-          fieldsContainer.innerHTML = `
-            <div class="form-group">
-              <label>Título</label>
-              <input type="text" id="fTitle" required value="${item ? item.title : ''}">
-            </div>
-            <div class="form-group">
-              <label>Categoria</label>
-              <select id="fCategory">
-                <option value="Atividade" ${item && item.category === 'Atividade' ? 'selected' : ''}>Atividade</option>
-                <option value="Pedagógico" ${item && item.category === 'Pedagógico' ? 'selected' : ''}>Pedagógico</option>
-                <option value="Pesquisa" ${item && item.category === 'Pesquisa' ? 'selected' : ''}>Pesquisa</option>
-                <option value="Notícia" ${item && item.category === 'Notícia' ? 'selected' : ''}>Notícia</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Data (ex: 12/05/2026)</label>
-              <input type="text" id="fDate" value="${item ? item.date : new Date().toLocaleDateString()}">
-            </div>
-            <div class="form-group">
-              <label>Tag de Destaque (ex: Destaque, Oficina)</label>
-              <input type="text" id="fTag" value="${item ? item.tag || '' : ''}">
-            </div>
-            <div class="form-group">
-              <label>URL da Imagem de Capa</label>
-              <input type="text" id="fCover" value="${item ? item.cover || '' : 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&q=80'}">
-            </div>
-            <div class="form-group">
-              <label>Breve Descrição (Resumo)</label>
-              <textarea id="fDesc" rows="2" required>${item ? item.description : ''}</textarea>
-            </div>
-            <div class="form-group">
-              <label>Conteúdo Completo (HTML ou Texto)</label>
-              <textarea id="fContent" rows="5" required>${item ? item.content : ''}</textarea>
-            </div>
-          `;
-        } else if (type === 'photo') {
-          titleEl.textContent = id !== null ? "Editar Foto" : "Adicionar Nova Foto";
-          fieldsContainer.innerHTML = `
-            <div class="form-group">
-              <label>Título / Legenda da Foto</label>
-              <input type="text" id="fPhotoTitle" required value="${item ? item.title : ''}">
-            </div>
-            <div class="form-group">
-              <label>Categoria da Prática</label>
-              <select id="fPhotoCategory">
-                <option value="Culminância" ${item && item.category === 'Culminância' ? 'selected' : ''}>Culminância</option>
-                <option value="Apresentação" ${item && item.category === 'Apresentação' ? 'selected' : ''}>Apresentação</option>
-                <option value="Pesquisa" ${item && item.category === 'Pesquisa' ? 'selected' : ''}>Pesquisa</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>URL da Imagem</label>
-              <input type="text" id="fPhotoUrl" required value="${item ? item.url : 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80'}">
-            </div>
-          `;
-        } else if (type === 'material') {
-          titleEl.textContent = id !== null ? "Editar Material Didático" : "Adicionar Material Didático";
-          fieldsContainer.innerHTML = `
-            <div class="form-group">
-              <label>Título do Material</label>
-              <input type="text" id="fMatTitle" required value="${item ? item.title : ''}">
-            </div>
-            <div class="form-group">
-              <label>Descrição</label>
-              <textarea id="fMatDesc" rows="2" required>${item ? item.description : ''}</textarea>
-            </div>
-            <div class="form-group">
-              <label>Link de Download / Acesso</label>
-              <input type="text" id="fMatLink" required value="${item ? item.link : '#'}">
-            </div>
-          `;
-        }
-
-        modal.style.display = "flex";
-      },
-
-      closeModal() {
-        document.getElementById("adminFormModal").style.display = "none";
+        document.getElementById('statTotalItems').textContent = this.data.items.length;
+        document.getElementById('statTotalPhotos').textContent = this.data.items.filter(i => i.category === 'practice').length;
+        document.getElementById('statTotalMaterials').textContent = this.data.items.filter(i => i.category === 'materials').length;
       },
 
       handleFormSubmit(e) {
         e.preventDefault();
-        const type = document.getElementById("formEditType").value;
-        const editId = parseInt(document.getElementById("formEditIndex").value);
+        const editIndex = parseInt(document.getElementById('editIndex').value);
+        const category = document.getElementById('formCategory').value;
+        const title = document.getElementById('formTitleInput').value;
+        const image = document.getElementById('formImage').value;
+        const tag = document.getElementById('formTag').value;
+        const desc = document.getElementById('formDesc').innerHTML;
 
-        if (type === 'card') {
-          const newCard = {
-            id: editId !== -1 ? editId : Date.now(),
-            title: document.getElementById("fTitle").value,
-            category: document.getElementById("fCategory").value,
-            date: document.getElementById("fDate").value,
-            tag: document.getElementById("fTag").value,
-            cover: document.getElementById("fCover").value,
-            description: document.getElementById("fDesc").value,
-            content: document.getElementById("fContent").value
-          };
+        const newItem = {
+          id: editIndex > -1 ? this.data.items[editIndex].id : Date.now(),
+          category,
+          title,
+          image: image || 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&q=80',
+          tag: tag || 'Geral',
+          desc
+        };
 
-          if (editId !== -1) {
-            const idx = db.cards.findIndex(c => c.id === editId);
-            if (idx !== -1) db.cards[idx] = newCard;
-          } else {
-            db.cards.unshift(newCard);
-          }
-        } else if (type === 'photo') {
-          const newPhoto = {
-            id: editId !== -1 ? editId : Date.now(),
-            title: document.getElementById("fPhotoTitle").value,
-            category: document.getElementById("fPhotoCategory").value,
-            url: document.getElementById("fPhotoUrl").value
-          };
-
-          if (editId !== -1) {
-            const idx = db.photos.findIndex(p => p.id === editId);
-            if (idx !== -1) db.photos[idx] = newPhoto;
-          } else {
-            db.photos.unshift(newPhoto);
-          }
-        } else if (type === 'material') {
-          const newMat = {
-            id: editId !== -1 ? editId : Date.now(),
-            title: document.getElementById("fMatTitle").value,
-            description: document.getElementById("fMatDesc").value,
-            link: document.getElementById("fMatLink").value
-          };
-
-          if (editId !== -1) {
-            const idx = db.materials.findIndex(m => m.id === editId);
-            if (idx !== -1) db.materials[idx] = newMat;
-          } else {
-            db.materials.unshift(newMat);
-          }
+        if (editIndex > -1) {
+          this.data.items[editIndex] = newItem;
+        } else {
+          this.data.items.unshift(newItem);
         }
 
-        saveDB();
-        App.renderAll();
-        this.closeModal();
+        this.save();
+        this.resetForm();
+        alert('Conteúdo salvo com sucesso!');
       },
 
-      editItem(type, id) {
-        this.openModal(type, id);
+      editItem(index) {
+        const item = this.data.items[index];
+        document.getElementById('editIndex').value = index;
+        document.getElementById('formCategory').value = item.category;
+        document.getElementById('formTitleInput').value = item.title;
+        document.getElementById('formImage').value = item.image;
+        document.getElementById('formTag').value = item.tag;
+        document.getElementById('formDesc').innerHTML = item.desc;
+
+        document.getElementById('formTitle').textContent = 'Editar Conteúdo / Registro';
+        document.getElementById('btnSubmitForm').textContent = 'Atualizar Conteúdo';
+        document.getElementById('btnResetForm').style.display = 'inline-block';
+
+        // Rolar até o formulário
+        document.getElementById('adminForm').scrollIntoView({ behavior: 'smooth' });
+        },
+
+      resetForm() {
+        document.getElementById('adminForm').reset();
+        document.getElementById('editIndex').value = '-1';
+        document.getElementById('formDesc').innerHTML = '';
+        document.getElementById('formTitle').textContent = 'Adicionar Novo Conteúdo / Atividade';
+        document.getElementById('btnSubmitForm').textContent = 'Salvar Conteúdo';
+        document.getElementById('btnResetForm').style.display = 'none';
       },
 
-      deleteItem(type, id) {
-        if (!confirm("Tem certeza que deseja excluir este registro?")) return;
-
-        if (type === 'card') {
-          db.cards = db.cards.filter(c => c.id !== id);
-        } else if (type === 'photo') {
-          db.photos = db.photos.filter(p => p.id !== id);
-        } else if (type === 'material') {
-          db.materials = db.materials.filter(m => m.id !== id);
+      deleteItem(index) {
+        if (confirm('Tem certeza que deseja excluir este item permanentemente?')) {
+          this.data.items.splice(index, 1);
+          this.save();
         }
-
-        saveDB();
-        App.renderAll();
       },
 
-      formatEditor(editorName, command, value = null) {
-        document.execCommand(command, false, value);
+      formatText(command) {
+        document.execCommand(command, false, null);
       },
 
-      saveSettings() {
-        db.settings.platformName = document.getElementById("settingPlatformName").value;
-        db.settings.heroTitle = document.getElementById("settingHeroTitle").value;
-        db.settings.heroDesc = document.getElementById("settingHeroDesc").value;
-        db.settings.aboutHtml = document.getElementById("editorAbout").innerHTML;
+      openLightboxItem(id) {
+        const item = this.data.items.find(i => i.id === id);
+        if (!item) return;
 
-        saveDB();
-        App.renderAll();
-        alert("Configurações salvas com sucesso!");
+        document.getElementById('lightboxTitle').textContent = item.title;
+        document.getElementById('lightboxMeta').textContent = `Seção: ${item.category.toUpperCase()} | Tag: ${item.tag}`;
+        
+        const body = document.getElementById('lightboxBody');
+        body.innerHTML = `
+          ${item.image ? `<img src="${item.image}" alt="${item.title}">` : ''}
+          <div style="text-align: left; font-size: 0.95rem; line-height: 1.6; color: var(--texto);">
+            ${item.desc}
+          </div>
+        `;
+
+        document.getElementById('lightboxModal').style.display = 'flex';
+      },
+
+      closeLightbox() {
+        document.getElementById('lightboxModal').style.display = 'none';
+      },
+
+      truncateText(text, limit) {
+        const clean = text.replace(/<[^>]*>?/gm, '');
+        if (clean.length <= limit) return clean;
+        return clean.substring(0, limit) + '...';
       }
     };
 
-    // Inicialização da Aplicação ao carregar a página
-    document.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener('DOMContentLoaded', () => {
       App.init();
     });
   </script>
