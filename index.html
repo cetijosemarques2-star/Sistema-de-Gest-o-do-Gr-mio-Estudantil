@@ -213,7 +213,7 @@
       margin-bottom: 0.5rem;
     }
 
-    /* CARDS COMO JANELAS DE CONTEÚDO (MELHORIA RESPONSIVA) */
+    /* CARDS COMO JANELAS DE CONTEÚDO */
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -247,10 +247,9 @@
       align-items: center;
     }
 
-    /* Layout Horizontal no Computador e Vertical no Celular para os Cards */
     .card-content-wrapper {
       display: flex;
-      flex-direction: column; /* Padrão Mobile: Vertical */
+      flex-direction: column;
       flex-grow: 1;
     }
 
@@ -263,7 +262,7 @@
 
     @media (min-width: 769px) {
       .card-content-wrapper {
-        flex-direction: row; /* Computador: Horizontal (Imagem lado esquerdo, texto lado direito) */
+        flex-direction: row;
       }
       .card-cover-img {
         width: 140px;
@@ -305,7 +304,6 @@
       align-self: flex-start;
     }
 
-    /* ÁREA DE EXIBIÇÃO DE CONTEÚDO ENRIQUECIDO */
     .content-area {
       background-color: var(--fundo);
       border: 1px solid var(--card-border);
@@ -343,7 +341,7 @@
       color: var(--texto);
     }
 
-    /* EDITOR VISUAL DE TEXTO (WYSIWYG) */
+    /* EDITOR VISUAL */
     .editor-container {
       border: 1px solid var(--card-border);
       border-radius: 6px;
@@ -483,7 +481,6 @@
       border-bottom-color: var(--terracota);
     }
 
-    /* MOBILE ADJUSTMENTS */
     @media (max-width: 768px) {
       aside {
         transform: translateX(-100%);
@@ -622,8 +619,12 @@
         <br>
         <form id="loginForm">
           <div class="form-group">
-            <label for="inputPassword">Senha de Acesso</label>
-            <input type="password" id="inputPassword" required autocomplete="current-password">
+            <label for="inputEmail">E-mail do administrador</label>
+            <input type="email" id="inputEmail" required autocomplete="username" placeholder="administrador@email.com">
+          </div>
+          <div class="form-group">
+            <label for="inputPassword">Senha</label>
+            <input type="password" id="inputPassword" required autocomplete="current-password" placeholder="Sua senha">
           </div>
           <button type="submit" class="btn-action">Entrar</button>
         </form>
@@ -651,7 +652,7 @@
           </div>
         </div>
 
-        <!-- CONFIGURAÇÕES GERAIS / TEXTO E LOGO -->
+        <!-- CONFIGURAÇÕES GERAIS -->
         <div class="admin-card">
           <h3>⚙️ Configurações Gerais da Plataforma</h3>
           <br>
@@ -672,7 +673,6 @@
               <label>Texto da Página "Sobre o Projeto" (Editor Visual)</label>
               <div class="editor-container">
                 <div class="editor-toolbar">
-                  <!-- Fontes -->
                   <select onchange="App.execAboutCmd('fontName', this.value)">
                     <option value="Arial">Arial</option>
                     <option value="Times New Roman">Times New Roman</option>
@@ -680,7 +680,6 @@
                     <option value="Georgia">Georgia</option>
                     <option value="Verdana">Verdana</option>
                   </select>
-                  <!-- Tamanho -->
                   <select onchange="App.execAboutCmd('fontSize', this.value)">
                     <option value="1">Pequena (Muito pequena)</option>
                     <option value="2">Pequena</option>
@@ -739,7 +738,6 @@
               <label>Conteúdo Detalhado (Editor Visual WYSIWYG)</label>
               <div class="editor-container">
                 <div class="editor-toolbar">
-                  <!-- Fontes -->
                   <select onchange="App.execCmd('fontName', this.value)">
                     <option value="Arial">Arial</option>
                     <option value="Times New Roman">Times New Roman</option>
@@ -747,7 +745,6 @@
                     <option value="Georgia">Georgia</option>
                     <option value="Verdana">Verdana</option>
                   </select>
-                  <!-- Tamanho -->
                   <select onchange="App.execCmd('fontSize', this.value)">
                     <option value="1">Pequena (Muito pequena)</option>
                     <option value="2">Pequena</option>
@@ -830,7 +827,6 @@
               <label>Relato / Conteúdo Completo (Editor Visual)</label>
               <div class="editor-container">
                 <div class="editor-toolbar">
-                  <!-- Fontes -->
                   <select onchange="App.execPracticeCmd('fontName', this.value)">
                     <option value="Arial">Arial</option>
                     <option value="Times New Roman">Times New Roman</option>
@@ -838,7 +834,6 @@
                     <option value="Georgia">Georgia</option>
                     <option value="Verdana">Verdana</option>
                   </select>
-                  <!-- Tamanho -->
                   <select onchange="App.execPracticeCmd('fontSize', this.value)">
                     <option value="1">Pequena (Muito pequena)</option>
                     <option value="2">Pequena</option>
@@ -951,6 +946,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyB6GV-yNCPWl6GlRLNgkj_r4YIsiiJF1L0",
@@ -964,6 +960,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const auth = getAuth(app);
 
     const App = {
       state: {
@@ -1075,17 +1072,41 @@
           this.renderCards(e.target.value);
         });
 
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
           e.preventDefault();
-          const pass = document.getElementById('inputPassword').value;
-          if (pass === 'admin123') {
-            this.state.isAdmin = true;
-            document.getElementById('adminLoginBox').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            this.populateSettingsForm();
-            this.renderAdminTables();
-          } else {
-            alert('Senha incorreta!');
+          const email = document.getElementById('inputEmail').value.trim();
+          const password = document.getElementById('inputPassword').value;
+
+          try {
+            const credential = await signInWithEmailAndPassword(auth, email, password);
+            const uid = credential.user.uid;
+            const adminRef = ref(db, `admins/${uid}`);
+
+            onValue(adminRef, (snapshot) => {
+              if (snapshot.val() === true) {
+                this.state.isAdmin = true;
+                document.getElementById('adminLoginBox').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                this.populateSettingsForm();
+                this.renderAdminTables();
+                alert('Login realizado com sucesso!');
+              } else {
+                alert('Este usuário não possui permissão de administrador.');
+                signOut(auth);
+              }
+            }, { onlyOnce: true });
+
+          } catch (error) {
+            console.error(error);
+            if (
+              error.code === 'auth/invalid-credential' ||
+              error.code === 'auth/wrong-password' ||
+              error.code === 'auth/user-not-found'
+            ) {
+              alert('E-mail ou senha incorretos.');
+            } else {
+              alert('Erro ao entrar: ' + error.message);
+            }
           }
         });
 
@@ -1147,7 +1168,7 @@
 
           if (coverFile) {
             const reader = new FileReader();
-            reader.onload = (evt) => processSave(evt.tatarget.result);
+            reader.onload = (evt) => processSave(evt.target.result);
             reader.readAsDataURL(coverFile);
           } else {
             processSave(document.getElementById('currentCoverUrl').value);
@@ -1213,13 +1234,15 @@
                 .then(() => {
                   alert('Material atualizado!');
                   this.resetMaterialForm();
-                });
+                })
+                .catch(err => alert('Erro ao atualizar: ' + err.message));
             } else {
               push(ref(db, 'materials'), materialData)
                 .then(() => {
                   alert('Material cadastrado!');
                   this.resetMaterialForm();
-                });
+                })
+                .catch(err => alert('Erro ao cadastrar: ' + err.message));
             }
           };
 
@@ -1524,10 +1547,10 @@
 
         if (item.type === 'link') {
           document.getElementById('inputMaterialUrl').value = item.fileUrl || '';
-        } else if (item.type === 'imagem' && item.fileUrl) {
-          document.getElementById('materialFilePreview').innerHTML = `<img src="${item.fileUrl}" style="height: 60px; border-radius: 4px;">`;
-        } else {
+        } else if (item.fileUrl) {
           document.getElementById('materialFilePreview').innerHTML = `<em>Arquivo já anexado.</em>`;
+        } else {
+          document.getElementById('materialFilePreview').innerHTML = '';
         }
       },
 
@@ -1599,7 +1622,7 @@
         if (item.cover) {
           document.getElementById('practiceCoverPreview').innerHTML = `<img src="${item.cover}" style="height: 60px; border-radius: 4px;">`;
         } else {
-          document.getElementById('practiceCoverPreview').innerHTML = '';
+          document.getElementById('practiceCoverPreview').innerHTml = '';
         }
       },
 
@@ -1620,11 +1643,17 @@
         document.getElementById('practiceFormTitle').textContent = '📸 Adicionar Registro: Projeto na Prática';
       },
 
-      logoutAdmin() {
-        this.state.isAdmin = false;
-        document.getElementById('adminLoginBox').style.display = 'block';
-        document.getElementById('adminPanel').style.display = 'none';
-        document.getElementById('inputPassword').value = '';
+      async logoutAdmin() {
+        try {
+          await signOut(auth);
+          this.state.isAdmin = false;
+          document.getElementById('adminLoginBox').style.display = 'block';
+          document.getElementById('adminPanel').style.display = 'none';
+          document.getElementById('inputEmail').value = '';
+          document.getElementById('inputPassword').value = '';
+        } catch (error) {
+          alert('Erro ao sair: ' + error.message);
+        }
       },
 
       execCmd(cmd, value = null) {
@@ -1668,9 +1697,30 @@
 
     window.App = App;
 
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        App.state.isAdmin = false;
+        return;
+      }
+
+      const adminRef = ref(db, `admins/${user.uid}`);
+      onValue(adminRef, (snapshot) => {
+        if (snapshot.val() === true) {
+          App.state.isAdmin = true;
+          document.getElementById('adminLoginBox').style.display = 'none';
+          document.getElementById('adminPanel').style.display = 'block';
+          App.populateSettingsForm();
+          App.renderAdminTables();
+        } else {
+          App.state.isAdmin = false;
+        }
+      }, { onlyOnce: true });
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
       App.init();
     });
   </script>
 </body>
-</html>
+  </html>
+  
